@@ -1,0 +1,4 @@
+CREATE ROLE kursim_app LOGIN PASSWORD 'kursim_app_pw' NOSUPERUSER NOCREATEDB NOCREATEROLE;
+GRANT CONNECT ON DATABASE kursim TO kursim_app;
+\c kursim
+GRANT USAGE ON SCHEMA public TO kursim_app;

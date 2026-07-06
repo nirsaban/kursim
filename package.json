@@ -1,0 +1,37 @@
+{
+  "name": "kursim",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "test": "vitest run",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "next": "^15",
+    "react": "^19",
+    "react-dom": "^19",
+    "@prisma/client": "^6",
+    "ioredis": "^5",
+    "jose": "^5",
+    "@node-rs/argon2": "^2",
+    "zod": "^3",
+    "cloudinary": "^2"
+  },
+  "devDependencies": {
+    "prisma": "^6",
+    "typescript": "^5",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^3.4",
+    "postcss": "^8",
+    "autoprefixer": "^10",
+    "vitest": "^2",
+    "ioredis-mock": "^8",
+    "tsx": "^4"
+  }
+}

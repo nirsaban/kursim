@@ -1,0 +1,224 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  OWNER
+  INSTRUCTOR
+  STUDENT
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum EvictionPolicy {
+  BLOCK
+  EVICT_OLDEST
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum AttachmentKind {
+  DOC
+  IMAGE
+  OTHER
+}
+
+model Tenant {
+  id              String        @id @default(uuid()) @db.Uuid
+  slug            String        @unique
+  name            String
+  status          TenantStatus  @default(ACTIVE)
+  sessionLimit    Int           @default(3)
+  evictionPolicy  EvictionPolicy @default(BLOCK)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  users           User[]
+  courses         Course[]
+  invites         Invite[]
+  modules         Module[]
+  lessons         Lesson[]
+  attachments     Attachment[]
+  enrollments     Enrollment[]
+  progress        Progress[]
+  reviews         CourseReview[]
+  affiliateLinks  AffiliateLink[]
+}
+
+model User {
+  id                  String      @id @default(uuid()) @db.Uuid
+  tenantId            String?     @db.Uuid
+  email               String
+  passwordHash        String
+  role                UserRole
+  status              UserStatus  @default(ACTIVE)
+  mustChangePassword  Boolean     @default(false)
+  lastLoginAt         DateTime?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  tenant              Tenant?     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  enrollments         Enrollment[]
+  progress            Progress[]
+  reviews             CourseReview[]
+  affiliateLinks      AffiliateLink[]
+
+  @@unique([tenantId, email])
+}
+
+model Invite {
+  id        String      @id @default(uuid()) @db.Uuid
+  tenantId  String      @db.Uuid
+  tokenHash String      @unique
+  email     String?
+  role      UserRole    @default(STUDENT)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime    @default(now())
+
+  tenant    Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id               String        @id @default(uuid()) @db.Uuid
+  tenantId         String        @db.Uuid
+  title            String
+  description      String?       @db.Text
+  coverPublicId    String?
+  status           CourseStatus  @default(DRAFT)
+  marketing        Json?
+  landingPublished Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  modules         Module[]
+  enrollments     Enrollment[]
+  reviews         CourseReview[]
+  affiliateLinks  AffiliateLink[]
+}
+
+model CourseReview {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  courseId  String   @db.Uuid
+  studentId String   @db.Uuid
+  name        String   @default("")
+  rating      Int
+  text        String   @db.Text
+  /** Private feedback for the owner — never shown on the landing page. */
+  privateNote String   @default("") @db.Text
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, studentId])
+}
+
+model AffiliateLink {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  courseId  String   @db.Uuid
+  studentId String   @db.Uuid
+  /** Short public share code carried as ?ref= on the landing page. */
+  code      String   @unique
+  /** Unique visitors who opened the landing page via this link. */
+  visits    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, studentId])
+}
+
+model Module {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @db.Uuid
+  courseId  String    @db.Uuid
+  title     String
+  sortOrder Int       @default(0)
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+}
+
+model Lesson {
+  id            String    @id @default(uuid()) @db.Uuid
+  tenantId      String    @db.Uuid
+  moduleId      String    @db.Uuid
+  title         String
+  notes         String?   @db.Text
+  videoPublicId String?
+  durationSec   Int?
+  sortOrder     Int       @default(0)
+
+  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  module        Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  attachments   Attachment[]
+  progress      Progress[]
+}
+
+model Attachment {
+  id        String          @id @default(uuid()) @db.Uuid
+  tenantId  String          @db.Uuid
+  lessonId  String          @db.Uuid
+  publicId  String
+  filename  String
+  kind      AttachmentKind  @default(OTHER)
+
+  tenant    Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lesson    Lesson          @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model Progress {
+  id              String    @id @default(uuid()) @db.Uuid
+  tenantId        String    @db.Uuid
+  studentId       String    @db.Uuid
+  lessonId        String    @db.Uuid
+  lastPositionSec Int       @default(0)
+  completedAt     DateTime?
+  updatedAt       DateTime  @updatedAt
+
+  tenant          Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student         User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  lesson          Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, lessonId])
+}
+
+model Enrollment {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @db.Uuid
+  studentId String    @db.Uuid
+  courseId  String    @db.Uuid
+  createdAt DateTime  @default(now())
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student   User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+}
