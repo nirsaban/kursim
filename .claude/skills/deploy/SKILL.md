@@ -32,6 +32,8 @@ Production runs on VPS `root@72.62.154.127` (Debian 13) at `https://kursim.milte
    - `ssh root@72.62.154.127 'docker logs kursim-app --tail 20'` — migrations applied, server listening, no crash loop.
    - `curl -s -o /dev/null -w "%{http_code}" https://kursim.miltech.cloud` — expect 200/3xx.
 
+5. **Commit & push**: the server is not a git checkout, so a deploy can ship code that exists nowhere in history. After verifying, commit the deployed changes and push to `origin main` (https://github.com/nirsaban/kursim) so git always matches production. Ask the user first if the working tree mixes unrelated in-progress work.
+
 ## Notes
 
 - New env vars must be added to the server's `/root/kursim/.env` by hand (document them in `.env.example`).
