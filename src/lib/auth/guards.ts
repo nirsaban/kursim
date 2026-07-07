@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { ACCESS_COOKIE, clearedCookieOptions, REFRESH_COOKIE } from './cookies';
+import { ACCESS_COOKIE } from './cookies';
 import { Role, verifyAccessToken } from './jwt';
 import { sessionExists } from '@/lib/session-registry/registry';
 
@@ -33,11 +33,15 @@ export async function getAuth(): Promise<AuthContext | null> {
   };
 }
 
+/**
+ * 401 without touching cookies. An expired access token is the NORMAL state
+ * ten minutes after login — the client recovers via /api/auth/refresh, which
+ * needs the refresh cookie intact. Only a failed refresh or explicit logout
+ * may clear cookies; clearing them here logs users out at every access-token
+ * expiry.
+ */
 export function unauthorized(message = 'unauthorized'): NextResponse {
-  const res = NextResponse.json({ error: message }, { status: 401 });
-  res.cookies.set(ACCESS_COOKIE, '', clearedCookieOptions());
-  res.cookies.set(REFRESH_COOKIE, '', clearedCookieOptions());
-  return res;
+  return NextResponse.json({ error: message }, { status: 401 });
 }
 
 export function forbidden(message = 'forbidden'): NextResponse {

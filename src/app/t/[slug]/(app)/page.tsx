@@ -70,10 +70,11 @@ export default async function StudentHomePage({
               <Link
                 key={course.id}
                 href={`/t/${slug}/course/${course.id}`}
-                className="group bg-white border border-line rounded-xl2 shadow-card hover:shadow-lift transition-shadow overflow-hidden"
+                className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift hover:-translate-y-1 transition-all duration-300 overflow-hidden animate-rise"
+                style={{ animationDelay: `${Math.min(courses.indexOf(course), 5) * 80}ms` }}
               >
                 <div className="h-24 bg-gradient-to-l from-brand-800 to-brand-600 flex items-end p-4">
-                  <span className="w-11 h-11 rounded-xl bg-white shadow-card flex items-center justify-center text-2xl translate-y-8">
+                  <span className="w-11 h-11 rounded-xl bg-card shadow-card flex items-center justify-center text-2xl translate-y-8">
                     {emoji}
                   </span>
                 </div>
@@ -113,7 +114,7 @@ export default async function StudentHomePage({
                   href={`/t/${slug}/c/${course.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group bg-white border border-line rounded-xl2 shadow-card hover:shadow-lift transition-shadow p-5 flex flex-col"
+                  className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift hover:-translate-y-1 transition-all duration-300 p-5 flex flex-col"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span className="w-11 h-11 rounded-xl bg-copper-100 flex items-center justify-center text-2xl shrink-0">

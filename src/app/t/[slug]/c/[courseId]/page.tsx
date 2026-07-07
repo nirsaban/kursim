@@ -9,6 +9,8 @@ import { isCloudinaryConfigured } from '@/lib/cloudinary/client';
 import { signedDeliveryUrl, VIDEO_URL_TTL_SEC } from '@/lib/cloudinary/sign-delivery';
 import Reveal from '@/components/landing/Reveal';
 import BeforeAfterSlider from '@/components/landing/BeforeAfterSlider';
+import CourseRevealSequence from '@/components/landing/CourseRevealSequence';
+import TiltCard from '@/components/fx/TiltCard';
 import { trackAffiliateVisit } from '@/lib/affiliates';
 import { headers } from 'next/headers';
 import { he } from '@/lib/he';
@@ -138,21 +140,40 @@ export default async function CourseLandingPage({ params, searchParams }: Params
     ? { target: '_blank' as const, rel: 'noopener noreferrer' }
     : {};
 
+  const avgRating =
+    reviews.length > 0
+      ? Math.round((reviews.reduce((n, r) => n + r.rating, 0) / reviews.length) * 10) / 10
+      : null;
+
+  // AI-generated cinematic hero (Veo → scroll-scrubbed frame sequence), if ready.
+  const media = await forTenant(tenant.id).courseMedia.findFirst({ where: { courseId } });
+  const cinematic =
+    media?.status === 'ready' && media.framesBaseUrl && media.posterUrl
+      ? { framesBaseUrl: media.framesBaseUrl, frameCount: media.frameCount, posterUrl: media.posterUrl }
+      : null;
+
+  // Hero showcase media (design 1e): prefer a before/after pair, else the first
+  // gallery item. Skipped when the cinematic AI hero already owns the top fold.
+  const heroMedia = cinematic
+    ? null
+    : (gallery.find((g) => g.kind === 'BEFORE_AFTER' && g.afterUrl) ?? gallery[0] ?? null);
+  const galleryRest = heroMedia ? gallery.filter((g) => g !== heroMedia) : gallery;
+
   const cta = (extra = '') => (
     <a
       href={ctaHref}
       {...externalProps}
-      className={`inline-flex items-center justify-center gap-2 font-display font-bold rounded-xl px-7 py-3.5 text-white transition-transform hover:scale-[1.02] active:scale-[0.99] ${extra}`}
-      style={{ background: theme.accent }}
+      className={`inline-flex items-center justify-center gap-2 font-bold rounded-[14px] px-8 py-3.5 text-card transition-transform hover:scale-[1.02] active:scale-[0.99] ${extra}`}
+      style={{ background: theme.main, boxShadow: `0 8px 22px ${theme.main}59` }}
     >
       {m.paymentLink && <span aria-hidden>🔒</span>}
       {ctaText}
-      {m.priceText && <span className="font-body font-medium opacity-90">· {m.priceText}</span>}
+      {m.priceText && <span className="font-medium opacity-90">· {m.priceText}</span>}
     </a>
   );
 
   return (
-    <main className="bg-white text-ink">
+    <main className="bg-card text-ink">
       {previewMode && (
         <div className="bg-warn text-white text-center text-sm font-semibold py-2 px-4">
           {he.landingPreview} — {he.landingDraftBadge}
@@ -163,24 +184,24 @@ export default async function CourseLandingPage({ params, searchParams }: Params
       {showSale && (
         <a
           href="#sale"
-          className="block text-center text-sm font-bold text-white py-2.5 px-4 hover:opacity-95"
-          style={{ background: theme.accent }}
+          className="block text-center text-sm font-bold text-card py-2.5 px-4 hover:opacity-95"
+          style={{ background: theme.main }}
         >
           🎁 {m.sale.title} — <span className="underline">{he.saleCta}</span>
         </a>
       )}
 
       {/* Mini nav */}
-      <header
-        className="sticky top-0 z-40 border-b backdrop-blur bg-white/85"
-        style={{ borderColor: `${theme.main}22` }}
-      >
-        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-xl" aria-hidden>
-              {m.emoji}
+      <header className="sticky top-0 z-40 border-b border-line backdrop-blur bg-card/95">
+        <div className="max-w-5xl mx-auto px-4 h-[62px] flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span
+              className="w-9 h-9 rounded-[10px] bg-ink text-paper grid place-items-center font-display font-black text-lg shrink-0"
+              aria-hidden
+            >
+              {tenant.name.charAt(0)}
             </span>
-            <span className="font-display font-bold truncate">{tenant.name}</span>
+            <span className="font-bold truncate">{tenant.name}</span>
           </div>
           <nav className="hidden sm:flex items-center gap-5 text-sm font-medium text-muted">
             {lessonCount > 0 && (
@@ -209,7 +230,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
               </a>
             )}
             {showSale && (
-              <a href="#sale" className="font-bold" style={{ color: theme.accent }}>
+              <a href="#sale" className="font-bold" style={{ color: theme.main }}>
                 {he.saleBadge}
               </a>
             )}
@@ -217,118 +238,202 @@ export default async function CourseLandingPage({ params, searchParams }: Params
           <a
             href={ctaHref}
             {...externalProps}
-            className="shrink-0 text-sm font-bold text-white rounded-lg px-4 py-2 transition-opacity hover:opacity-90"
-            style={{ background: theme.accent }}
+            className="shrink-0 text-sm font-bold text-card rounded-[11px] px-5 py-2.5 transition-opacity hover:opacity-90"
+            style={{ background: theme.main }}
           >
             {ctaText}
           </a>
         </div>
       </header>
 
-      {/* Hero */}
+      {/* AI cinematic hero (scroll-scrubbed Veo sequence) — shown when generated */}
+      {cinematic && (
+        <CourseRevealSequence
+          framesPath={cinematic.framesBaseUrl}
+          frameCount={cinematic.frameCount}
+          poster={cinematic.posterUrl}
+          headline={headline}
+          badge={`${m.emoji} ${he.digitalCourseBadge}`}
+          accent={theme.main}
+        />
+      )}
+
+      {/* Hero — two columns per design 1e: copy + before/after showcase */}
       <section
-        className="relative overflow-hidden text-white"
-        style={{ background: `linear-gradient(140deg, ${theme.deep} 0%, ${theme.main} 100%)` }}
+        className="relative overflow-hidden"
+        style={{ background: `linear-gradient(180deg, ${theme.soft} 0%, #FFFDF8 100%)` }}
       >
         <div
-          className="absolute inset-0 opacity-[0.12]"
-          aria-hidden
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.6) 1px, transparent 0)',
-            backgroundSize: '26px 26px',
-          }}
-        />
-        <div className="relative max-w-5xl mx-auto px-4 py-20 sm:py-28">
-          <Reveal>
-            <p className="font-semibold text-white/70 mb-4">{tenant.name}</p>
-            <h1 className="font-display text-4xl sm:text-6xl font-bold leading-[1.1] max-w-3xl">
-              {headline}
-            </h1>
-            {m.subheadline && (
-              <p className="text-lg sm:text-xl text-white/80 mt-6 max-w-2xl leading-relaxed">
-                {m.subheadline}
-              </p>
-            )}
-          </Reveal>
-          <Reveal delay={150}>
-            <div className="flex flex-wrap items-center gap-4 mt-9">
-              {cta()}
-              <div className="flex flex-wrap gap-2 text-sm">
-                {course.modules.length > 0 && (
-                  <span className="bg-white/15 rounded-full px-3.5 py-1.5">
-                    {course.modules.length} {he.modules}
-                  </span>
-                )}
-                {lessonCount > 0 && (
-                  <span className="bg-white/15 rounded-full px-3.5 py-1.5">
-                    {lessonCount} {he.lessons}
-                  </span>
-                )}
-                {totalHours && (
-                  <span className="bg-white/15 rounded-full px-3.5 py-1.5" dir="ltr">
-                    ~{totalHours} שעות
-                  </span>
-                )}
-                {m.instructorName && (
-                  <span className="bg-white/15 rounded-full px-3.5 py-1.5">
-                    עם {m.instructorName}
+          className={`relative max-w-5xl mx-auto px-4 py-16 sm:py-20 ${
+            heroMedia ? 'grid gap-12 items-center lg:grid-cols-[1.1fr,1fr]' : ''
+          }`}
+        >
+          <div>
+            <Reveal>
+              <span
+                className="inline-flex items-center gap-2 text-[13px] font-bold rounded-full px-3.5 py-1.5 mb-5"
+                style={{ color: theme.main, background: `${theme.main}1A` }}
+              >
+                {m.emoji} {he.digitalCourseBadge}
+              </span>
+              <h1 className="font-display text-4xl sm:text-[52px] font-black leading-[1.15] max-w-3xl text-ink">
+                {headline}
+              </h1>
+              {m.subheadline && (
+                <p className="text-lg text-muted mt-5 max-w-2xl leading-relaxed">
+                  {m.subheadline}
+                </p>
+              )}
+            </Reveal>
+            <Reveal delay={150}>
+              <div className="flex flex-wrap items-center gap-4 mt-8">
+                {cta()}
+                {!heroMedia && m.instructorName && (
+                  <span className="text-sm text-muted">
+                    עם <b className="text-ink">{m.instructorName}</b>
                   </span>
                 )}
               </div>
-            </div>
-          </Reveal>
+              <div className="flex flex-wrap items-stretch gap-x-6 gap-y-3 mt-9 text-[13px] text-muted">
+                {(
+                  [
+                    course.modules.length > 0 && {
+                      value: String(course.modules.length),
+                      label: he.modules,
+                    },
+                    lessonCount > 0 && { value: String(lessonCount), label: he.lessons },
+                    totalHours && { value: String(totalHours), label: he.hoursVideo },
+                    avgRating && { value: `★ ${avgRating}`, label: he.reviews },
+                  ] as Array<{ value: string; label: string } | false | 0 | null>
+                )
+                  .filter((s): s is { value: string; label: string } => Boolean(s))
+                  .map((s, i) => (
+                    <div key={s.label} className="flex items-stretch gap-6">
+                      {i > 0 && <div className="w-px bg-line" aria-hidden />}
+                      <div>
+                        <b className="font-display font-black text-xl text-ink block" dir="ltr">
+                          {s.value}
+                        </b>
+                        {s.label}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </Reveal>
+          </div>
+
+          {heroMedia && (
+            <Reveal delay={250}>
+              <TiltCard maxTilt={5} className="rounded-[20px]">
+                <div className="rounded-[20px] overflow-hidden border border-line shadow-[0_18px_44px_rgba(20,18,10,0.14)]">
+                  {heroMedia.kind === 'BEFORE_AFTER' && heroMedia.afterUrl ? (
+                    <BeforeAfterSlider
+                      beforeUrl={heroMedia.url}
+                      afterUrl={heroMedia.afterUrl}
+                      beforeLabel={he.beforeLabel}
+                      afterLabel={he.afterLabel}
+                      accent={theme.main}
+                    />
+                  ) : heroMedia.kind === 'VIDEO' ? (
+                    <video
+                      src={heroMedia.url}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="w-full aspect-[4/3] object-cover bg-ink/5"
+                    />
+                  ) : (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={heroMedia.url}
+                      alt={heroMedia.caption || headline}
+                      className="w-full aspect-[4/3] object-cover bg-ink/5"
+                    />
+                  )}
+                </div>
+              </TiltCard>
+              {m.instructorName && (
+                <div className="flex items-center gap-3 mt-4 bg-card border border-line rounded-[14px] px-4 py-3">
+                  <span
+                    className="w-10 h-10 rounded-full grid place-items-center font-display font-black text-card"
+                    style={{ background: theme.main }}
+                    aria-hidden
+                  >
+                    {m.instructorName.charAt(0)}
+                  </span>
+                  <div>
+                    <div className="text-sm font-bold text-ink">{m.instructorName}</div>
+                    <div className="text-xs text-muted">{he.yourInstructor}</div>
+                  </div>
+                </div>
+              )}
+            </Reveal>
+          )}
+
         </div>
       </section>
 
-      {/* Audience */}
-      {m.audience.length > 0 && (
-        <section className="max-w-5xl mx-auto px-4 py-16">
-          <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-8">
-              {he.audienceTitle}
-            </h2>
-          </Reveal>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {m.audience.map((a, i) => (
-              <Reveal key={i} delay={i * 80}>
-                <div
-                  className="rounded-xl2 border p-5 h-full font-medium leading-relaxed"
-                  style={{ borderColor: `${theme.main}33`, background: theme.soft }}
-                >
-                  {a}
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Outcomes */}
-      {m.outcomes.length > 0 && (
-        <section style={{ background: theme.soft }}>
-          <div className="max-w-5xl mx-auto px-4 py-16">
-            <Reveal>
-              <h2 className="font-display text-2xl sm:text-3xl font-bold mb-8">
-                {he.outcomesTitle}
-              </h2>
-            </Reveal>
-            <ul className="grid gap-x-10 gap-y-4 sm:grid-cols-2">
-              {m.outcomes.map((o, i) => (
-                <Reveal key={i} delay={i * 60}>
-                  <li className="flex items-start gap-3">
-                    <span
-                      className="mt-0.5 w-6 h-6 rounded-full text-white text-xs flex items-center justify-center shrink-0"
-                      style={{ background: theme.main }}
-                      aria-hidden
-                    >
-                      ✓
-                    </span>
-                    <span className="leading-relaxed">{o}</span>
-                  </li>
+      {/* Who for + outcomes — one section, two columns per design 1e */}
+      {(m.audience.length > 0 || m.outcomes.length > 0) && (
+        <section className="border-t border-line">
+          <div
+            className={`max-w-5xl mx-auto px-4 py-16 ${
+              m.audience.length > 0 && m.outcomes.length > 0
+                ? 'grid gap-12 lg:grid-cols-[1fr,1.3fr]'
+                : ''
+            }`}
+          >
+            {m.audience.length > 0 && (
+              <div>
+                <Reveal>
+                  <h2 className="font-display text-2xl sm:text-3xl font-black mb-5">
+                    {he.audienceTitle}
+                  </h2>
                 </Reveal>
-              ))}
-            </ul>
+                <div className="flex flex-col gap-2.5">
+                  {m.audience.map((a, i) => (
+                    <Reveal key={i} delay={i * 80}>
+                      <div className="flex items-start gap-3 rounded-[13px] bg-paper px-4 py-3.5 leading-relaxed">
+                        <span
+                          className="font-black shrink-0"
+                          style={{ color: theme.main }}
+                          aria-hidden
+                        >
+                          ✓
+                        </span>
+                        <span className="text-[15px]">{a}</span>
+                      </div>
+                    </Reveal>
+                  ))}
+                </div>
+              </div>
+            )}
+            {m.outcomes.length > 0 && (
+              <div>
+                <Reveal>
+                  <h2 className="font-display text-2xl sm:text-3xl font-black mb-5">
+                    {he.outcomesTitle}
+                  </h2>
+                </Reveal>
+                <ul className="grid gap-3 sm:grid-cols-2">
+                  {m.outcomes.map((o, i) => (
+                    <Reveal key={i} delay={i * 60}>
+                      <li className="border border-line rounded-[13px] px-5 py-4 h-full">
+                        <span
+                          className="font-display font-black text-xl block"
+                          style={{ color: theme.main }}
+                          aria-hidden
+                          dir="ltr"
+                        >
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <span className="leading-relaxed text-sm mt-1 block">{o}</span>
+                      </li>
+                    </Reveal>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -337,7 +442,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
       {m.benefits.length > 0 && (
         <section className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-8">
+            <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">
               {he.benefitsTitle}
             </h2>
           </Reveal>
@@ -346,7 +451,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
               <Reveal key={i} delay={i * 80}>
                 <div className="border border-line rounded-xl2 p-6 h-full shadow-card">
                   <span
-                    className="inline-flex w-10 h-10 rounded-xl text-white items-center justify-center font-display font-bold"
+                    className="inline-flex w-10 h-10 rounded-xl text-card items-center justify-center font-display font-bold"
                     style={{ background: theme.main }}
                     aria-hidden
                   >
@@ -362,15 +467,15 @@ export default async function CourseLandingPage({ params, searchParams }: Params
       )}
 
       {/* Gallery: photos, short clips, before/after results */}
-      {gallery.length > 0 && (
+      {galleryRest.length > 0 && (
         <section id="gallery" className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-8">
+            <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">
               {he.galleryTitle}
             </h2>
           </Reveal>
           <div className="grid gap-5 sm:grid-cols-2">
-            {gallery.map((item, i) => (
+            {galleryRest.map((item, i) => (
               <Reveal key={i} delay={i * 80}>
                 <figure>
                   {item.kind === 'VIDEO' ? (
@@ -410,45 +515,66 @@ export default async function CourseLandingPage({ params, searchParams }: Params
         </section>
       )}
 
-      {/* Curriculum */}
+      {/* Curriculum — the dark ink chapter */}
       {lessonCount > 0 && (
-        <section id="curriculum" style={{ background: theme.soft }}>
+        <section id="curriculum" className="bg-ink">
           <div className="max-w-3xl mx-auto px-4 py-16">
             <Reveal>
-              <h2 className="font-display text-2xl sm:text-3xl font-bold mb-8">
+              <h2 className="font-display text-2xl sm:text-3xl font-black mb-1.5 text-paper">
                 {he.curriculum}
               </h2>
+              <p className="text-sm text-brand-300 mb-7">
+                <span dir="ltr">{course.modules.length}</span> {he.modules} ·{' '}
+                <span dir="ltr">{lessonCount}</span> {he.lessons}
+                {totalHours && (
+                  <>
+                    {' '}
+                    · <span dir="ltr">{totalHours}</span> {he.hoursVideo}
+                  </>
+                )}
+              </p>
             </Reveal>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {course.modules.map((mod, mi) => (
                 <Reveal key={mod.id} delay={mi * 60}>
                   <details
-                    className="group bg-white border border-line rounded-xl2 shadow-card overflow-hidden"
+                    className="group bg-ink-surface border border-paper/10 rounded-[15px] overflow-hidden"
                     open={mi === 0}
                   >
-                    <summary className="flex items-center gap-3 px-5 py-4 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
+                    <summary className="flex items-center gap-4 px-5 py-4 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
                       <span
-                        className="w-8 h-8 rounded-lg text-white font-display font-bold text-sm flex items-center justify-center shrink-0"
-                        style={{ background: theme.main }}
+                        className="font-display font-black text-lg shrink-0"
+                        style={{ color: theme.main }}
+                        dir="ltr"
                       >
-                        {mi + 1}
+                        {String(mi + 1).padStart(2, '0')}
                       </span>
-                      <span className="font-display font-bold flex-1">{mod.title}</span>
-                      <span className="text-xs text-muted">{mod.lessons.length} {he.lessons}</span>
+                      <span className="font-bold flex-1 text-paper">{mod.title}</span>
+                      <span className="text-xs text-brand-300">
+                        {mod.lessons.length} {he.lessons}
+                      </span>
                       <span
-                        className="text-muted transition-transform group-open:rotate-180"
+                        className="text-brand-300 transition-transform group-open:rotate-180"
                         aria-hidden
                       >
                         ▾
                       </span>
                     </summary>
-                    <ul className="border-t border-line/70 px-5 py-3 space-y-2">
+                    <ul className="border-t border-paper/10 px-5 py-2.5 space-y-1">
                       {mod.lessons.map((l) => (
-                        <li key={l.id} className="flex items-center gap-2.5 text-sm text-muted">
-                          <span aria-hidden>▸</span>
-                          <span className="flex-1">{l.title}</span>
+                        <li key={l.id} className="flex items-center gap-3 py-1.5 text-sm">
+                          <span
+                            className="w-[26px] h-[26px] rounded-lg bg-paper/10 text-paper text-[10px] grid place-items-center shrink-0"
+                            aria-hidden
+                          >
+                            ▶
+                          </span>
+                          <span className="flex-1 text-paper/85">{l.title}</span>
                           {l.durationSec ? (
-                            <span className="text-xs tabular-nums" dir="ltr">
+                            <span
+                              className="text-xs tabular-nums font-mono text-brand-300"
+                              dir="ltr"
+                            >
                               {Math.floor(l.durationSec / 60)}:
                               {String(l.durationSec % 60).padStart(2, '0')}
                             </span>
@@ -468,7 +594,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
       {m.testimonials.length > 0 && (
         <section id="testimonials" className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-8">
+            <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">
               {he.testimonialsTitle}
             </h2>
           </Reveal>
@@ -491,7 +617,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
                   </blockquote>
                   <figcaption className="flex items-center gap-2.5 mt-4">
                     <span
-                      className="w-9 h-9 rounded-full text-white font-display font-bold text-sm flex items-center justify-center"
+                      className="w-9 h-9 rounded-full text-card font-display font-bold text-sm flex items-center justify-center"
                       style={{ background: theme.main }}
                       aria-hidden
                     >
@@ -510,7 +636,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
       {reviews.length > 0 && (
         <section id="reviews" className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2">
+            <h2 className="font-display text-2xl sm:text-3xl font-black mb-2">
               {he.reviewsTitle}
             </h2>
             <p className="text-muted mb-8">{he.verifiedStudent} ✓</p>
@@ -518,18 +644,15 @@ export default async function CourseLandingPage({ params, searchParams }: Params
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
               <Reveal key={r.id} delay={i * 70}>
-                <figure className="border border-line rounded-xl2 p-5 h-full shadow-card bg-white">
-                  <div className="text-warn text-lg" aria-label={`${r.rating}/5`}>
+                <figure className="border border-line rounded-2xl p-5 h-full bg-card">
+                  <div className="text-coin text-[15px] tracking-[2px]" aria-label={`${r.rating}/5`}>
                     {'★'.repeat(r.rating)}
                     <span className="text-line">{'★'.repeat(5 - r.rating)}</span>
                   </div>
                   <blockquote className="mt-3 leading-relaxed text-sm">{r.text}</blockquote>
-                  <figcaption className="flex items-center gap-2 mt-4 text-sm">
-                    <span className="font-semibold">{r.name || he.verifiedStudent}</span>
-                    <span
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold rounded-full px-2 py-0.5 text-white"
-                      style={{ background: theme.main }}
-                    >
+                  <figcaption className="mt-4 text-sm">
+                    <span className="font-bold block">{r.name || he.verifiedStudent}</span>
+                    <span className="text-[11px] font-semibold text-ok">
                       ✓ {he.verifiedStudent}
                     </span>
                   </figcaption>
@@ -567,37 +690,6 @@ export default async function CourseLandingPage({ params, searchParams }: Params
         </section>
       )}
 
-      {/* FAQ */}
-      {m.faq.length > 0 && (
-        <section id="faq" style={{ background: theme.soft }}>
-          <div className="max-w-3xl mx-auto px-4 py-16">
-            <Reveal>
-              <h2 className="font-display text-2xl sm:text-3xl font-bold mb-8">{he.faqTitle}</h2>
-            </Reveal>
-            <div className="space-y-3">
-              {m.faq.map((f, i) => (
-                <Reveal key={i} delay={i * 50}>
-                  <details className="group bg-white border border-line rounded-xl2 shadow-card">
-                    <summary className="flex items-center gap-3 px-5 py-4 cursor-pointer select-none list-none font-semibold [&::-webkit-details-marker]:hidden">
-                      <span className="flex-1">{f.q}</span>
-                      <span
-                        className="text-muted transition-transform group-open:rotate-180"
-                        aria-hidden
-                      >
-                        ▾
-                      </span>
-                    </summary>
-                    <p className="px-5 pb-5 text-muted leading-relaxed whitespace-pre-wrap">
-                      {f.a}
-                    </p>
-                  </details>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Sale / bundle deal */}
       {showSale && (
         <section id="sale" className="max-w-5xl mx-auto px-4 py-16">
@@ -607,12 +699,12 @@ export default async function CourseLandingPage({ params, searchParams }: Params
               style={{ borderColor: theme.accent, background: theme.soft }}
             >
               <span
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-white rounded-full px-3 py-1"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-card rounded-full px-3 py-1"
                 style={{ background: theme.accent }}
               >
                 🎁 {he.saleBadge}
               </span>
-              <h2 className="font-display text-2xl sm:text-3xl font-bold mt-4">
+              <h2 className="font-display text-2xl sm:text-3xl font-black mt-4">
                 {m.sale.title}
               </h2>
               {m.sale.description && (
@@ -627,7 +719,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
                 </p>
               )}
               {salePartner && (
-                <div className="mt-6 flex flex-wrap sm:flex-nowrap items-center gap-5 rounded-xl2 border border-line bg-white p-4">
+                <div className="mt-6 flex flex-wrap sm:flex-nowrap items-center gap-5 rounded-xl2 border border-line bg-card p-4">
                   {salePartnerCoverUrl ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img
@@ -668,8 +760,8 @@ export default async function CourseLandingPage({ params, searchParams }: Params
                 <a
                   href={saleHref}
                   {...saleExternalProps}
-                  className="inline-flex items-center justify-center gap-2 font-display font-bold rounded-xl px-7 py-3.5 text-white transition-transform hover:scale-[1.02] active:scale-[0.99]"
-                  style={{ background: theme.accent }}
+                  className="inline-flex items-center justify-center gap-2 font-bold rounded-[14px] px-7 py-3.5 text-card transition-transform hover:scale-[1.02] active:scale-[0.99]"
+                  style={{ background: theme.main, boxShadow: `0 8px 22px ${theme.main}59` }}
                 >
                   {m.sale.paymentLink && <span aria-hidden>🔒</span>}
                   {he.saleCta}
@@ -680,36 +772,98 @@ export default async function CourseLandingPage({ params, searchParams }: Params
         </section>
       )}
 
-      {/* Final CTA */}
-      <section
-        className="text-white"
-        style={{ background: `linear-gradient(140deg, ${theme.deep} 0%, ${theme.main} 100%)` }}
-      >
-        <div className="max-w-3xl mx-auto px-4 py-20 text-center">
-          <Reveal>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold">{headline}</h2>
-            {m.priceText && (
-              <p className="text-white/80 text-lg mt-3 font-semibold">{m.priceText}</p>
-            )}
-            <div className="mt-8">{cta()}</div>
-            {(m.contactPhone || m.contactEmail) && (
-              <p className="text-white/60 text-sm mt-6" dir="ltr">
-                {[m.contactPhone, m.contactEmail].filter(Boolean).join(' · ')}
-              </p>
-            )}
+      {/* FAQ + CTA band — side by side per design 1e */}
+      <section id="faq" className="max-w-5xl mx-auto px-4 pb-16 pt-4">
+        <div
+          className={
+            m.faq.length > 0 ? 'grid gap-12 lg:grid-cols-2 items-start' : ''
+          }
+        >
+          {m.faq.length > 0 && (
+            <div>
+              <Reveal>
+                <h2 className="font-display text-2xl sm:text-3xl font-black mb-5">
+                  {he.faqTitle}
+                </h2>
+              </Reveal>
+              <div className="space-y-2.5">
+                {m.faq.map((f, i) => (
+                  <Reveal key={i} delay={i * 50}>
+                    <details className="group bg-card border border-line rounded-[13px]">
+                      <summary className="flex items-center gap-3 px-5 py-4 cursor-pointer select-none list-none font-bold text-[15px] [&::-webkit-details-marker]:hidden">
+                        <span className="flex-1">{f.q}</span>
+                        <span className="text-muted group-open:hidden" aria-hidden>
+                          +
+                        </span>
+                        <span
+                          className="hidden group-open:inline"
+                          style={{ color: theme.main }}
+                          aria-hidden
+                        >
+                          −
+                        </span>
+                      </summary>
+                      <p className="px-5 pb-5 text-sm text-muted leading-relaxed whitespace-pre-wrap">
+                        {f.a}
+                      </p>
+                    </details>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <Reveal delay={120}>
+            <div
+              className="relative overflow-hidden rounded-[22px] text-paper px-8 py-9 fx-grain"
+              style={{
+                background: `radial-gradient(ellipse at 15% 115%, ${theme.main}59, transparent 55%), #12151D`,
+              }}
+            >
+              <div className="relative">
+                <h2 className="font-display text-3xl font-black text-paper leading-snug">
+                  {headline}
+                </h2>
+                <p className="text-brand-300 text-sm leading-relaxed mt-3 max-w-md">
+                  {he.ctaAccessNote.replace('{n}', String(tenant.sessionLimit))}
+                </p>
+                <div className="mt-6 flex flex-wrap items-center gap-4">
+                  {cta()}
+                  <span className="text-xs text-brand-300">{he.ctaCoinsNote}</span>
+                </div>
+                {(m.contactPhone || m.contactEmail) && (
+                  <p className="text-brand-400 text-sm mt-5" dir="ltr">
+                    {[m.contactPhone, m.contactEmail].filter(Boolean).join(' · ')}
+                  </p>
+                )}
+              </div>
+            </div>
           </Reveal>
         </div>
       </section>
 
-      <footer className="py-6 border-t border-line">
+      <footer className="py-6 border-t border-line bg-card">
         <p className="text-center text-sm text-muted">
           {tenant.name} · נבנה עם Kursim
         </p>
       </footer>
 
-      {/* Sticky mobile CTA */}
-      <div className="sm:hidden sticky bottom-0 z-40 p-3 bg-white/95 backdrop-blur border-t border-line">
-        {cta('w-full')}
+      {/* Sticky mobile CTA — price beside the button per design 1e */}
+      <div className="sm:hidden sticky bottom-0 z-40 px-4 py-3 bg-card/95 backdrop-blur border-t border-line flex items-center gap-4">
+        {m.priceText && (
+          <div className="text-xs text-muted leading-tight shrink-0">
+            <b className="text-ink text-base font-display font-black block">{m.priceText}</b>
+          </div>
+        )}
+        <a
+          href={ctaHref}
+          {...externalProps}
+          className="flex-1 min-h-[48px] inline-flex items-center justify-center gap-2 font-bold rounded-[12px] px-5 text-card"
+          style={{ background: theme.main }}
+        >
+          {m.paymentLink && <span aria-hidden>🔒</span>}
+          {ctaText}
+        </a>
       </div>
     </main>
   );

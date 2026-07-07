@@ -66,7 +66,7 @@ export default async function LessonPage({
       />
 
       {lesson.notes && (
-        <div className="mt-6 bg-white border border-line rounded-xl2 shadow-card p-6">
+        <div className="mt-6 bg-card border border-line rounded-xl2 shadow-card p-6">
           <p className="kicker mb-2">הערות לשיעור</p>
           <div className="whitespace-pre-wrap text-ink leading-relaxed">{lesson.notes}</div>
         </div>
@@ -76,7 +76,7 @@ export default async function LessonPage({
         {prev ? (
           <Link
             href={`/t/${slug}/lesson/${prev.id}`}
-            className="text-sm font-medium bg-white border border-line rounded-xl px-4 py-2.5 hover:border-brand-300 transition-colors max-w-[45%] truncate"
+            className="text-sm font-medium bg-card border border-line rounded-xl px-4 py-2.5 hover:border-brand-300 transition-colors max-w-[45%] truncate"
           >
             → {prev.title}
           </Link>

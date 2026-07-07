@@ -141,7 +141,7 @@ export default function StudentsManager() {
           <div className="flex items-center gap-2">
             <code
               dir="ltr"
-              className="bg-white border border-brand-200 rounded-lg px-3 py-2 text-xs break-all flex-1"
+              className="bg-card border border-brand-200 rounded-lg px-3 py-2 text-xs break-all flex-1"
             >
               {inviteUrl}
             </code>

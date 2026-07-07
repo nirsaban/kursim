@@ -5,6 +5,7 @@ import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { listLiveSessions } from '@/lib/session-registry/registry';
 import PageHeader from '@/components/ui/PageHeader';
 import StatCard from '@/components/ui/StatCard';
+import TiltCard from '@/components/fx/TiltCard';
 import { Card, CardHeader } from '@/components/ui/Card';
 import EmptyState from '@/components/ui/EmptyState';
 import Badge from '@/components/ui/Badge';
@@ -56,27 +57,43 @@ export default async function AdminDashboard({
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard
-          label={he.students}
-          value={studentCount}
-          href={`/t/${slug}/admin/students`}
-        />
-        <StatCard
-          label={he.courses}
-          value={courseCount}
-          sub={`${publishedCount} ${he.published}`}
-          href={`/t/${slug}/admin/courses`}
-        />
-        <StatCard
-          label={he.sessions}
-          value={liveSessions.length}
-          accent
-          href={`/t/${slug}/admin/sessions`}
-        />
-        <StatCard label={he.landingPage} value={landingCount} sub={he.landingPublished} />
+        <div className="animate-rise rise-1">
+          <TiltCard maxTilt={5} className="rounded-xl2 h-full">
+            <StatCard
+              label={he.students}
+              value={studentCount}
+              href={`/t/${slug}/admin/students`}
+            />
+          </TiltCard>
+        </div>
+        <div className="animate-rise rise-2">
+          <TiltCard maxTilt={5} className="rounded-xl2 h-full">
+            <StatCard
+              label={he.courses}
+              value={courseCount}
+              sub={`${publishedCount} ${he.published}`}
+              href={`/t/${slug}/admin/courses`}
+            />
+          </TiltCard>
+        </div>
+        <div className="animate-rise rise-3">
+          <TiltCard maxTilt={5} className="rounded-xl2 h-full">
+            <StatCard
+              label={he.sessions}
+              value={liveSessions.length}
+              accent
+              href={`/t/${slug}/admin/sessions`}
+            />
+          </TiltCard>
+        </div>
+        <div className="animate-rise rise-4">
+          <TiltCard maxTilt={5} className="rounded-xl2 h-full">
+            <StatCard label={he.landingPage} value={landingCount} sub={he.landingPublished} />
+          </TiltCard>
+        </div>
       </div>
 
-      <Card>
+      <Card className="animate-rise rise-5">
         <CardHeader
           title={he.whoIsWatching}
           actions={

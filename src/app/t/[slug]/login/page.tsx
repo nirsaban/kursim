@@ -16,10 +16,11 @@ export default async function TenantLoginPage({
 
   return (
     <AuthShell
-      title={tenant.name}
-      subtitle={he.login}
-      panelTitle="הלמידה שלכם, במקום אחד"
-      panelText="קורסים, שיעורי וידאו וחומרי לימוד — זמינים מכל מכשיר, עם התקדמות שנשמרת אוטומטית."
+      orgName={tenant.name}
+      title={he.loginWelcome}
+      subtitle={he.loginSubtitle}
+      panelTitle={he.authPanelTitle}
+      panelText={he.authPanelText}
     >
       <Suspense>
         <LoginForm tenantSlug={slug} />

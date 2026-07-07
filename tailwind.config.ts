@@ -83,10 +83,33 @@ const config: Config = {
           '70%': { boxShadow: '0 0 0 9px rgba(217,164,65,0)' },
           '100%': { boxShadow: '0 0 0 0 rgba(217,164,65,0)' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        drift: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(4%, -6%) scale(1.08)' },
+          '66%': { transform: 'translate(-5%, 4%) scale(0.95)' },
+        },
+        sheen: {
+          '0%': { transform: 'translateX(-150%) skewX(-18deg)' },
+          '100%': { transform: 'translateX(250%) skewX(-18deg)' },
+        },
+        rise: {
+          from: { opacity: '0', transform: 'translateY(18px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'pulse-live': 'pulse-live 2.4s infinite',
         'pulse-amber': 'pulse-amber 2.4s infinite',
+        float: 'float 6s ease-in-out infinite',
+        'float-slow': 'float 9s ease-in-out infinite',
+        drift: 'drift 18s ease-in-out infinite',
+        'drift-slow': 'drift 26s ease-in-out infinite',
+        sheen: 'sheen 2.6s ease-in-out infinite',
+        rise: 'rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both',
       },
     },
   },

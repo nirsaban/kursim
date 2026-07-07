@@ -60,6 +60,7 @@ model Tenant {
   progress        Progress[]
   reviews         CourseReview[]
   affiliateLinks  AffiliateLink[]
+  courseMedia     CourseMedia[]
 }
 
 model User {
@@ -113,6 +114,35 @@ model Course {
   enrollments     Enrollment[]
   reviews         CourseReview[]
   affiliateLinks  AffiliateLink[]
+  media           CourseMedia?
+}
+
+/// AI-generated marketing media for a course landing page: a Veo video rendered
+/// as a 240-frame scroll-scrubbed hero sequence, plus Imagen stills. Public
+/// (landing pages are public); the "media is never public" rule still governs lessons.
+model CourseMedia {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenantId      String   @db.Uuid
+  courseId      String   @unique @db.Uuid
+  /// idle | generating | ready | failed
+  status        String   @default("idle")
+  /// Cloudinary base URL; individual frames appended as /frame_0001.jpg … frame_0240.jpg
+  framesBaseUrl String?
+  frameCount    Int      @default(240)
+  posterUrl     String?
+  videoUrl      String?
+  /// [{ role, url, aspectRatio }]
+  stills        Json?
+  /// The full Gemini prompt-writer output, kept for re-runs and debugging.
+  promptJson    Json?
+  error         String?  @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
 }
 
 model CourseReview {

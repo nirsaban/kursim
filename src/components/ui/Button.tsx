@@ -11,7 +11,7 @@ const variants: Record<Variant, string> = {
   ghost: 'text-muted hover:text-ink hover:bg-ink/5',
   danger:
     'bg-danger-soft text-danger border border-danger-line hover:bg-danger/10',
-  cta: 'bg-copper-500 text-card font-bold hover:bg-copper-600 active:bg-copper-700 shadow-cta',
+  cta: 'bg-copper-500 text-card font-bold hover:bg-copper-600 active:bg-copper-700 shadow-cta relative overflow-hidden fx-sheen',
 };
 
 const sizes: Record<Size, string> = {
@@ -33,7 +33,7 @@ export default function Button({
     <button
       {...props}
       className={cn(
-        'inline-flex items-center justify-center font-semibold transition-colors disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap',
+        'inline-flex items-center justify-center font-semibold transition-all duration-200 hover:-translate-y-px active:translate-y-0 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap',
         variants[variant],
         sizes[size],
         className,

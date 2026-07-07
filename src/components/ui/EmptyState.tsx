@@ -11,9 +11,15 @@ export default function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center text-center py-14 px-6">
-      {icon && (
-        <div className="w-12 h-12 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center text-xl mb-4">
+      {icon ? (
+        <div className="w-12 h-12 rounded-2xl bg-paper text-ink flex items-center justify-center text-xl mb-4">
           {icon}
+        </div>
+      ) : (
+        <div className="inline-flex gap-1.5 mb-3">
+          <span className="w-2.5 h-2.5 rounded-full border-2 border-dashed border-seat" />
+          <span className="w-2.5 h-2.5 rounded-full border-2 border-dashed border-seat" />
+          <span className="w-2.5 h-2.5 rounded-full border-2 border-dashed border-seat" />
         </div>
       )}
       <p className="font-semibold text-ink">{title}</p>

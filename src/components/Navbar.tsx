@@ -11,6 +11,8 @@ export interface NavLink {
   href: string;
   label: string;
   exact?: boolean;
+  /** Renders the pulsing Live dot next to the label (the seats motif). */
+  liveDot?: boolean;
 }
 
 export default function Navbar({
@@ -39,7 +41,7 @@ export default function Navbar({
     <header
       className={cn(
         'sticky top-0 z-40 border-b backdrop-blur',
-        ink ? 'bg-brand-950/95 border-brand-900 text-white' : 'bg-white/90 border-line',
+        ink ? 'bg-ink/95 border-ink-surface text-paper' : 'bg-card/90 border-line',
       )}
     >
       <div className="max-w-6xl mx-auto px-4">
@@ -48,7 +50,7 @@ export default function Navbar({
             <span
               className={cn(
                 'w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0',
-                ink ? 'bg-white/10' : 'bg-brand-100',
+                ink ? 'bg-paper/10' : 'bg-paper border border-line',
               )}
               aria-hidden
             >
@@ -59,7 +61,7 @@ export default function Navbar({
               <span
                 className={cn(
                   'text-[11px] font-semibold rounded-full px-2 py-0.5 shrink-0',
-                  ink ? 'bg-white/15 text-white' : 'bg-brand-100 text-brand-800',
+                  ink ? 'bg-paper/15 text-paper' : 'bg-ink text-paper',
                 )}
               >
                 {roleLabel}
@@ -107,17 +109,20 @@ function NavItem({
     <Link
       href={link.href}
       className={cn(
-        'text-sm font-medium rounded-lg px-3 py-1.5 whitespace-nowrap transition-colors',
+        'inline-flex items-center gap-1.5 text-sm font-medium rounded-lg px-3 py-1.5 whitespace-nowrap transition-colors',
         active
           ? ink
-            ? 'bg-white/15 text-white'
-            : 'bg-brand-50 text-brand-800'
+            ? 'bg-paper/10 text-paper font-semibold'
+            : 'bg-ink/5 text-ink font-semibold'
           : ink
-            ? 'text-white/70 hover:text-white hover:bg-white/10'
+            ? 'text-brand-300 hover:text-paper hover:bg-paper/5'
             : 'text-muted hover:text-ink hover:bg-ink/5',
       )}
       aria-current={active ? 'page' : undefined}
     >
+      {link.liveDot && (
+        <span className="w-[7px] h-[7px] rounded-full bg-live animate-pulse-live" />
+      )}
       {link.label}
     </Link>
   );
@@ -158,8 +163,8 @@ function UserMenu({
         className={cn(
           'w-9 h-9 rounded-full font-display font-bold text-sm flex items-center justify-center transition-colors',
           ink
-            ? 'bg-white/15 text-white hover:bg-white/25'
-            : 'bg-brand-700 text-white hover:bg-brand-800',
+            ? 'bg-copper-500 text-card hover:bg-copper-600'
+            : 'bg-ink text-card hover:bg-ink-surface',
         )}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -170,7 +175,7 @@ function UserMenu({
       {open && (
         <div
           role="menu"
-          className="absolute end-0 mt-2 w-56 bg-white text-ink border border-line rounded-xl shadow-lift py-1.5 z-50"
+          className="absolute end-0 mt-2 w-56 bg-card text-ink border border-line rounded-xl shadow-lift py-1.5 z-50"
         >
           <p className="px-4 py-2 text-xs text-muted border-b border-line truncate" dir="ltr">
             {email}

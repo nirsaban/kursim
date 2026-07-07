@@ -12,6 +12,7 @@ const TENANT_MODELS = new Set([
   'Progress',
   'CourseReview',
   'AffiliateLink',
+  'CourseMedia',
 ]);
 
 const WHERE_OPS = new Set([

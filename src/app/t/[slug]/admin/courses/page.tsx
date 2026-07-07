@@ -50,7 +50,7 @@ export default async function AdminCoursesPage({
               <Link
                 key={course.id}
                 href={`/t/${slug}/admin/courses/${course.id}`}
-                className="group bg-white border border-line rounded-xl2 shadow-card hover:shadow-lift transition-shadow p-5"
+                className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift transition-shadow p-5"
               >
                 <div className="flex items-start gap-4">
                   <span className="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center text-2xl shrink-0">

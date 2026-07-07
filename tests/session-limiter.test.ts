@@ -119,16 +119,50 @@ describe('session limiter policy', () => {
 });
 
 describe('refresh token rotation', () => {
-  it('rotates on valid use and old token becomes unusable', async () => {
+  it('replays the same rotation for a token replaced within the grace window', async () => {
     const { sid, refreshToken } = await createSession({ userId: USER, tenantId: 't1' });
     const first = await rotateRefreshToken(sid, refreshToken);
     expect(first.ok).toBe(true);
 
-    // Reusing the original (already rotated) token = assumed theft → session killed.
+    // Concurrent-refresh race: same token presented again moments later gets
+    // the same rotated token back instead of killing the session.
+    const replay = await rotateRefreshToken(sid, refreshToken);
+    expect(replay.ok).toBe(true);
+    if (first.ok && replay.ok) expect(replay.refreshToken).toBe(first.refreshToken);
+    expect(await sessionExists(sid)).toBe(true);
+  });
+
+  it('treats reuse after the grace window as theft and kills the session', async () => {
+    const { sid, refreshToken } = await createSession({ userId: USER, tenantId: 't1' });
+    const first = await rotateRefreshToken(sid, refreshToken);
+    expect(first.ok).toBe(true);
+
+    // Simulate the grace record expiring.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (getRedis() as any).del(`sess:${sid}:rotation`);
+
     const reuse = await rotateRefreshToken(sid, refreshToken);
     expect(reuse.ok).toBe(false);
     if (!reuse.ok) expect(reuse.reason).toBe('reused');
     expect(await sessionExists(sid)).toBe(false);
+  });
+
+  it('concurrent rotations of the same token converge on one new token', async () => {
+    const { sid, refreshToken } = await createSession({ userId: USER, tenantId: 't1' });
+    const [a, b] = await Promise.all([
+      rotateRefreshToken(sid, refreshToken),
+      rotateRefreshToken(sid, refreshToken),
+    ]);
+    expect(a.ok).toBe(true);
+    expect(b.ok).toBe(true);
+    if (a.ok && b.ok) expect(a.refreshToken).toBe(b.refreshToken);
+    expect(await sessionExists(sid)).toBe(true);
+
+    // The surviving token keeps working.
+    if (a.ok) {
+      const next = await rotateRefreshToken(sid, a.refreshToken);
+      expect(next.ok).toBe(true);
+    }
   });
 
   it('accepts the newest token across multiple rotations', async () => {

@@ -52,7 +52,7 @@ export default function AffiliateCard({ courseId }: { courseId: string }) {
   }
 
   return (
-    <section className="bg-white border border-line rounded-xl2 shadow-card p-5">
+    <section className="bg-card border border-line rounded-xl2 shadow-card p-5">
       <h2 className="font-display font-bold text-lg">{he.affiliateTitle}</h2>
       <p className="text-sm text-muted mt-1">
         {he.affiliateHint.replace('{n}', String(stats.visitsPerCoin))}

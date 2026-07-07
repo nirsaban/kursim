@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
-      <header className="border-b border-line bg-white/90">
+      <header className="border-b border-line bg-card/90">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="w-9 h-9 rounded-xl bg-brand-100 flex items-center justify-center text-lg">
@@ -49,7 +49,7 @@ export default function Home() {
           <div className="hidden lg:block" aria-hidden>
             <div className="relative">
               <div className="absolute -inset-6 bg-brand-100/60 rounded-[2rem] rotate-2" />
-              <div className="relative bg-white border border-line rounded-[1.5rem] shadow-lift p-6 space-y-4">
+              <div className="relative bg-card border border-line rounded-[1.5rem] shadow-lift p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center">

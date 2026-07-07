@@ -17,15 +17,15 @@ export default function StatCard({
   const inner = (
     <div
       className={cn(
-        'bg-white border border-line rounded-xl2 shadow-card p-5 h-full transition-shadow',
-        href && 'hover:shadow-lift',
+        'bg-card border border-line rounded-xl2 shadow-card p-5 h-full transition-all duration-300',
+        href && 'hover:shadow-lift hover:-translate-y-1',
       )}
     >
       <p className="kicker">{label}</p>
       <p
         className={cn(
-          'font-display text-3xl font-bold mt-2 tabular-nums',
-          accent ? 'text-brand-700' : 'text-ink',
+          'font-display text-3xl font-black mt-2 tabular-nums',
+          accent ? 'text-copper-600' : 'text-ink',
         )}
       >
         {value}

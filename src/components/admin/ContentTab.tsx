@@ -101,7 +101,7 @@ export default function ContentTab({
       )}
 
       {course.modules.map((mod, mi) => (
-        <section key={mod.id} className="bg-white border border-line rounded-xl2 shadow-card">
+        <section key={mod.id} className="bg-card border border-line rounded-xl2 shadow-card">
           <div className="flex items-center gap-3 px-5 py-3.5 border-b border-line bg-paper/50 rounded-t-xl2">
             <span className="kicker shrink-0">
               {he.modules} {mi + 1}
@@ -164,7 +164,7 @@ export default function ContentTab({
                       }}
                     />
                     <textarea
-                      className="w-full bg-white border border-line rounded-xl px-3.5 py-2.5 text-sm resize-y outline-none focus:border-brand-500"
+                      className="w-full bg-card border border-line rounded-xl px-3.5 py-2.5 text-sm resize-y outline-none focus:border-brand-500"
                       placeholder={he.lessonNotes}
                       rows={3}
                       defaultValue={lesson.notes ?? ''}

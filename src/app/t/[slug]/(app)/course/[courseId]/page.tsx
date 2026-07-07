@@ -73,7 +73,7 @@ export default async function CoursePage({
         → {he.backToCourses}
       </Link>
 
-      <div className="bg-white border border-line rounded-xl2 shadow-card p-6 mt-4 mb-8">
+      <div className="bg-card border border-line rounded-xl2 shadow-card p-6 mt-4 mb-8">
         <h1 className="font-display text-3xl font-bold">{course.title}</h1>
         {course.description && <p className="text-muted mt-2 leading-relaxed">{course.description}</p>}
         <div className="flex items-center gap-4 mt-5">
@@ -116,7 +116,7 @@ export default async function CoursePage({
               </span>
               <h2 className="font-display font-bold text-lg">{mod.title}</h2>
             </div>
-            <div className="bg-white border border-line rounded-xl2 shadow-card overflow-hidden">
+            <div className="bg-card border border-line rounded-xl2 shadow-card overflow-hidden">
               {mod.lessons.length === 0 ? (
                 <p className="px-5 py-4 text-sm text-muted">{he.noLessons}</p>
               ) : (

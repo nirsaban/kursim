@@ -15,6 +15,7 @@ import {
   StringListEditor,
 } from './MarketingFields';
 import GalleryEditor from './GalleryEditor';
+import AiMediaCard from './AiMediaCard';
 import ReviewsModeration from './ReviewsModeration';
 import AffiliatesPanel from './AffiliatesPanel';
 
@@ -248,6 +249,9 @@ export default function MarketingTab({
         </CardBody>
       </Card>
 
+      {/* AI cinematic hero video */}
+      <AiMediaCard courseId={courseId} />
+
       {/* Gallery */}
       <Card>
         <CardHeader title={he.gallerySection} subtitle={he.galleryTitle} />
@@ -395,7 +399,7 @@ export default function MarketingTab({
         </CardBody>
       </Card>
 
-      <div className="sticky bottom-4 flex items-center gap-3 bg-white/95 backdrop-blur border border-line rounded-xl2 shadow-lift px-5 py-3">
+      <div className="sticky bottom-4 flex items-center gap-3 bg-card/95 backdrop-blur border border-line rounded-xl2 shadow-lift px-5 py-3">
         <Button onClick={save} disabled={busy}>
           {he.save}
         </Button>

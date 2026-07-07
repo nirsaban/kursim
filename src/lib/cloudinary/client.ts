@@ -26,3 +26,13 @@ export function getCloudinary(): typeof cloudinary {
 export function courseFolder(tenantId: string, courseId: string): string {
   return `tenants/${tenantId}/courses/${courseId}`;
 }
+
+/**
+ * PUBLIC folder for AI-generated landing media. Landing pages are public, so
+ * these assets are delivered as `type: upload` (unsigned CDN URLs) — distinct
+ * from the authenticated lesson media under courseFolder(). The "media is never
+ * public" rule still governs lesson video/attachments.
+ */
+export function marketingFolder(tenantId: string, courseId: string): string {
+  return `tenants/${tenantId}/marketing/courses/${courseId}`;
+}

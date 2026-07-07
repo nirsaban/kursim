@@ -35,7 +35,7 @@ export default function ReviewPrompt({ courseId }: { courseId: string }) {
   }
 
   return (
-    <div className="bg-white border-2 border-brand-200 rounded-xl2 shadow-card p-6">
+    <div className="bg-card border-2 border-brand-200 rounded-xl2 shadow-card p-6">
       <div className="flex items-center gap-3 mb-1">
         <span className="text-2xl" aria-hidden>
           🎉

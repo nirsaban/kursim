@@ -67,7 +67,7 @@ export default function CourseEditor({
   return (
     <div className="mt-4 space-y-6">
       {/* Header */}
-      <div className="bg-white border border-line rounded-xl2 shadow-card p-5">
+      <div className="bg-card border border-line rounded-xl2 shadow-card p-5">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3 flex-1 min-w-52">
             <input

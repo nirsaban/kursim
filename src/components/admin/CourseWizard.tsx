@@ -121,7 +121,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
             href={`/t/${tenantSlug}/c/${createdId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center bg-white border border-line hover:border-brand-300 font-semibold rounded-xl px-5 py-2.5 text-sm transition-colors"
+            className="inline-flex items-center bg-card border border-line hover:border-brand-300 font-semibold rounded-xl px-5 py-2.5 text-sm transition-colors"
           >
             {he.landingPreview} ↗
           </a>

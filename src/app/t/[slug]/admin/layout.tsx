@@ -31,7 +31,7 @@ export default async function AdminLayout({
     ...(auth.role === 'OWNER'
       ? [
           { href: `/t/${slug}/admin/students`, label: he.students },
-          { href: `/t/${slug}/admin/sessions`, label: he.sessions },
+          { href: `/t/${slug}/admin/sessions`, label: he.sessions, liveDot: true },
           { href: `/t/${slug}/admin/settings`, label: he.settings },
         ]
       : []),
@@ -48,6 +48,7 @@ export default async function AdminLayout({
         roleLabel={he.admin}
         userEmail={user?.email}
         changePasswordHref={`/t/${slug}/change-password`}
+        tone="ink"
       />
       <main className="max-w-6xl mx-auto px-4 py-8">{children}</main>
     </div>

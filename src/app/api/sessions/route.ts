@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth/guards';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
+import { prisma } from '@/lib/tenant/prisma';
 import { listLiveSessions } from '@/lib/session-registry/registry';
 
 /** Tenant-wide "who's connected now" for the owner panel. */
 export async function GET() {
   const auth = await requireAuth({ roles: ['OWNER'] });
   if (auth instanceof NextResponse) return auth;
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: auth.tenantId! },
+    select: { sessionLimit: true, evictionPolicy: true },
+  });
 
   const db = forTenant(auth.tenantId!);
   const users = await db.user.findMany({
@@ -32,5 +38,9 @@ export async function GET() {
   ).flat();
 
   sessions.sort((a, b) => b.lastSeenAt - a.lastSeenAt);
-  return NextResponse.json({ sessions });
+  return NextResponse.json({
+    sessions,
+    limit: tenant?.sessionLimit ?? 3,
+    policy: tenant?.evictionPolicy ?? 'BLOCK',
+  });
 }

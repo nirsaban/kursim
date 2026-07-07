@@ -1,0 +1,10 @@
+# Dev override for `npm run dev:full` — publishes postgres/redis on
+# non-default host ports (5432/6379 are often taken by other local projects)
+# so the Next.js app can run natively outside docker.
+services:
+  postgres:
+    ports:
+      - "15432:5432"
+  redis:
+    ports:
+      - "16379:6379"
