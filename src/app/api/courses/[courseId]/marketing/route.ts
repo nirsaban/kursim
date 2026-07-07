@@ -51,6 +51,14 @@ export async function PUT(req: Request, { params }: Params) {
     }
   }
 
+  // The sale's partner course must be another course of this tenant.
+  const { partnerCourseId } = parsed.data.sale;
+  if (partnerCourseId) {
+    if (partnerCourseId === courseId) return apiError(400, 'sale_partner_is_self');
+    const partner = await db.course.findFirst({ where: { id: partnerCourseId } });
+    if (!partner) return apiError(400, 'sale_partner_not_found');
+  }
+
   await db.course.update({
     where: { id: courseId },
     data: { marketing: parsed.data },

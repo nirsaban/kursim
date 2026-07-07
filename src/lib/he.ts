@@ -185,6 +185,25 @@ export const he = {
   afterLabel: 'אחרי',
   beforeAfterHint: 'בחרו קודם את תמונת ה"לפני", ומיד אחריה את תמונת ה"אחרי"',
 
+  // landing sale / bundle offer
+  saleSection: 'מבצע בדף הנחיתה',
+  saleSectionHint: 'חברו קורס נוסף והציעו הטבה — למשל 1+1 או הנחה על הקורס השני',
+  saleEnable: 'הצגת המבצע בדף הנחיתה',
+  saleTitleLabel: 'כותרת המבצע',
+  saleTitlePlaceholder: 'למשל: קונים קורס אחד — מקבלים את השני מתנה!',
+  saleDescriptionLabel: 'פרטי המבצע (טקסט חופשי)',
+  salePartnerCourse: 'הקורס שמצטרף למבצע',
+  salePartnerNone: 'ללא קורס מקושר',
+  salePaymentLink: 'קישור לתשלום עבור המבצע',
+  salePaymentLinkHint: 'דף סליקה ייעודי לעסקת המבצע — כפתור המבצע בדף הנחיתה יוביל אליו',
+  saleEndsAt: 'בתוקף עד (לא חובה)',
+  saleEndsAtHint: 'אחרי תאריך זה המבצע יוסתר מדף הנחיתה אוטומטית',
+  saleBadge: 'מבצע מיוחד',
+  saleEndsOn: 'המבצע בתוקף עד',
+  saleCta: 'לרכישת המבצע',
+  saleIncludedCourse: 'הקורס שמצטרף למבצע',
+  saleExpired: 'תאריך המבצע עבר — הוא מוסתר מדף הנחיתה',
+
   // student reviews
   reviews: 'ביקורות תלמידים',
   reviewsTitle: 'מה אומרים תלמידים אמיתיים',

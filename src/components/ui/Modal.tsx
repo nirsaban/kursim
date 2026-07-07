@@ -38,7 +38,7 @@ export default function Modal({
     >
       <div
         className={cn(
-          'bg-white rounded-xl2 shadow-modal w-full max-h-[85vh] overflow-y-auto',
+          'bg-card rounded-xl2 shadow-modal w-full max-h-[85vh] overflow-y-auto',
           wide ? 'max-w-2xl' : 'max-w-md',
         )}
         onClick={(e) => e.stopPropagation()}

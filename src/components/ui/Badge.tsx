@@ -3,23 +3,34 @@ import { cn } from '@/lib/cn';
 type Tone = 'brand' | 'ok' | 'danger' | 'warn' | 'neutral' | 'copper';
 
 const tones: Record<Tone, string> = {
-  brand: 'bg-brand-100 text-brand-800',
-  ok: 'bg-ok/10 text-ok',
-  danger: 'bg-danger/10 text-danger',
-  warn: 'bg-warn/10 text-warn',
-  neutral: 'bg-ink/5 text-muted',
-  copper: 'bg-copper-100 text-copper-800',
+  brand: 'bg-ink text-paper',
+  ok: 'bg-ok-soft text-ok',
+  danger: 'bg-danger-soft text-danger',
+  warn: 'bg-warn-soft text-warn',
+  neutral: 'bg-paper text-muted border border-line',
+  copper: 'bg-copper-100 text-copper-700',
+};
+
+const dotColors: Record<Tone, string> = {
+  brand: 'bg-paper',
+  ok: 'bg-live',
+  danger: 'bg-danger',
+  warn: 'bg-coin',
+  neutral: 'bg-seat',
+  copper: 'bg-copper-500',
 };
 
 export default function Badge({
   tone = 'neutral',
   className,
   dot,
+  pulse,
   children,
 }: {
   tone?: Tone;
   className?: string;
   dot?: boolean;
+  pulse?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -30,7 +41,15 @@ export default function Badge({
         className,
       )}
     >
-      {dot && <span className="w-1.5 h-1.5 rounded-full bg-current" />}
+      {dot && (
+        <span
+          className={cn(
+            'w-1.5 h-1.5 rounded-full',
+            dotColors[tone],
+            pulse && (tone === 'warn' ? 'animate-pulse-amber' : 'animate-pulse-live'),
+          )}
+        />
+      )}
       {children}
     </span>
   );

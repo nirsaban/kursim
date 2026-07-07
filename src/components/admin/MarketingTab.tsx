@@ -5,7 +5,7 @@ import { apiFetch } from '@/lib/client/api';
 import { he } from '@/lib/he';
 import { CourseMarketing, emptyMarketing } from '@/lib/validation/marketing';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
-import { Field, Input, Textarea } from '@/components/ui/Field';
+import { Field, Input, Select, Textarea } from '@/components/ui/Field';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import {
@@ -33,6 +33,7 @@ export default function MarketingTab({
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [otherCourses, setOtherCourses] = useState<{ id: string; title: string }[]>([]);
 
   useEffect(() => {
     apiFetch(`/api/courses/${courseId}/marketing`)
@@ -41,6 +42,15 @@ export default function MarketingTab({
         if (d) {
           setM(d.marketing);
           setPublished(d.landingPublished);
+        }
+      });
+    apiFetch('/api/courses')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d) {
+          setOtherCourses(
+            (d.courses as { id: string; title: string }[]).filter((c) => c.id !== courseId),
+          );
         }
       });
   }, [courseId]);
@@ -263,6 +273,76 @@ export default function MarketingTab({
         <CardHeader title={he.affiliatesSection} subtitle={he.affiliateTitle} />
         <CardBody>
           <AffiliatesPanel courseId={courseId} />
+        </CardBody>
+      </Card>
+
+      {/* Sale / bundle offer */}
+      <Card>
+        <CardHeader title={he.saleSection} subtitle={he.saleSectionHint} />
+        <CardBody className="space-y-4">
+          <label className="flex items-center gap-2.5 text-sm font-medium cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={m.sale.enabled}
+              onChange={(e) => set({ sale: { ...m.sale, enabled: e.target.checked } })}
+              className="w-4 h-4 accent-brand-700"
+            />
+            {he.saleEnable}
+          </label>
+          {m.sale.enabled && (
+            <>
+              <Field label={he.saleTitleLabel}>
+                <Input
+                  value={m.sale.title}
+                  placeholder={he.saleTitlePlaceholder}
+                  onChange={(e) => set({ sale: { ...m.sale, title: e.target.value } })}
+                />
+              </Field>
+              <Field label={he.saleDescriptionLabel}>
+                <Textarea
+                  rows={3}
+                  value={m.sale.description}
+                  onChange={(e) => set({ sale: { ...m.sale, description: e.target.value } })}
+                />
+              </Field>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <Field label={he.salePartnerCourse}>
+                  <Select
+                    value={m.sale.partnerCourseId}
+                    onChange={(e) =>
+                      set({ sale: { ...m.sale, partnerCourseId: e.target.value } })
+                    }
+                  >
+                    <option value="">{he.salePartnerNone}</option>
+                    {otherCourses.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.title}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+                <Field label={he.saleEndsAt} hint={he.saleEndsAtHint}>
+                  <Input
+                    type="date"
+                    dir="ltr"
+                    value={m.sale.endsAt}
+                    onChange={(e) => set({ sale: { ...m.sale, endsAt: e.target.value } })}
+                  />
+                </Field>
+              </div>
+              <Field label={he.salePaymentLink} hint={he.salePaymentLinkHint}>
+                <Input
+                  dir="ltr"
+                  value={m.sale.paymentLink}
+                  placeholder="https://pay.example.com/..."
+                  onChange={(e) => set({ sale: { ...m.sale, paymentLink: e.target.value } })}
+                />
+              </Field>
+              {m.sale.endsAt && new Date(`${m.sale.endsAt}T23:59:59`) < new Date() && (
+                <p className="text-sm font-medium text-warn">{he.saleExpired}</p>
+              )}
+            </>
+          )}
         </CardBody>
       </Card>
 

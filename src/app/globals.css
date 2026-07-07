@@ -10,17 +10,17 @@
   h2,
   h3,
   h4 {
-    @apply font-display;
+    @apply font-display font-black;
     text-wrap: balance;
   }
   table {
     font-variant-numeric: tabular-nums;
   }
   ::selection {
-    @apply bg-brand-200 text-brand-950;
+    @apply bg-copper-100 text-ink;
   }
   :focus-visible {
-    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-paper;
+    @apply outline-none ring-2 ring-copper-500 ring-offset-2 ring-offset-paper;
   }
 }
 

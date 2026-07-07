@@ -47,6 +47,30 @@ export const marketingSchema = z.object({
     )
     .max(8)
     .default([]),
+  /**
+   * Optional sale/bundle offer (e.g. 1+1 or a discount on a second course).
+   * Free-text wording keeps it flexible; partnerCourseId features another
+   * course of the same tenant inside the deal section.
+   */
+  sale: z
+    .object({
+      enabled: z.boolean().default(false),
+      title: z.string().max(120).default(''),
+      description: z.string().max(1000).default(''),
+      partnerCourseId: z.string().uuid().or(z.literal('')).default(''),
+      paymentLink: z
+        .string()
+        .max(500)
+        .refine((v) => v === '' || /^https?:\/\//.test(v), 'must be an http(s) URL')
+        .default(''),
+      /** yyyy-mm-dd; empty = no expiry. The sale hides itself after this day. */
+      endsAt: z
+        .string()
+        .max(10)
+        .refine((v) => v === '' || /^\d{4}-\d{2}-\d{2}$/.test(v), 'must be yyyy-mm-dd')
+        .default(''),
+    })
+    .default({}),
   contactPhone: z.string().max(30).default(''),
   contactEmail: z.string().max(320).default(''),
   accent: z.enum(LANDING_ACCENTS).default('petrol'),
@@ -61,4 +85,12 @@ export const emptyMarketing: CourseMarketing = marketingSchema.parse({});
 export function parseMarketing(value: unknown): CourseMarketing {
   const parsed = marketingSchema.safeParse(value ?? {});
   return parsed.success ? parsed.data : emptyMarketing;
+}
+
+/** Whether the sale should currently show on the landing page (endsAt is inclusive). */
+export function saleActive(m: CourseMarketing, now: Date = new Date()): boolean {
+  const s = m.sale;
+  if (!s.enabled || !s.title) return false;
+  if (s.endsAt && now > new Date(`${s.endsAt}T23:59:59`)) return false;
+  return true;
 }

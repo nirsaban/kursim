@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getTenantBySlug } from '@/lib/tenant/resolve';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { getAuth } from '@/lib/auth/guards';
-import { parseMarketing } from '@/lib/validation/marketing';
+import { parseMarketing, saleActive } from '@/lib/validation/marketing';
 import { LANDING_THEMES } from '@/lib/landing-themes';
 import { isCloudinaryConfigured } from '@/lib/cloudinary/client';
 import { signedDeliveryUrl, VIDEO_URL_TTL_SEC } from '@/lib/cloudinary/sign-delivery';
@@ -113,6 +113,31 @@ export default async function CourseLandingPage({ params, searchParams }: Params
     ? { target: '_blank' as const, rel: 'noopener noreferrer' }
     : {};
 
+  // Sale / bundle offer: shown only while active; the partner course is
+  // loaded through the tenant-scoped client so cross-tenant ids resolve to null.
+  const showSale = saleActive(m);
+  const salePartner =
+    showSale && m.sale.partnerCourseId
+      ? await forTenant(tenant.id).course.findFirst({
+          where: { id: m.sale.partnerCourseId },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            coverPublicId: true,
+            landingPublished: true,
+          },
+        })
+      : null;
+  const salePartnerCoverUrl =
+    salePartner?.coverPublicId && isCloudinaryConfigured()
+      ? signedDeliveryUrl(salePartner.coverPublicId, 'image', VIDEO_URL_TTL_SEC, 'jpg')
+      : null;
+  const saleHref = m.sale.paymentLink || ctaHref;
+  const saleExternalProps = /^https?:\/\//.test(saleHref)
+    ? { target: '_blank' as const, rel: 'noopener noreferrer' }
+    : {};
+
   const cta = (extra = '') => (
     <a
       href={ctaHref}
@@ -132,6 +157,17 @@ export default async function CourseLandingPage({ params, searchParams }: Params
         <div className="bg-warn text-white text-center text-sm font-semibold py-2 px-4">
           {he.landingPreview} — {he.landingDraftBadge}
         </div>
+      )}
+
+      {/* Sale announcement strip */}
+      {showSale && (
+        <a
+          href="#sale"
+          className="block text-center text-sm font-bold text-white py-2.5 px-4 hover:opacity-95"
+          style={{ background: theme.accent }}
+        >
+          🎁 {m.sale.title} — <span className="underline">{he.saleCta}</span>
+        </a>
       )}
 
       {/* Mini nav */}
@@ -170,6 +206,11 @@ export default async function CourseLandingPage({ params, searchParams }: Params
             {m.faq.length > 0 && (
               <a href="#faq" className="hover:text-ink">
                 {he.faqTitle}
+              </a>
+            )}
+            {showSale && (
+              <a href="#sale" className="font-bold" style={{ color: theme.accent }}>
+                {he.saleBadge}
               </a>
             )}
           </nav>
@@ -554,6 +595,88 @@ export default async function CourseLandingPage({ params, searchParams }: Params
               ))}
             </div>
           </div>
+        </section>
+      )}
+
+      {/* Sale / bundle deal */}
+      {showSale && (
+        <section id="sale" className="max-w-5xl mx-auto px-4 py-16">
+          <Reveal>
+            <div
+              className="rounded-xl2 border-2 shadow-lift px-6 py-8 sm:px-10"
+              style={{ borderColor: theme.accent, background: theme.soft }}
+            >
+              <span
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-white rounded-full px-3 py-1"
+                style={{ background: theme.accent }}
+              >
+                🎁 {he.saleBadge}
+              </span>
+              <h2 className="font-display text-2xl sm:text-3xl font-bold mt-4">
+                {m.sale.title}
+              </h2>
+              {m.sale.description && (
+                <p className="text-muted mt-3 leading-relaxed whitespace-pre-wrap max-w-2xl">
+                  {m.sale.description}
+                </p>
+              )}
+              {m.sale.endsAt && (
+                <p className="text-sm font-semibold mt-3" style={{ color: theme.accent }}>
+                  ⏳ {he.saleEndsOn}{' '}
+                  {new Date(`${m.sale.endsAt}T00:00:00`).toLocaleDateString('he-IL')}
+                </p>
+              )}
+              {salePartner && (
+                <div className="mt-6 flex flex-wrap sm:flex-nowrap items-center gap-5 rounded-xl2 border border-line bg-white p-4">
+                  {salePartnerCoverUrl ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={salePartnerCoverUrl}
+                      alt={salePartner.title}
+                      className="w-full sm:w-40 aspect-[4/3] object-cover rounded-xl bg-ink/5 shrink-0"
+                    />
+                  ) : (
+                    <span
+                      className="hidden sm:flex w-20 h-20 rounded-xl text-4xl items-center justify-center shrink-0"
+                      style={{ background: theme.soft }}
+                      aria-hidden
+                    >
+                      {m.emoji}
+                    </span>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-muted">{he.saleIncludedCourse}</p>
+                    <h3 className="font-display font-bold text-lg mt-0.5">{salePartner.title}</h3>
+                    {salePartner.description && (
+                      <p className="text-sm text-muted mt-1 leading-relaxed line-clamp-2">
+                        {salePartner.description}
+                      </p>
+                    )}
+                    {salePartner.landingPublished && (
+                      <a
+                        href={`/t/${slug}/c/${salePartner.id}`}
+                        className="inline-block text-sm font-semibold mt-2 hover:underline"
+                        style={{ color: theme.main }}
+                      >
+                        {he.viewCourse} ↗
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="mt-7">
+                <a
+                  href={saleHref}
+                  {...saleExternalProps}
+                  className="inline-flex items-center justify-center gap-2 font-display font-bold rounded-xl px-7 py-3.5 text-white transition-transform hover:scale-[1.02] active:scale-[0.99]"
+                  style={{ background: theme.accent }}
+                >
+                  {m.sale.paymentLink && <span aria-hidden>🔒</span>}
+                  {he.saleCta}
+                </a>
+              </div>
+            </div>
+          </Reveal>
         </section>
       )}
 

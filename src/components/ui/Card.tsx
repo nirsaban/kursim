@@ -7,7 +7,7 @@ export function Card({
   return (
     <div
       {...props}
-      className={cn('bg-white border border-line rounded-xl2 shadow-card', className)}
+      className={cn('bg-card border border-line rounded-xl2 shadow-card', className)}
     />
   );
 }

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&amp;family=Heebo:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEAE2;font-family:'Heebo',system-ui,sans-serif}
+a{color:#12626E}a:hover{color:#E4572E}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#12151D;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 'Heebo',sans-serif;color:#12151D}
+.dv-intro{max-width:760px;margin:0 0 24px;font:400 12.5px/1.7 'Heebo',sans-serif;color:rgba(0,0,0,.6)}
+.dv-opts{display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#12151D;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:500 12px/1.3 'Heebo',sans-serif;color:rgba(0,0,0,.6)}
+.dv-card{max-width:100%;background:#FFFDF8;border:1px solid rgba(0,0,0,.09);border-radius:10px;box-shadow:0 2px 8px rgba(20,18,10,.07);overflow:hidden}
+.dv-opt:target .dv-oid{background:#E4572E;color:#fff}
+.dv-next{margin:26px 0 0;font:12px/1.5 'Heebo',sans-serif;color:rgba(0,0,0,.5)}
+@keyframes kPulse{0%{box-shadow:0 0 0 0 rgba(47,191,113,.55)}70%{box-shadow:0 0 0 9px rgba(47,191,113,0)}100%{box-shadow:0 0 0 0 rgba(47,191,113,0)}}
+@keyframes kPulseAmber{0%{box-shadow:0 0 0 0 rgba(217,164,65,.55)}70%{box-shadow:0 0 0 9px rgba(217,164,65,0)}100%{box-shadow:0 0 0 0 rgba(217,164,65,0)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Kursim · כיוון חדש — «דיו ואות» + שלושת מסכי הדגל</span></div>
+<p class="dv-intro"><b>הכיוון:</b> «דיו ואות» (Ink &amp; Signal) — עוזבים את הטורקיז/נחושת החמים לטובת זהות חדה ואופיינית יותר: כרום דיו כהה־כחלחל, נייר עצם חם, ומבטא ורמיליון אחד שמופיע רק ברגעים שחשובים. המוטיב המרכזי הוא <b>נקודת ה־Live</b> — עיגול פועם שמסמן מכשיר מחובר, והוא גם חלק מהלוגו: פיצ'ר הגבלת המכשירים הופך משורת טבלה לשפה ויזואלית של "מושבים" (● ● ● ○). טיפוגרפיה: Frank Ruhl Libre לכותרות (סריף עברי בעל אופי) + Heebo לגוף. עברית מלאה, RTL מלא, תוכן לטיני נשאר LTR.</p>
+<div class="dv-opts">
+
+<!-- ═══════════ 1a IDENTITY ═══════════ -->
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>זהות — לוגו · צבע · טיפוגרפיה</div>
+<div class="dv-card" style="width:1060px" dir="rtl">
+  <div style="padding:44px 48px;display:flex;flex-direction:column;gap:36px">
+    <!-- logo lockup -->
+    <div style="display:flex;align-items:center;gap:40px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:18px">
+        <svg width="76" height="76" viewBox="0 0 64 64" aria-label="לוגו קורסים">
+          <rect x="2" y="2" width="60" height="60" rx="17" fill="#12151D"></rect>
+          <text x="34" y="45" text-anchor="middle" font-family="Frank Ruhl Libre, serif" font-weight="900" font-size="38" fill="#F5F2EB">ק</text>
+          <circle cx="49" cy="47" r="6.5" fill="#E4572E"></circle>
+        </svg>
+        <div>
+          <div style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:46px;line-height:1;color:#12151D">קורסים<span style="color:#E4572E">.</span></div>
+          <div style="font-size:13px;color:#6F6C64;margin-top:6px;letter-spacing:.02em">בית הספר הדיגיטלי שלכם — בלי סיסמאות משותפות</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;margin-inline-start:auto">
+        <div style="width:96px;height:96px;border-radius:20px;background:#12151D;display:grid;place-items:center">
+          <svg width="46" height="46" viewBox="0 0 64 64"><text x="34" y="45" text-anchor="middle" font-family="Frank Ruhl Libre, serif" font-weight="900" font-size="38" fill="#F5F2EB">ק</text><circle cx="49" cy="47" r="6.5" fill="#E4572E"></circle></svg>
+        </div>
+        <div style="width:96px;height:96px;border-radius:20px;background:#F5F2EB;border:1px solid #E5E0D4;display:grid;place-items:center">
+          <svg width="46" height="46" viewBox="0 0 64 64"><text x="34" y="45" text-anchor="middle" font-family="Frank Ruhl Libre, serif" font-weight="900" font-size="38" fill="#12151D">ק</text><circle cx="49" cy="47" r="6.5" fill="#E4572E"></circle></svg>
+        </div>
+        <div style="width:96px;height:96px;border-radius:20px;background:#E4572E;display:grid;place-items:center">
+          <svg width="46" height="46" viewBox="0 0 64 64"><text x="34" y="45" text-anchor="middle" font-family="Frank Ruhl Libre, serif" font-weight="900" font-size="38" fill="#FFFDF8">ק</text><circle cx="49" cy="47" r="6.5" fill="#12151D"></circle></svg>
+        </div>
+      </div>
+    </div>
+    <!-- palette -->
+    <div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#6F6C64;margin-bottom:12px">פלטה</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px">
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #E5E0D4"><div style="height:64px;background:#12151D"></div><div style="padding:8px 10px;font-size:11px"><b>דיו</b><div dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;text-align:right">#12151D</div></div></div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #E5E0D4"><div style="height:64px;background:#1A1F2A"></div><div style="padding:8px 10px;font-size:11px"><b>דיו־משטח</b><div dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;text-align:right">#1A1F2A</div></div></div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #E5E0D4"><div style="height:64px;background:#F5F2EB"></div><div style="padding:8px 10px;font-size:11px"><b>עצם</b><div dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;text-align:right">#F5F2EB</div></div></div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #E5E0D4"><div style="height:64px;background:#FFFDF8"></div><div style="padding:8px 10px;font-size:11px"><b>קלף</b><div dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;text-align:right">#FFFDF8</div></div></div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #E5E0D4"><div style="height:64px;background:#E4572E"></div><div style="padding:8px 10px;font-size:11px"><b>ורמיליון</b><div dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;text-align:right">#E4572E</div></div></div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #E5E0D4"><div style="height:64px;background:#2FBF71"></div><div style="padding:8px 10px;font-size:11px"><b>Live</b><div dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;text-align:right">#2FBF71</div></div></div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #E5E0D4"><div style="height:64px;background:#D9A441"></div><div style="padding:8px 10px;font-size:11px"><b>מטבע</b><div dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;text-align:right">#D9A441</div></div></div>
+      </div>
+    </div>
+    <!-- type + motif -->
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:28px">
+      <div style="border:1px solid #E5E0D4;border-radius:16px;padding:26px 28px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#6F6C64;margin-bottom:14px">טיפוגרפיה</div>
+        <div style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:40px;line-height:1.15;color:#12151D">ללמד זה שלכם.<br>לשמור על זה — שלנו.</div>
+        <div style="font-size:15px;line-height:1.8;color:#3A3830;margin-top:14px">Heebo לגוף הטקסט — קריא, חם ונעים גם בצפיפות גבוהה. מספרים ותוכן לטיני תמיד <span dir="ltr" style="font-family:ui-monospace,monospace;font-size:13px;background:#F5F2EB;padding:1px 6px;border-radius:5px">LTR · ₪349 · 21:14</span> בתוך הפריסה הימנית.</div>
+      </div>
+      <div style="border-radius:16px;background:#12151D;padding:26px 28px;color:#F5F2EB">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#9AA1AF;margin-bottom:14px">מוטיב המושבים</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <span style="width:16px;height:16px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span>
+          <span style="width:16px;height:16px;border-radius:50%;background:#2FBF71"></span>
+          <span style="width:16px;height:16px;border-radius:50%;background:#2FBF71"></span>
+          <span style="width:16px;height:16px;border-radius:50%;border:2px dashed #5A6170;box-sizing:border-box"></span>
+        </div>
+        <div style="font-size:13.5px;line-height:1.8;color:#C7CBD4">כל תלמיד/ה מקבל/ת "מושבים" — מכשירים מחוברים. מלא = מחובר, פועם = פעיל עכשיו, מקווקו = פנוי. המוטיב חוזר בלוגין, בלוח הבקרה ובחדר החיבורים.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════ 1b UI KIT ═══════════ -->
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>ערכת רכיבים — מצבי יסוד</div>
+<div class="dv-card" style="width:1060px" dir="rtl">
+  <div style="padding:40px 48px;display:flex;flex-direction:column;gap:30px">
+    <div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#6F6C64;margin-bottom:12px">כפתורים</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <button style="font-family:'Heebo',sans-serif;font-weight:600;font-size:15px;padding:12px 26px;border-radius:12px;border:none;background:#12151D;color:#FFFDF8;cursor:pointer" style-hover="background:#1A1F2A">כניסה</button>
+        <button style="font-family:'Heebo',sans-serif;font-weight:600;font-size:15px;padding:11px 24px;border-radius:12px;border:1.5px solid #12151D;background:transparent;color:#12151D;cursor:pointer" style-hover="background:#F5F2EB">עריכה</button>
+        <button style="font-family:'Heebo',sans-serif;font-weight:500;font-size:15px;padding:12px 20px;border-radius:12px;border:none;background:transparent;color:#6F6C64;cursor:pointer" style-hover="background:#F5F2EB;color:#12151D">ביטול</button>
+        <button style="font-family:'Heebo',sans-serif;font-weight:600;font-size:14px;padding:10px 20px;border-radius:12px;border:1.5px solid #EAD3CF;background:#FBEDEA;color:#B3382C;cursor:pointer" style-hover="background:#F6DCD7">מחיקה</button>
+        <button style="font-family:'Heebo',sans-serif;font-weight:700;font-size:17px;padding:15px 34px;border-radius:14px;border:none;background:#E4572E;color:#FFFDF8;cursor:pointer;box-shadow:0 6px 18px rgba(228,87,46,.35)" style-hover="background:#C9481F">אני רוצה להתחיל ←</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#6F6C64;margin-bottom:12px">שדות</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <label style="display:block"><span style="font-size:13px;font-weight:600;color:#3A3830;display:block;margin-bottom:6px">אימייל</span><input dir="ltr" placeholder="name@school.co.il" style="width:100%;box-sizing:border-box;font-family:'Heebo',sans-serif;font-size:15px;padding:11px 14px;border-radius:12px;border:1.5px solid #E5E0D4;background:#FFFDF8;color:#12151D;outline:none;text-align:left"></label>
+          <label style="display:block"><span style="font-size:13px;font-weight:600;color:#3A3830;display:block;margin-bottom:6px">בפוקוס</span><input value="נועה ברק" style="width:100%;box-sizing:border-box;font-family:'Heebo',sans-serif;font-size:15px;padding:11px 14px;border-radius:12px;border:1.5px solid #E4572E;box-shadow:0 0 0 3px rgba(228,87,46,.18);background:#FFFDF8;color:#12151D;outline:none"></label>
+          <label style="display:block"><span style="font-size:13px;font-weight:600;color:#B3382C;display:block;margin-bottom:6px">סיסמה</span><input type="password" value="123" style="width:100%;box-sizing:border-box;font-family:'Heebo',sans-serif;font-size:15px;padding:11px 14px;border-radius:12px;border:1.5px solid #B3382C;background:#FDF6F5;color:#12151D;outline:none"><span style="font-size:12px;color:#B3382C;margin-top:5px;display:block">הסיסמה קצרה מדי — צריך לפחות 8 תווים</span></label>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#6F6C64;margin-bottom:12px">תגיות ומצבים</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">
+          <span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:99px;background:#E3F6EC;color:#1E7A4C;display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span>מחובר/ת עכשיו</span>
+          <span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:99px;background:#12151D;color:#F5F2EB">פורסם</span>
+          <span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:99px;background:#F5F2EB;color:#6F6C64;border:1px solid #E5E0D4">טיוטה</span>
+          <span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:99px;background:#FBF3E2;color:#A16207">במגבלת מכשירים</span>
+          <span style="font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:99px;background:#FBEDEA;color:#B3382C">מושעה</span>
+        </div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#6F6C64;margin-bottom:10px">התקדמות</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px"><span style="font-weight:600;color:#12151D">צילום בסמארטפון</span><span dir="ltr" style="color:#6F6C64">72%</span></div><div style="height:8px;border-radius:99px;background:#EDE9DF;overflow:hidden"><div style="width:72%;height:100%;border-radius:99px;background:#12151D"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px"><span style="font-weight:600;color:#1E7A4C">הושלם! 🎓</span><span dir="ltr" style="color:#6F6C64">100%</span></div><div style="height:8px;border-radius:99px;background:#EDE9DF;overflow:hidden"><div style="width:100%;height:100%;border-radius:99px;background:#2FBF71"></div></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#6F6C64;margin-bottom:12px">כרטיס נתון + ריק</div>
+        <div style="border:1px solid #E5E0D4;border-radius:16px;padding:18px 20px;margin-bottom:14px;background:#FFFDF8">
+          <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:#6F6C64">חיבורים פעילים</span><span style="width:9px;height:9px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span></div>
+          <div style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:38px;color:#12151D;line-height:1.2"><span dir="ltr">7</span></div>
+          <div style="font-size:12px;color:#6F6C64">אצל <span dir="ltr">4</span> תלמידים · <span style="color:#A16207;font-weight:600">אחת במגבלה</span></div>
+        </div>
+        <div style="border:1.5px dashed #E5E0D4;border-radius:16px;padding:20px;text-align:center">
+          <div style="display:inline-flex;gap:6px;margin-bottom:8px"><span style="width:10px;height:10px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span><span style="width:10px;height:10px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span><span style="width:10px;height:10px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span></div>
+          <div style="font-size:13.5px;font-weight:600;color:#12151D">אין חיבורים פעילים כרגע</div>
+          <div style="font-size:12.5px;color:#6F6C64;line-height:1.6;margin-top:4px">כשתלמידים ייכנסו לצפות, הם יופיעו כאן בזמן אמת.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════ 1c LOGIN + DEVICE LIMIT ═══════════ -->
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>לוגין + מצבי מגבלת מכשירים — פיצ'ר הדגל · דסקטופ + מובייל</div>
+
+<div class="dv-card" style="width:1120px" dir="rtl">
+  <div style="display:grid;grid-template-columns:1fr 1fr;min-height:600px">
+    <!-- form side (right in RTL) -->
+    <div style="padding:64px 72px;display:flex;flex-direction:column;justify-content:center;background:#FFFDF8">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:34px">
+        <div style="width:44px;height:44px;border-radius:12px;background:#12151D;display:grid;place-items:center;color:#F5F2EB;font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:22px">א</div>
+        <div><div style="font-weight:700;font-size:16px;color:#12151D">סטודיו אוֹר</div><div style="font-size:12px;color:#6F6C64">בית ספר לצילום</div></div>
+      </div>
+      <h1 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:34px;color:#12151D;margin:0 0 8px">שמחים לראות אתכם</h1>
+      <p style="font-size:15px;color:#6F6C64;margin:0 0 30px">מתחברים וממשיכים בדיוק מאיפה שעצרתם.</p>
+      <div style="display:flex;flex-direction:column;gap:16px;max-width:360px">
+        <label><span style="font-size:13px;font-weight:600;color:#3A3830;display:block;margin-bottom:6px">אימייל</span><input dir="ltr" value="yael@gmail.com" style="width:100%;box-sizing:border-box;font-family:'Heebo',sans-serif;font-size:15px;padding:13px 16px;border-radius:12px;border:1.5px solid #E5E0D4;background:#FFFDF8;outline:none;text-align:left;color:#12151D"></label>
+        <label><span style="font-size:13px;font-weight:600;color:#3A3830;display:block;margin-bottom:6px">סיסמה</span><input dir="ltr" type="password" value="password" style="width:100%;box-sizing:border-box;font-family:'Heebo',sans-serif;font-size:15px;padding:13px 16px;border-radius:12px;border:1.5px solid #E5E0D4;background:#FFFDF8;outline:none;text-align:left;color:#12151D"></label>
+        <button style="font-family:'Heebo',sans-serif;font-weight:700;font-size:16px;padding:14px;border-radius:12px;border:none;background:#12151D;color:#FFFDF8;cursor:pointer;margin-top:6px" style-hover="background:#1A1F2A">כניסה</button>
+        <a href="#1c" style="font-size:13.5px;color:#6F6C64;text-decoration:none;text-align:center" style-hover="color:#E4572E">שכחתם סיסמה?</a>
+      </div>
+    </div>
+    <!-- brand side -->
+    <div style="background:#12151D;padding:64px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 20% 110%, rgba(228,87,46,.22), transparent 55%), radial-gradient(ellipse at 90% -10%, rgba(47,191,113,.12), transparent 50%)"></div>
+      <div style="position:relative;display:flex;align-items:center;gap:10px">
+        <svg width="34" height="34" viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="17" fill="#F5F2EB"></rect><text x="34" y="45" text-anchor="middle" font-family="Frank Ruhl Libre, serif" font-weight="900" font-size="38" fill="#12151D">ק</text><circle cx="49" cy="47" r="6.5" fill="#E4572E"></circle></svg>
+        <span style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:20px;color:#F5F2EB">קורסים<span style="color:#E4572E">.</span></span>
+      </div>
+      <div style="position:relative">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:18px">
+          <span style="width:13px;height:13px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span>
+          <span style="width:13px;height:13px;border-radius:50%;background:#2FBF71"></span>
+          <span style="width:13px;height:13px;border-radius:50%;border:2px dashed #5A6170;box-sizing:border-box"></span>
+        </div>
+        <div style="font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:27px;line-height:1.4;color:#F5F2EB">החשבון שלכם, המכשירים שלכם.<br>לא של אף אחד אחר.</div>
+        <div style="font-size:14px;color:#9AA1AF;margin-top:12px;line-height:1.7">כל חשבון מוגן במגבלת מכשירים חכמה — כך שהתוכן שרכשתם נשאר שלכם בלבד.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- device limit + evicted states -->
+<div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+<div class="dv-card" style="width:520px" dir="rtl">
+  <div style="padding:44px 48px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">
+      <div style="display:flex;gap:7px">
+        <span style="width:14px;height:14px;border-radius:50%;background:#D9A441;animation:kPulseAmber 2.4s infinite"></span>
+        <span style="width:14px;height:14px;border-radius:50%;background:#D9A441"></span>
+        <span style="width:14px;height:14px;border-radius:50%;background:#D9A441"></span>
+      </div>
+      <span style="font-size:12.5px;font-weight:700;color:#A16207;background:#FBF3E2;padding:4px 12px;border-radius:99px">3 מתוך 3 מכשירים בשימוש</span>
+    </div>
+    <h2 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:28px;color:#12151D;margin:14px 0 8px">הגעתם למגבלת המכשירים</h2>
+    <p style="font-size:14.5px;line-height:1.75;color:#6F6C64;margin:0 0 22px">החשבון מחובר כבר בשלושה מכשירים — המספר המרבי. כדי להיכנס מכאן, מתנתקים מאחד המכשירים שלמטה ומנסים שוב. הכול בסדר, זה קורה לכולם 🙂</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px">
+      <div style="display:flex;align-items:center;gap:14px;border:1px solid #E5E0D4;border-radius:14px;padding:13px 16px;background:#FFFDF8">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.5" stroke="#12151D" stroke-width="1.6"></rect><circle cx="12" cy="18.4" r="1" fill="#12151D"></circle></svg>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#12151D">iPhone · Safari</div><div style="font-size:12.5px;color:#6F6C64">נראה לאחרונה לפני 2 דקות</div></div>
+        <span style="width:9px;height:9px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;border:1px solid #E5E0D4;border-radius:14px;padding:13px 16px;background:#FFFDF8">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="11" rx="1.8" stroke="#12151D" stroke-width="1.6"></rect><path d="M2.5 18.5h19" stroke="#12151D" stroke-width="1.6" stroke-linecap="round"></path></svg>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#12151D">מחשב נייד · Chrome, Windows</div><div style="font-size:12.5px;color:#6F6C64">נראה לאחרונה אתמול בשעה <span dir="ltr">21:14</span></div></div>
+        <span style="width:9px;height:9px;border-radius:50%;background:#C9C4B6"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;border:1px solid #E5E0D4;border-radius:14px;padding:13px 16px;background:#FFFDF8">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="4.5" y="3" width="15" height="18" rx="2.5" stroke="#12151D" stroke-width="1.6"></rect><circle cx="12" cy="18" r="1" fill="#12151D"></circle></svg>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#12151D">טאבלט · Chrome, Android</div><div style="font-size:12.5px;color:#6F6C64">נראה לאחרונה לפני 3 ימים</div></div>
+        <span style="width:9px;height:9px;border-radius:50%;background:#C9C4B6"></span>
+      </div>
+    </div>
+    <button style="width:100%;font-family:'Heebo',sans-serif;font-weight:700;font-size:15px;padding:13px;border-radius:12px;border:none;background:#12151D;color:#FFFDF8;cursor:pointer" style-hover="background:#1A1F2A">התנתקתי — לנסות שוב</button>
+    <div style="font-size:12.5px;color:#6F6C64;text-align:center;margin-top:14px">לא מזהים אחד מהמכשירים? <a href="#1c" style="color:#E4572E;font-weight:600;text-decoration:none">כדאי להחליף סיסמה</a></div>
+  </div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:24px">
+<div class="dv-card" style="width:400px" dir="rtl">
+  <div style="padding:38px 40px;text-align:center">
+    <div style="display:inline-flex;gap:7px;margin-bottom:16px">
+      <span style="width:13px;height:13px;border-radius:50%;background:#C9C4B6"></span>
+      <span style="width:13px;height:13px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span>
+      <span style="width:13px;height:13px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span>
+    </div>
+    <h3 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:23px;color:#12151D;margin:0 0 8px">החשבון הופעל ממכשיר אחר</h3>
+    <p style="font-size:14px;line-height:1.7;color:#6F6C64;margin:0 0 22px">מישהו התחבר לחשבון ממכשיר חדש, ולכן המכשיר הזה נותק אוטומטית. אם זה הייתם אתם — פשוט מתחברים מחדש.</p>
+    <button style="width:100%;font-family:'Heebo',sans-serif;font-weight:700;font-size:15px;padding:13px;border-radius:12px;border:none;background:#12151D;color:#FFFDF8;cursor:pointer" style-hover="background:#1A1F2A">התחברות מחדש</button>
+    <div style="font-size:12.5px;color:#6F6C64;margin-top:12px">זה לא הייתם אתם? <a href="#1c" style="color:#E4572E;font-weight:600;text-decoration:none">החליפו סיסמה עכשיו</a></div>
+  </div>
+</div>
+
+<!-- mobile device-limit -->
+<div class="dv-card" style="width:390px" dir="rtl">
+  <div style="background:#12151D;padding:14px 20px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:8px"><svg width="22" height="22" viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="17" fill="#F5F2EB"></rect><text x="34" y="45" text-anchor="middle" font-family="Frank Ruhl Libre, serif" font-weight="900" font-size="38" fill="#12151D">ק</text><circle cx="49" cy="47" r="6.5" fill="#E4572E"></circle></svg><span style="font-size:13px;font-weight:700;color:#F5F2EB">סטודיו אוֹר</span></div>
+    <span dir="ltr" style="font-size:12px;color:#9AA1AF;font-family:ui-monospace,monospace">9:41</span>
+  </div>
+  <div style="padding:28px 22px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="display:flex;gap:6px"><span style="width:12px;height:12px;border-radius:50%;background:#D9A441;animation:kPulseAmber 2.4s infinite"></span><span style="width:12px;height:12px;border-radius:50%;background:#D9A441"></span><span style="width:12px;height:12px;border-radius:50%;background:#D9A441"></span></div>
+      <span style="font-size:11.5px;font-weight:700;color:#A16207;background:#FBF3E2;padding:3px 10px;border-radius:99px">3/3 מכשירים</span>
+    </div>
+    <h3 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:22px;color:#12151D;margin:0 0 6px">הגעתם למגבלת המכשירים</h3>
+    <p style="font-size:13.5px;line-height:1.7;color:#6F6C64;margin:0 0 18px">מתנתקים מאחד המכשירים — ונכנסים מכאן.</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:12px;border:1px solid #E5E0D4;border-radius:12px;padding:12px 14px;min-height:44px;box-sizing:border-box"><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:#12151D">iPhone · Safari</div><div style="font-size:12px;color:#6F6C64">לפני 2 דקות</div></div><span style="width:8px;height:8px;border-radius:50%;background:#2FBF71"></span></div>
+      <div style="display:flex;align-items:center;gap:12px;border:1px solid #E5E0D4;border-radius:12px;padding:12px 14px;min-height:44px;box-sizing:border-box"><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:#12151D">מחשב נייד · Chrome</div><div style="font-size:12px;color:#6F6C64">אתמול, <span dir="ltr">21:14</span></div></div><span style="width:8px;height:8px;border-radius:50%;background:#C9C4B6"></span></div>
+      <div style="display:flex;align-items:center;gap:12px;border:1px solid #E5E0D4;border-radius:12px;padding:12px 14px;min-height:44px;box-sizing:border-box"><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:#12151D">טאבלט · Chrome</div><div style="font-size:12px;color:#6F6C64">לפני 3 ימים</div></div><span style="width:8px;height:8px;border-radius:50%;background:#C9C4B6"></span></div>
+    </div>
+    <button style="width:100%;font-family:'Heebo',sans-serif;font-weight:700;font-size:15px;padding:14px;border-radius:12px;border:none;background:#12151D;color:#FFFDF8;min-height:48px">התנתקתי — לנסות שוב</button>
+  </div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════ 1d CONTROL ROOM ═══════════ -->
+<div class="dv-opt" id="1d">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>חדר החיבורים — קוקפיט הגבלת המכשירים (OWNER) · דסקטופ + מובייל</div>
+<div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+<div class="dv-card" style="width:1240px" dir="rtl">
+  <!-- dark admin chrome -->
+  <div style="background:#12151D;padding:0 32px;display:flex;align-items:center;gap:28px;height:60px">
+    <div style="display:flex;align-items:center;gap:9px"><svg width="26" height="26" viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="17" fill="#F5F2EB"></rect><text x="34" y="45" text-anchor="middle" font-family="Frank Ruhl Libre, serif" font-weight="900" font-size="38" fill="#12151D">ק</text><circle cx="49" cy="47" r="6.5" fill="#E4572E"></circle></svg><span style="font-size:14px;font-weight:700;color:#F5F2EB">סטודיו אוֹר · ניהול</span></div>
+    <nav style="display:flex;gap:4px;font-size:13.5px">
+      <a href="#1d" style="color:#9AA1AF;text-decoration:none;padding:8px 12px;border-radius:9px" style-hover="color:#F5F2EB">לוח בקרה</a>
+      <a href="#1d" style="color:#9AA1AF;text-decoration:none;padding:8px 12px;border-radius:9px" style-hover="color:#F5F2EB">קורסים</a>
+      <a href="#1d" style="color:#9AA1AF;text-decoration:none;padding:8px 12px;border-radius:9px" style-hover="color:#F5F2EB">תלמידים</a>
+      <a href="#1d" style="color:#F5F2EB;font-weight:600;text-decoration:none;padding:8px 12px;border-radius:9px;background:rgba(255,255,255,.09);display:inline-flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span>חיבורים</a>
+      <a href="#1d" style="color:#9AA1AF;text-decoration:none;padding:8px 12px;border-radius:9px" style-hover="color:#F5F2EB">הגדרות</a>
+    </nav>
+    <div style="margin-inline-start:auto;width:32px;height:32px;border-radius:50%;background:#E4572E;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700">נ</div>
+  </div>
+  <div style="background:#F5F2EB;padding:36px 40px 44px">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:26px">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px"><h2 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:32px;color:#12151D;margin:0">מי מחובר עכשיו</h2><span style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:#1E7A4C;background:#E3F6EC;padding:5px 13px;border-radius:99px"><span style="width:8px;height:8px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span>עדכון חי</span></div>
+        <div style="font-size:14px;color:#6F6C64;margin-top:6px">7 חיבורים פעילים אצל 4 תלמידים · המדיניות: <b style="color:#12151D">ניתוק המכשיר הישן ביותר</b>, עד <span dir="ltr">3</span> מכשירים לתלמיד/ה</div>
+      </div>
+      <input placeholder="חיפוש לפי שם או אימייל…" style="font-family:'Heebo',sans-serif;font-size:14px;padding:11px 16px;border-radius:12px;border:1.5px solid #E5E0D4;background:#FFFDF8;outline:none;width:260px;color:#12151D">
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:18px">
+      <!-- student at limit -->
+      <div style="background:#FFFDF8;border:1.5px solid #EAD9AE;border-radius:18px;padding:22px 24px;box-shadow:0 2px 10px rgba(161,98,7,.06)">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+          <div style="width:42px;height:42px;border-radius:50%;background:#12151D;color:#F5F2EB;display:grid;place-items:center;font-weight:700;font-size:15px">יכ</div>
+          <div style="flex:1"><div style="font-size:15.5px;font-weight:700;color:#12151D">יעל כהן</div><div dir="ltr" style="font-size:12.5px;color:#6F6C64;text-align:right">yael.c@gmail.com</div></div>
+          <div style="text-align:left"><div style="display:flex;gap:6px;justify-content:flex-end"><span style="width:11px;height:11px;border-radius:50%;background:#D9A441;animation:kPulseAmber 2.4s infinite"></span><span style="width:11px;height:11px;border-radius:50%;background:#D9A441"></span><span style="width:11px;height:11px;border-radius:50%;background:#D9A441"></span></div><div style="font-size:11.5px;font-weight:700;color:#A16207;margin-top:4px">3/3 · במגבלה</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px;background:#F5F2EB;border-radius:11px;padding:10px 14px;font-size:13px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite;flex:none"></span>
+            <span style="font-weight:600;color:#12151D;flex:1">iPhone · Safari</span>
+            <span dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;font-size:12px">84.229.11.42</span>
+            <span style="color:#6F6C64">מחובר מאז <span dir="ltr">14:02</span></span>
+            <button style="font-family:'Heebo',sans-serif;font-size:12.5px;font-weight:600;color:#B3382C;background:none;border:1px solid #EAD3CF;border-radius:8px;padding:5px 12px;cursor:pointer" style-hover="background:#FBEDEA">ניתוק</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;background:#F5F2EB;border-radius:11px;padding:10px 14px;font-size:13px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#2FBF71;flex:none"></span>
+            <span style="font-weight:600;color:#12151D;flex:1">מחשב נייד · Chrome</span>
+            <span dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;font-size:12px">84.229.11.42</span>
+            <span style="color:#6F6C64">מחובר מאז <span dir="ltr">13:15</span></span>
+            <button style="font-family:'Heebo',sans-serif;font-size:12.5px;font-weight:600;color:#B3382C;background:none;border:1px solid #EAD3CF;border-radius:8px;padding:5px 12px;cursor:pointer" style-hover="background:#FBEDEA">ניתוק</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;background:#F5F2EB;border-radius:11px;padding:10px 14px;font-size:13px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#2FBF71;flex:none"></span>
+            <span style="font-weight:600;color:#12151D;flex:1">טלוויזיה · Chromecast</span>
+            <span dir="ltr" style="color:#B3382C;font-family:ui-monospace,monospace;font-size:12px;font-weight:700">176.12.88.3</span>
+            <span style="color:#6F6C64">מחובר מאז <span dir="ltr">14:20</span></span>
+            <button style="font-family:'Heebo',sans-serif;font-size:12.5px;font-weight:600;color:#B3382C;background:none;border:1px solid #EAD3CF;border-radius:8px;padding:5px 12px;cursor:pointer" style-hover="background:#FBEDEA">ניתוק</button>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:12.5px;color:#A16207;background:#FBF3E2;border-radius:10px;padding:9px 14px">⚠ שתי כתובות <span dir="ltr">IP</span> שונות בו־זמנית — ייתכן שהחשבון משותף. שווה לבדוק.</div>
+      </div>
+      <!-- normal students -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#FFFDF8;border:1px solid #E5E0D4;border-radius:18px;padding:20px 24px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:42px;height:42px;border-radius:50%;background:#F5F2EB;border:1px solid #E5E0D4;color:#12151D;display:grid;place-items:center;font-weight:700;font-size:15px">אל</div>
+            <div style="flex:1"><div style="font-size:15.5px;font-weight:700;color:#12151D">אבי לוי</div><div dir="ltr" style="font-size:12.5px;color:#6F6C64;text-align:right">avi.levi@walla.co.il</div></div>
+            <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span><span style="width:11px;height:11px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span><span style="width:11px;height:11px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;background:#F5F2EB;border-radius:11px;padding:10px 14px;font-size:13px;margin-top:12px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite;flex:none"></span>
+            <span style="font-weight:600;color:#12151D;flex:1">Android · Chrome</span>
+            <span dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;font-size:12px">62.90.140.7</span>
+            <span style="color:#6F6C64">מחובר מאז <span dir="ltr">13:48</span></span>
+            <button style="font-family:'Heebo',sans-serif;font-size:12.5px;font-weight:600;color:#B3382C;background:none;border:1px solid #EAD3CF;border-radius:8px;padding:5px 12px;cursor:pointer" style-hover="background:#FBEDEA">ניתוק</button>
+          </div>
+        </div>
+        <div style="background:#FFFDF8;border:1px solid #E5E0D4;border-radius:18px;padding:20px 24px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:42px;height:42px;border-radius:50%;background:#F5F2EB;border:1px solid #E5E0D4;color:#12151D;display:grid;place-items:center;font-weight:700;font-size:15px">מפ</div>
+            <div style="flex:1"><div style="font-size:15.5px;font-weight:700;color:#12151D">מאיה פרץ</div><div dir="ltr" style="font-size:12.5px;color:#6F6C64;text-align:right">maya.p@gmail.com</div></div>
+            <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span><span style="width:11px;height:11px;border-radius:50%;background:#2FBF71"></span><span style="width:11px;height:11px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+            <div style="display:flex;align-items:center;gap:12px;background:#F5F2EB;border-radius:11px;padding:10px 14px;font-size:13px">
+              <span style="width:8px;height:8px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite;flex:none"></span>
+              <span style="font-weight:600;color:#12151D;flex:1">iPad · Safari</span>
+              <span dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;font-size:12px">79.181.22.90</span>
+              <span style="color:#6F6C64">מחובר מאז <span dir="ltr">12:30</span></span>
+              <button style="font-family:'Heebo',sans-serif;font-size:12.5px;font-weight:600;color:#B3382C;background:none;border:1px solid #EAD3CF;border-radius:8px;padding:5px 12px;cursor:pointer" style-hover="background:#FBEDEA">ניתוק</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:#F5F2EB;border-radius:11px;padding:10px 14px;font-size:13px">
+              <span style="width:8px;height:8px;border-radius:50%;background:#2FBF71;flex:none"></span>
+              <span style="font-weight:600;color:#12151D;flex:1">iPhone · Safari</span>
+              <span dir="ltr" style="color:#6F6C64;font-family:ui-monospace,monospace;font-size:12px">79.181.22.90</span>
+              <span style="color:#6F6C64">מחובר מאז <span dir="ltr">11:52</span></span>
+              <button style="font-family:'Heebo',sans-serif;font-size:12.5px;font-weight:600;color:#B3382C;background:none;border:1px solid #EAD3CF;border-radius:8px;padding:5px 12px;cursor:pointer" style-hover="background:#FBEDEA">ניתוק</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:18px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:#6F6C64"><span style="width:7px;height:7px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span>עודכן לפני 4 שניות · דניאל שרון התנתק/ה בשעה <span dir="ltr">14:31</span></div>
+  </div>
+</div>
+
+<!-- mobile control room -->
+<div class="dv-card" style="width:390px" dir="rtl">
+  <div style="background:#12151D;padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:8px"><svg width="22" height="22" viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="17" fill="#F5F2EB"></rect><text x="34" y="45" text-anchor="middle" font-family="Frank Ruhl Libre, serif" font-weight="900" font-size="38" fill="#12151D">ק</text><circle cx="49" cy="47" r="6.5" fill="#E4572E"></circle></svg><span style="font-size:13px;font-weight:700;color:#F5F2EB">חיבורים</span><span style="width:7px;height:7px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span></div>
+    <span style="font-size:12px;color:#9AA1AF">7 פעילים</span>
+  </div>
+  <div style="background:#F5F2EB;padding:20px 16px 26px;display:flex;flex-direction:column;gap:12px">
+    <div style="background:#FFFDF8;border:1.5px solid #EAD9AE;border-radius:15px;padding:15px 16px">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#12151D;color:#F5F2EB;display:grid;place-items:center;font-weight:700;font-size:13px">יכ</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#12151D">יעל כהן</div><div style="font-size:11.5px;font-weight:700;color:#A16207">3/3 · במגבלה · 2 כתובות IP</div></div>
+        <div style="display:flex;gap:5px"><span style="width:9px;height:9px;border-radius:50%;background:#D9A441;animation:kPulseAmber 2.4s infinite"></span><span style="width:9px;height:9px;border-radius:50%;background:#D9A441"></span><span style="width:9px;height:9px;border-radius:50%;background:#D9A441"></span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:#F5F2EB;border-radius:10px;padding:9px 12px;font-size:12.5px;margin-top:10px">
+        <span style="width:7px;height:7px;border-radius:50%;background:#2FBF71;flex:none"></span>
+        <span style="font-weight:600;color:#12151D;flex:1">iPhone · Safari</span>
+        <button style="font-family:'Heebo',sans-serif;font-size:12px;font-weight:600;color:#B3382C;background:none;border:1px solid #EAD3CF;border-radius:8px;padding:6px 12px;min-height:32px">ניתוק</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:#F5F2EB;border-radius:10px;padding:9px 12px;font-size:12.5px;margin-top:7px">
+        <span style="width:7px;height:7px;border-radius:50%;background:#2FBF71;flex:none"></span>
+        <span style="font-weight:600;color:#12151D;flex:1">טלוויזיה · Chromecast</span>
+        <button style="font-family:'Heebo',sans-serif;font-size:12px;font-weight:600;color:#B3382C;background:none;border:1px solid #EAD3CF;border-radius:8px;padding:6px 12px;min-height:32px">ניתוק</button>
+      </div>
+    </div>
+    <div style="background:#FFFDF8;border:1px solid #E5E0D4;border-radius:15px;padding:15px 16px;display:flex;align-items:center;gap:11px">
+      <div style="width:36px;height:36px;border-radius:50%;background:#F5F2EB;border:1px solid #E5E0D4;color:#12151D;display:grid;place-items:center;font-weight:700;font-size:13px">אל</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#12151D">אבי לוי</div><div style="font-size:12px;color:#6F6C64">Android · Chrome · מאז <span dir="ltr">13:48</span></div></div>
+      <div style="display:flex;gap:5px"><span style="width:9px;height:9px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span><span style="width:9px;height:9px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span><span style="width:9px;height:9px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span></div>
+    </div>
+    <div style="background:#FFFDF8;border:1px solid #E5E0D4;border-radius:15px;padding:15px 16px;display:flex;align-items:center;gap:11px">
+      <div style="width:36px;height:36px;border-radius:50%;background:#F5F2EB;border:1px solid #E5E0D4;color:#12151D;display:grid;place-items:center;font-weight:700;font-size:13px">מפ</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#12151D">מאיה פרץ</div><div style="font-size:12px;color:#6F6C64">iPad + iPhone · פעילה עכשיו</div></div>
+      <div style="display:flex;gap:5px"><span style="width:9px;height:9px;border-radius:50%;background:#2FBF71;animation:kPulse 2.4s infinite"></span><span style="width:9px;height:9px;border-radius:50%;background:#2FBF71"></span><span style="width:9px;height:9px;border-radius:50%;border:2px dashed #C9C4B6;box-sizing:border-box"></span></div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════ 1e COURSE LANDING ═══════════ -->
+<div class="dv-opt" id="1e">
+<div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>דף נחיתה/מכירה לקורס — חלון הראווה (PUBLIC) · דסקטופ + מובייל</div>
+<div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#6F6C64" dir="rtl">ערכות נושא (נבחרה «חמרה»):
+  <span style="width:22px;height:22px;border-radius:50%;background:#B0492A;outline:2.5px solid #12151D;outline-offset:2px;cursor:pointer"></span>
+  <span style="width:22px;height:22px;border-radius:50%;background:#177A87;cursor:pointer"></span>
+  <span style="width:22px;height:22px;border-radius:50%;background:#5B5FA8;cursor:pointer"></span>
+  <span style="width:22px;height:22px;border-radius:50%;background:#3D7A4E;cursor:pointer"></span>
+  <span style="width:22px;height:22px;border-radius:50%;background:#8A4C97;cursor:pointer"></span>
+</div>
+<div class="dv-card" style="width:1200px" dir="rtl">
+  <!-- sticky nav -->
+  <div style="background:rgba(255,253,248,.95);border-bottom:1px solid #E5E0D4;padding:0 40px;height:62px;display:flex;align-items:center;gap:26px">
+    <div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:10px;background:#12151D;display:grid;place-items:center;color:#F5F2EB;font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:18px">א</div><span style="font-weight:700;font-size:15px;color:#12151D">סטודיו אוֹר</span></div>
+    <nav style="display:flex;gap:22px;font-size:13.5px;margin-inline-start:12px">
+      <a href="#1e" style="color:#6F6C64;text-decoration:none" style-hover="color:#12151D">תוכנית הלימודים</a>
+      <a href="#1e" style="color:#6F6C64;text-decoration:none" style-hover="color:#12151D">ביקורות</a>
+      <a href="#1e" style="color:#6F6C64;text-decoration:none" style-hover="color:#12151D">שאלות נפוצות</a>
+    </nav>
+    <div style="margin-inline-start:auto;display:flex;align-items:center;gap:14px">
+      <a href="#1e" style="font-size:13.5px;color:#6F6C64;text-decoration:none" style-hover="color:#12151D">כניסת תלמידים</a>
+      <button style="font-family:'Heebo',sans-serif;font-weight:700;font-size:14px;padding:10px 22px;border-radius:11px;border:none;background:#B0492A;color:#FFFDF8;cursor:pointer" style-hover="background:#93381E">הרשמה · <span dir="ltr">₪349</span></button>
+    </div>
+  </div>
+  <!-- hero -->
+  <div style="background:linear-gradient(180deg,#F7F0EA 0%,#FFFDF8 100%);padding:64px 40px 56px">
+    <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#B0492A;background:#F7E5DD;padding:6px 14px;border-radius:99px;margin-bottom:18px">📸 קורס דיגיטלי · מחזור חדש נפתח</div>
+        <h1 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:52px;line-height:1.15;color:#12151D;margin:0 0 16px">צילום בסמארטפון:<br>מתמונות "בסדר"<br>לתמונות שמוכרות</h1>
+        <p style="font-size:17px;line-height:1.75;color:#5A574E;margin:0 0 28px;max-width:480px">הטלפון שכבר יש לכם בכיס מספיק בהחלט. נועה ברק תלמד אתכם לחשוב כמו צלמים — קומפוזיציה, אור, ועריכה שהופכת כל פריים למקצועי.</p>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+          <button style="font-family:'Heebo',sans-serif;font-weight:700;font-size:18px;padding:16px 38px;border-radius:14px;border:none;background:#B0492A;color:#FFFDF8;cursor:pointer;box-shadow:0 8px 22px rgba(176,73,42,.35)" style-hover="background:#93381E">אני רוצה להתחיל ←</button>
+          <div style="font-size:14px;color:#6F6C64"><b style="color:#12151D;font-size:17px"><span dir="ltr">₪349</span></b> · תשלום חד־פעמי, גישה לתמיד</div>
+        </div>
+        <div style="display:flex;gap:26px;margin-top:32px;font-size:13.5px;color:#5A574E">
+          <div><b style="font-family:'Frank Ruhl Libre',serif;font-size:22px;color:#12151D;display:block"><span dir="ltr">6</span></b>פרקים</div>
+          <div style="width:1px;background:#E5E0D4"></div>
+          <div><b style="font-family:'Frank Ruhl Libre',serif;font-size:22px;color:#12151D;display:block"><span dir="ltr">42</span></b>שיעורים</div>
+          <div style="width:1px;background:#E5E0D4"></div>
+          <div><b style="font-family:'Frank Ruhl Libre',serif;font-size:22px;color:#12151D;display:block"><span dir="ltr">9.5</span></b>שעות וידאו</div>
+          <div style="width:1px;background:#E5E0D4"></div>
+          <div><b style="font-family:'Frank Ruhl Libre',serif;font-size:22px;color:#12151D;display:block">★ <span dir="ltr">4.9</span></b><span dir="ltr">127</span> ביקורות</div>
+        </div>
+      </div>
+      <!-- before/after -->
+      <div>
+        <div style="border-radius:20px;overflow:hidden;border:1px solid #E5E0D4;box-shadow:0 18px 44px rgba(20,18,10,.14);position:relative">
+          <div style="display:grid;grid-template-columns:1fr 1fr;height:340px">
+            <div style="background:repeating-linear-gradient(45deg,#E9E2D6 0 12px,#F1EBE0 12px 24px);display:grid;place-items:center"><span style="font-family:ui-monospace,monospace;font-size:11px;color:#8A857A;background:#FFFDF8;padding:4px 10px;border-radius:6px">תמונה: לפני</span></div>
+            <div style="background:repeating-linear-gradient(45deg,#D9C7BC 0 12px,#E4D5CB 12px 24px);display:grid;place-items:center"><span style="font-family:ui-monospace,monospace;font-size:11px;color:#7A6A5E;background:#FFFDF8;padding:4px 10px;border-radius:6px">תמונה: אחרי</span></div>
+          </div>
+          <div style="position:absolute;top:0;bottom:0;right:50%;width:3px;background:#FFFDF8;box-shadow:0 0 8px rgba(0,0,0,.25)"></div>
+          <div style="position:absolute;top:50%;right:50%;transform:translate(50%,-50%);width:44px;height:44px;border-radius:50%;background:#FFFDF8;box-shadow:0 4px 14px rgba(0,0,0,.22);display:grid;place-items:center;font-size:14px;color:#12151D;cursor:ew-resize">⇄</div>
+          <span style="position:absolute;top:14px;right:14px;font-size:11.5px;font-weight:700;color:#FFFDF8;background:rgba(18,21,29,.75);padding:4px 11px;border-radius:99px">לפני</span>
+          <span style="position:absolute;top:14px;left:14px;font-size:11.5px;font-weight:700;color:#FFFDF8;background:rgba(176,73,42,.9);padding:4px 11px;border-radius:99px">אחרי</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:16px;background:#FFFDF8;border:1px solid #E5E0D4;border-radius:14px;padding:12px 16px">
+          <div style="width:40px;height:40px;border-radius:50%;background:repeating-linear-gradient(45deg,#D8D2C4 0 6px,#E5E0D4 6px 12px)"></div>
+          <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#12151D">נועה ברק</div><div style="font-size:12.5px;color:#6F6C64">צלמת מסחרית, <span dir="ltr">12</span> שנות ניסיון · המנחה שלכם</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- who for + outcomes -->
+  <div style="padding:56px 40px;border-top:1px solid #E5E0D4">
+    <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:48px">
+      <div>
+        <h2 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:28px;color:#12151D;margin:0 0 18px">למי הקורס מתאים?</h2>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#F5F2EB;border-radius:13px;padding:14px 18px"><span style="color:#B0492A;font-weight:900">✓</span><span style="font-size:14.5px;line-height:1.6;color:#3A3830">בעלי/ות עסקים קטנים שרוצים לצלם מוצרים בעצמם</span></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#F5F2EB;border-radius:13px;padding:14px 18px"><span style="color:#B0492A;font-weight:900">✓</span><span style="font-size:14.5px;line-height:1.6;color:#3A3830">יוצרי/ות תוכן שנמאס להם מפיד שנראה חובבני</span></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#F5F2EB;border-radius:13px;padding:14px 18px"><span style="color:#B0492A;font-weight:900">✓</span><span style="font-size:14.5px;line-height:1.6;color:#3A3830">כל מי שאוהב/ת לצלם — בלי שום ידע קודם</span></div>
+        </div>
+      </div>
+      <div>
+        <h2 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:28px;color:#12151D;margin:0 0 18px">מה תשיגו בסוף הקורס</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="border:1px solid #E5E0D4;border-radius:13px;padding:16px 18px"><div style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:20px;color:#B0492A">01</div><div style="font-size:14px;line-height:1.6;color:#3A3830;margin-top:4px">שליטה מלאה בקומפוזיציה, אור טבעי ואור מלאכותי</div></div>
+          <div style="border:1px solid #E5E0D4;border-radius:13px;padding:16px 18px"><div style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:20px;color:#B0492A">02</div><div style="font-size:14px;line-height:1.6;color:#3A3830;margin-top:4px">זרימת עריכה מקצועית בחינם, ישירות מהטלפון</div></div>
+          <div style="border:1px solid #E5E0D4;border-radius:13px;padding:16px 18px"><div style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:20px;color:#B0492A">03</div><div style="font-size:14px;line-height:1.6;color:#3A3830;margin-top:4px">תיק עבודות של <span dir="ltr">20</span> תמונות ברמה מסחרית</div></div>
+          <div style="border:1px solid #E5E0D4;border-radius:13px;padding:16px 18px"><div style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:20px;color:#B0492A">04</div><div style="font-size:14px;line-height:1.6;color:#3A3830;margin-top:4px">"עין של צלם" — לזהות פריים טוב לפני שלוחצים</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- curriculum -->
+  <div style="padding:56px 40px;background:#12151D">
+    <h2 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:28px;color:#F5F2EB;margin:0 0 6px">תוכנית הלימודים</h2>
+    <div style="font-size:14px;color:#9AA1AF;margin-bottom:26px"><span dir="ltr">6</span> פרקים · <span dir="ltr">42</span> שיעורים · <span dir="ltr">9.5</span> שעות</div>
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:820px">
+      <div style="background:#1A1F2A;border:1px solid rgba(255,255,255,.08);border-radius:15px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:16px;padding:17px 22px;cursor:pointer">
+          <span style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:17px;color:#B0492A"><span dir="ltr">01</span></span>
+          <span style="font-size:15.5px;font-weight:700;color:#F5F2EB;flex:1">לחשוב כמו צלם — יסודות הקומפוזיציה</span>
+          <span style="font-size:12.5px;color:#9AA1AF"><span dir="ltr">7</span> שיעורים · <span dir="ltr">1:24</span></span>
+          <span style="color:#9AA1AF;transform:rotate(180deg)">⌄</span>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,.07);padding:8px 22px 14px">
+          <div style="display:flex;align-items:center;gap:12px;padding:9px 0;font-size:13.5px"><span style="width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.08);display:grid;place-items:center;color:#F5F2EB;font-size:10px">▶</span><span style="color:#E8E4DA;flex:1">חוק השלישים — ולמה מותר לשבור אותו</span><span dir="ltr" style="color:#9AA1AF;font-size:12px;font-family:ui-monospace,monospace">08:12</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:9px 0;font-size:13.5px"><span style="width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.08);display:grid;place-items:center;color:#F5F2EB;font-size:10px">▶</span><span style="color:#E8E4DA;flex:1">קווים מובילים ומסגרות טבעיות</span><span dir="ltr" style="color:#9AA1AF;font-size:12px;font-family:ui-monospace,monospace">11:47</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:9px 0;font-size:13.5px"><span style="width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.08);display:grid;place-items:center;color:#F5F2EB;font-size:10px">▶</span><span style="color:#E8E4DA;flex:1">תרגול: 10 פריימים בסלון שלכם</span><span dir="ltr" style="color:#9AA1AF;font-size:12px;font-family:ui-monospace,monospace">14:03</span></div>
+        </div>
+      </div>
+      <div style="background:#1A1F2A;border:1px solid rgba(255,255,255,.08);border-radius:15px;display:flex;align-items:center;gap:16px;padding:17px 22px;cursor:pointer">
+        <span style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:17px;color:#B0492A"><span dir="ltr">02</span></span>
+        <span style="font-size:15.5px;font-weight:700;color:#F5F2EB;flex:1">אור — החומר שממנו עשויות תמונות</span>
+        <span style="font-size:12.5px;color:#9AA1AF"><span dir="ltr">8</span> שיעורים · <span dir="ltr">1:52</span></span>
+        <span style="color:#9AA1AF">⌄</span>
+      </div>
+      <div style="background:#1A1F2A;border:1px solid rgba(255,255,255,.08);border-radius:15px;display:flex;align-items:center;gap:16px;padding:17px 22px;cursor:pointer">
+        <span style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:17px;color:#B0492A"><span dir="ltr">03</span></span>
+        <span style="font-size:15.5px;font-weight:700;color:#F5F2EB;flex:1">צילום מוצר ואוכל שגורם לרצות לקנות</span>
+        <span style="font-size:12.5px;color:#9AA1AF"><span dir="ltr">9</span> שיעורים · <span dir="ltr">2:10</span></span>
+        <span style="color:#9AA1AF">⌄</span>
+      </div>
+      <div style="text-align:center;padding:6px 0 0"><a href="#1e" style="font-size:13.5px;color:#9AA1AF;text-decoration:none" style-hover="color:#F5F2EB">+ עוד 3 פרקים</a></div>
+    </div>
+  </div>
+  <!-- reviews -->
+  <div style="padding:56px 40px">
+    <h2 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:28px;color:#12151D;margin:0 0 4px">מה אומרים התלמידים</h2>
+    <div style="font-size:14px;color:#6F6C64;margin-bottom:24px">★★★★★ <b style="color:#12151D"><span dir="ltr">4.9</span></b> ממוצע · <span dir="ltr">127</span> ביקורות מאומתות</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+      <div style="border:1px solid #E5E0D4;border-radius:16px;padding:22px 24px;background:#FFFDF8">
+        <div style="color:#D9A441;font-size:15px;letter-spacing:2px;margin-bottom:10px">★★★★★</div>
+        <p style="font-size:14.5px;line-height:1.75;color:#3A3830;margin:0 0 16px">"תוך שבועיים המכירות בחנות האטסי שלי עלו — רק בגלל שהתמונות סוף סוף נראות מקצועיות."</p>
+        <div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:50%;background:#F5F2EB;border:1px solid #E5E0D4;display:grid;place-items:center;font-size:12px;font-weight:700;color:#12151D">רב</div><div><div style="font-size:13px;font-weight:700;color:#12151D">רותם בן־דוד</div><div style="font-size:11.5px;color:#1E7A4C;font-weight:600">✓ תלמיד/ה מאומת/ת</div></div></div>
+      </div>
+      <div style="border:1px solid #E5E0D4;border-radius:16px;padding:22px 24px;background:#FFFDF8">
+        <div style="color:#D9A441;font-size:15px;letter-spacing:2px;margin-bottom:10px">★★★★★</div>
+        <p style="font-size:14.5px;line-height:1.75;color:#3A3830;margin:0 0 16px">"נועה מסבירה בגובה העיניים. סיימתי את כל הקורס בשבוע וחזרתי לתרגולים שוב ושוב."</p>
+        <div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:50%;background:#F5F2EB;border:1px solid #E5E0D4;display:grid;place-items:center;font-size:12px;font-weight:700;color:#12151D">עש</div><div><div style="font-size:13px;font-weight:700;color:#12151D">עדי שמעוני</div><div style="font-size:11.5px;color:#1E7A4C;font-weight:600">✓ תלמיד/ה מאומת/ת</div></div></div>
+      </div>
+      <div style="border:1px solid #E5E0D4;border-radius:16px;padding:22px 24px;background:#FFFDF8">
+        <div style="color:#D9A441;font-size:15px;letter-spacing:2px;margin-bottom:10px">★★★★<span style="color:#E5E0D4">★</span></div>
+        <p style="font-size:14.5px;line-height:1.75;color:#3A3830;margin:0 0 16px">"הפרק על אור טבעי שווה את כל המחיר. הייתי שמח ליותר תרגול בצילום לילה."</p>
+        <div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:50%;background:#F5F2EB;border:1px solid #E5E0D4;display:grid;place-items:center;font-size:12px;font-weight:700;color:#12151D">גא</div><div><div style="font-size:13px;font-weight:700;color:#12151D">גיא אלמוג</div><div style="font-size:11.5px;color:#1E7A4C;font-weight:600">✓ תלמיד/ה מאומת/ת</div></div></div>
+      </div>
+    </div>
+  </div>
+  <!-- FAQ + CTA band -->
+  <div style="padding:0 40px 56px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start">
+      <div>
+        <h2 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:28px;color:#12151D;margin:0 0 18px">שאלות נפוצות</h2>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="border:1px solid #E5E0D4;border-radius:13px;padding:16px 20px"><div style="font-size:14.5px;font-weight:700;color:#12151D;display:flex;justify-content:space-between;align-items:center">צריך טלפון מדגם מסוים? <span style="color:#B0492A">−</span></div><div style="font-size:13.5px;line-height:1.7;color:#6F6C64;margin-top:8px">לא. כל סמארטפון מחמש השנים האחרונות מספיק. העיקרון חשוב מהציוד.</div></div>
+          <div style="border:1px solid #E5E0D4;border-radius:13px;padding:16px 20px"><div style="font-size:14.5px;font-weight:700;color:#12151D;display:flex;justify-content:space-between;align-items:center">לכמה זמן יש גישה לקורס? <span style="color:#6F6C64">+</span></div></div>
+          <div style="border:1px solid #E5E0D4;border-radius:13px;padding:16px 20px"><div style="font-size:14.5px;font-weight:700;color:#12151D;display:flex;justify-content:space-between;align-items:center">בכמה מכשירים אפשר לצפות? <span style="color:#6F6C64">+</span></div></div>
+        </div>
+      </div>
+      <div style="background:#12151D;border-radius:22px;padding:38px 40px;position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 15% 115%, rgba(176,73,42,.35), transparent 55%)"></div>
+        <div style="position:relative">
+          <h2 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:30px;color:#F5F2EB;margin:0 0 10px">מוכנים להתחיל לצלם ברצינות?</h2>
+          <p style="font-size:14.5px;line-height:1.7;color:#C7CBD4;margin:0 0 24px">גישה מיידית לכל השיעורים, לתמיד. אפשר לצפות מכל מכשיר — עד <span dir="ltr">3</span> במקביל.</p>
+          <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+            <button style="font-family:'Heebo',sans-serif;font-weight:700;font-size:17px;padding:15px 34px;border-radius:14px;border:none;background:#B0492A;color:#FFFDF8;cursor:pointer;box-shadow:0 8px 22px rgba(176,73,42,.45)" style-hover="background:#93381E">הרשמה · <span dir="ltr">₪349</span></button>
+            <div style="font-size:13px;color:#9AA1AF">🪙 שיתפו את הקורס אחרי הרכישה — וצברו מטבעות</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- mobile landing -->
+<div class="dv-card" style="width:390px" dir="rtl">
+  <div style="background:rgba(255,253,248,.97);border-bottom:1px solid #E5E0D4;padding:0 18px;height:54px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:30px;border-radius:9px;background:#12151D;display:grid;place-items:center;color:#F5F2EB;font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:15px">א</div><span style="font-weight:700;font-size:14px;color:#12151D">סטודיו אוֹר</span></div>
+    <span style="font-size:20px;color:#12151D">☰</span>
+  </div>
+  <div style="background:linear-gradient(180deg,#F7F0EA,#FFFDF8);padding:32px 22px 28px">
+    <div style="display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:#B0492A;background:#F7E5DD;padding:5px 12px;border-radius:99px;margin-bottom:14px">📸 קורס דיגיטלי</div>
+    <h1 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:30px;line-height:1.2;color:#12151D;margin:0 0 10px">צילום בסמארטפון: מתמונות "בסדר" לתמונות שמוכרות</h1>
+    <p style="font-size:14px;line-height:1.7;color:#5A574E;margin:0 0 18px">הטלפון שבכיס מספיק בהחלט — לומדים לחשוב כמו צלמים.</p>
+    <div style="border-radius:16px;overflow:hidden;border:1px solid #E5E0D4;position:relative;height:190px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;height:100%">
+        <div style="background:repeating-linear-gradient(45deg,#E9E2D6 0 10px,#F1EBE0 10px 20px)"></div>
+        <div style="background:repeating-linear-gradient(45deg,#D9C7BC 0 10px,#E4D5CB 10px 20px)"></div>
+      </div>
+      <div style="position:absolute;top:0;bottom:0;right:50%;width:3px;background:#FFFDF8"></div>
+      <div style="position:absolute;top:50%;right:50%;transform:translate(50%,-50%);width:40px;height:40px;border-radius:50%;background:#FFFDF8;box-shadow:0 4px 12px rgba(0,0,0,.2);display:grid;place-items:center;font-size:13px">⇄</div>
+    </div>
+    <div style="display:flex;gap:16px;font-size:12px;color:#5A574E;margin-bottom:6px">
+      <span><b style="color:#12151D"><span dir="ltr">6</span></b> פרקים</span>
+      <span><b style="color:#12151D"><span dir="ltr">42</span></b> שיעורים</span>
+      <span><b style="color:#12151D"><span dir="ltr">9.5</span></b> שעות</span>
+      <span>★ <b style="color:#12151D"><span dir="ltr">4.9</span></b></span>
+    </div>
+  </div>
+  <div style="padding:24px 22px;border-top:1px solid #E5E0D4">
+    <h2 style="font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:20px;color:#12151D;margin:0 0 12px">תוכנית הלימודים</h2>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="border:1px solid #E5E0D4;border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px;min-height:44px;box-sizing:border-box"><span style="font-family:'Frank Ruhl Libre',serif;font-weight:900;color:#B0492A"><span dir="ltr">01</span></span><span style="font-size:13.5px;font-weight:600;color:#12151D;flex:1">לחשוב כמו צלם</span><span dir="ltr" style="font-size:11.5px;color:#6F6C64">1:24</span></div>
+      <div style="border:1px solid #E5E0D4;border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px;min-height:44px;box-sizing:border-box"><span style="font-family:'Frank Ruhl Libre',serif;font-weight:900;color:#B0492A"><span dir="ltr">02</span></span><span style="font-size:13.5px;font-weight:600;color:#12151D;flex:1">אור — החומר של התמונות</span><span dir="ltr" style="font-size:11.5px;color:#6F6C64">1:52</span></div>
+      <div style="border:1px solid #E5E0D4;border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px;min-height:44px;box-sizing:border-box"><span style="font-family:'Frank Ruhl Libre',serif;font-weight:900;color:#B0492A"><span dir="ltr">03</span></span><span style="font-size:13.5px;font-weight:600;color:#12151D;flex:1">צילום מוצר ואוכל</span><span dir="ltr" style="font-size:11.5px;color:#6F6C64">2:10</span></div>
+    </div>
+  </div>
+  <!-- sticky mobile CTA -->
+  <div style="position:sticky;bottom:0;background:rgba(255,253,248,.97);border-top:1px solid #E5E0D4;padding:12px 18px;display:flex;align-items:center;gap:14px">
+    <div style="font-size:13px;color:#6F6C64"><b style="color:#12151D;font-size:16px"><span dir="ltr">₪349</span></b><br>גישה לתמיד</div>
+    <button style="flex:1;font-family:'Heebo',sans-serif;font-weight:700;font-size:15px;padding:14px;border-radius:12px;border:none;background:#B0492A;color:#FFFDF8;min-height:48px">אני רוצה להתחיל ←</button>
+  </div>
+</div>
+</div>
+</div>
+
+
+</div>
+<p class="dv-next">אפשר להמשיך עם: «תעשו גרסה כהה לחדר החיבורים <a class="dv-oid" href="#1d">1d</a>» · «תבנו את דף הבית השיווקי ואת אשף הקורס» · «כיוון ויזואלי שני להשוואה»</p>
+</section>
+
+</x-dc>
+</body>
+</html>
