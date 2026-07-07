@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { apiError, clientIp, parseBody } from '@/lib/api';
 import { loginSchema } from '@/lib/validation/schemas';
 import { rateLimit, LOGIN_LIMIT } from '@/lib/rate-limit';
@@ -6,10 +7,11 @@ import { getTenantBySlug } from '@/lib/tenant/resolve';
 import { forTenant, asSuperAdmin } from '@/lib/tenant/scoped-prisma';
 import { hashPassword, verifyPassword } from '@/lib/auth/password';
 import { signAccessToken } from '@/lib/auth/jwt';
-import { createSession } from '@/lib/session-registry/registry';
+import { createSession, evictSession, sessionExists } from '@/lib/session-registry/registry';
 import { enforceSessionPolicy } from '@/lib/session-registry/policy';
 import { deviceLabelFromUa } from '@/lib/auth/device';
-import { setAuthCookies } from '@/lib/auth/issue';
+import { parseRefreshCookie, setAuthCookies } from '@/lib/auth/issue';
+import { REFRESH_COOKIE } from '@/lib/auth/cookies';
 
 // Verified against when the user doesn't exist, so response timing doesn't
 // reveal which emails are registered.
@@ -52,6 +54,16 @@ export async function POST(req: Request) {
   const passwordOk = await verifyPassword(user?.passwordHash ?? (await dummyHashPromise), password);
   if (!user || !passwordOk) return invalidCredentials();
   if (user.status !== 'ACTIVE') return apiError(403, 'account_suspended');
+
+  // A browser re-logging-in still carries its previous session cookie.
+  // Replace that session instead of stacking a new one, so the limiter counts
+  // devices, not logins. Possession of the httpOnly sid grants the same power
+  // as logout over that session, and the cookie is overwritten below either
+  // way — even if it belonged to a different account on a shared browser.
+  const prior = parseRefreshCookie((await cookies()).get(REFRESH_COOKIE)?.value);
+  if (prior && (await sessionExists(prior.sid))) {
+    await evictSession(prior.sid, { notify: false });
+  }
 
   const limit = tenant?.sessionLimit ?? SUPER_ADMIN_SESSION_LIMIT;
   const policy = tenant?.evictionPolicy ?? 'EVICT_OLDEST';
