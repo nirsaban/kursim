@@ -16,6 +16,7 @@ import {
 } from './MarketingFields';
 import GalleryEditor from './GalleryEditor';
 import ReviewsModeration from './ReviewsModeration';
+import AffiliatesPanel from './AffiliatesPanel';
 
 export default function MarketingTab({
   courseId,
@@ -254,6 +255,14 @@ export default function MarketingTab({
         <CardHeader title={he.reviews} subtitle={he.reviewsTitle} />
         <CardBody>
           <ReviewsModeration courseId={courseId} />
+        </CardBody>
+      </Card>
+
+      {/* Affiliates */}
+      <Card>
+        <CardHeader title={he.affiliatesSection} subtitle={he.affiliateTitle} />
+        <CardBody>
+          <AffiliatesPanel courseId={courseId} />
         </CardBody>
       </Card>
 

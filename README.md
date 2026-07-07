@@ -76,7 +76,8 @@ For development without Docker (requires running PostgreSQL and Redis):
 - **Course Onboarding Wizard** — New courses start with a guided flow that collects marketing content (audience, outcomes, benefits, testimonials, FAQ, pricing, styling)
 - **Public Landing Pages** — Every course can publish an interactive marketing landing page (`/t/{school}/c/{courseId}`) with a curriculum accordion, testimonials, FAQ, media gallery (photos, short clips, and draggable before/after comparisons), and a themed CTA — no login required, shareable anywhere
 - **Payment Link CTA** — Set a checkout URL in the wizard/marketing tab and the landing page's enroll button leads straight to payment (opens in a new tab)
-- **Verified Student Reviews** — Students are prompted to rate and review when they finish the last lesson of a course; the owner approves reviews before they appear on the landing page with a "verified student" badge
+- **Verified Student Reviews** — Students are prompted to rate and review when they finish the last lesson of a course (including a private note to the instructor); the owner can edit the wording before approving it to the landing page with a "verified student" badge
+- **Affiliate Program** — Every enrolled student gets a personal share link (`?ref=code`) for the course landing page; unique visitors are counted (deduplicated by IP + browser in Redis) and every N visitors (default 100, `AFFILIATE_VISITS_PER_COIN`) earns the student a coin. Students track visits/coins on their course page; owners see all affiliates per course in the marketing tab
 - **Cloudinary Integration** — Direct browser upload of large video assets
 - **Hebrew UI** — RTL-correct interface with Tailwind CSS logical properties
 

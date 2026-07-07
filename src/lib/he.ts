@@ -219,6 +219,11 @@ export const he = {
   affiliateCoins: 'מטבעות שנצברו',
   affiliateToNext: 'עוד {n} מבקרים למטבע הבא',
   affiliateGetLink: 'קבלת קישור שיתוף',
+  shareWhatsapp: 'שיתוף בוואטסאפ',
+  shareInstagram: 'סטורי באינסטגרם',
+  shareGeneric: 'שיתוף...',
+  shareText: 'מוזמנים להציץ בקורס שאני לומד/ת:',
+  instagramCopied: 'הקישור הועתק! פתחו סטורי באינסטגרם והוסיפו אותו כסטיקר קישור (Link)',
   affiliatesSection: 'שיווק שותפים',
   affiliatesEmpty: 'עדיין אין שותפים — תלמידים שרכשו את הקורס יכולים לשתף קישור אישי ולצבור מטבעות',
 
