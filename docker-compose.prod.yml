@@ -47,6 +47,26 @@ services:
       redis:
         condition: service_healthy
 
+  # AI course-media worker: consumes the BullMQ queue and runs the Gemini
+  # pipeline (prompt → Veo → ffmpeg frames → Imagen → Cloudinary). Shares the
+  # app image; overrides the entrypoint to run the worker instead of the server.
+  worker:
+    build: .
+    container_name: kursim-worker
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://kursim_app:${KURSIM_APP_PASSWORD}@postgres:5432/kursim
+      REDIS_URL: redis://redis:6379
+      FFMPEG_PATH: /usr/bin/ffmpeg
+    entrypoint: ["node", "--import", "tsx", "src/worker/course-media-worker.ts"]
+    networks: [internal]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 networks:
   internal:
   proxy:

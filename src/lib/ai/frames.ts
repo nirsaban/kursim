@@ -7,6 +7,10 @@ import ffmpegPath from 'ffmpeg-static';
 
 const run = promisify(execFile);
 
+// Prefer a system ffmpeg (set FFMPEG_PATH on Alpine, where the ffmpeg-static
+// glibc binary won't run under musl); fall back to ffmpeg-static, then PATH.
+const FFMPEG_BIN = process.env.FFMPEG_PATH || ffmpegPath || 'ffmpeg';
+
 export interface ExtractedFrames {
   /** Temp working directory — caller must call cleanup() when done. */
   dir: string;
@@ -23,12 +27,11 @@ export interface ExtractedFrames {
  * copies the last frame as the poster. Returns the actual frame count.
  */
 export async function extractFrames(mp4: Buffer, maxFrames = 240): Promise<ExtractedFrames> {
-  if (!ffmpegPath) throw new Error('ffmpeg-static binary not found');
   const dir = await mkdtemp(join(tmpdir(), 'kursim-frames-'));
   const mp4Path = join(dir, 'clip.mp4');
   await writeFile(mp4Path, mp4);
 
-  await run(ffmpegPath, [
+  await run(FFMPEG_BIN, [
     '-y',
     '-i', mp4Path,
     '-vf', 'fps=30,scale=1280:-2:flags=lanczos',
