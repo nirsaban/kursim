@@ -162,7 +162,7 @@ export default function StudentsManager() {
       {students.length === 0 ? (
         <EmptyState
           icon="🧑‍🎓"
-          title={he.none}
+          title={he.noStudentsYet}
           hint="הוסיפו תלמיד ראשון או שלחו קישור הזמנה"
           action={<Button onClick={() => setCreateOpen(true)}>+ {he.newStudent}</Button>}
         />

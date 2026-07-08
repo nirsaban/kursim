@@ -33,7 +33,7 @@ export default function AffiliatesPanel({ courseId }: { courseId: string }) {
 
   if (!affiliates) return <div className="h-24 rounded-xl bg-ink/[0.04] animate-pulse" />;
   if (affiliates.length === 0) {
-    return <EmptyState icon="🪙" title={he.none} hint={he.affiliatesEmpty} />;
+    return <EmptyState icon="🪙" title={he.noAffiliatesYet} hint={he.affiliatesEmpty} />;
   }
 
   return (

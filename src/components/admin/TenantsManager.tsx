@@ -78,7 +78,7 @@ export default function TenantsManager() {
       <Button onClick={() => setShowForm(true)}>+ {he.newTenant}</Button>
 
       {tenants.length === 0 ? (
-        <EmptyState icon="🏫" title={he.none} hint="צרו את בית הספר הראשון בפלטפורמה" />
+        <EmptyState icon="🏫" title={he.noTenantsYet} hint="צרו את בית הספר הראשון בפלטפורמה" />
       ) : (
         <TableWrap>
           <Table>

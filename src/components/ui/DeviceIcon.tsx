@@ -2,8 +2,8 @@ type Kind = 'phone' | 'tablet' | 'tv' | 'laptop';
 
 function kindOf(label: string): Kind {
   const l = label.toLowerCase();
-  if (/(iphone|android(?!.*tablet)|mobile|pixel|galaxy(?! tab))/.test(l)) return 'phone';
   if (/(ipad|tablet|tab )/.test(l)) return 'tablet';
+  if (/(iphone|ios|android(?!.*tablet)|mobile|pixel|galaxy(?! tab))/.test(l)) return 'phone';
   if (/(tv|chromecast|apple tv)/.test(l)) return 'tv';
   return 'laptop';
 }
