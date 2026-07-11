@@ -10,6 +10,7 @@
     "worker": "node --env-file=.env --import tsx src/worker/course-media-worker.ts",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
+    "users": "ADMIN_DATABASE_URL=\"${ADMIN_DATABASE_URL:-postgresql://postgres:postgres@localhost:15432/kursim}\" tsx scripts/list-users.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
