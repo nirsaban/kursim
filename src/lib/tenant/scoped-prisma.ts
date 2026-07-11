@@ -13,6 +13,7 @@ const TENANT_MODELS = new Set([
   'CourseReview',
   'AffiliateLink',
   'CourseMedia',
+  'LearningActivity',
 ]);
 
 const WHERE_OPS = new Set([

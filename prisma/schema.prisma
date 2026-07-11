@@ -47,6 +47,8 @@ model Tenant {
   status          TenantStatus  @default(ACTIVE)
   sessionLimit    Int           @default(3)
   evictionPolicy  EvictionPolicy @default(BLOCK)
+  /// Owner-customizable student-home content (validated by homepageSchema).
+  homepage        Json?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
@@ -61,6 +63,7 @@ model Tenant {
   reviews         CourseReview[]
   affiliateLinks  AffiliateLink[]
   courseMedia     CourseMedia[]
+  learningActivity LearningActivity[]
 }
 
 model User {
@@ -80,6 +83,7 @@ model User {
   progress            Progress[]
   reviews             CourseReview[]
   affiliateLinks      AffiliateLink[]
+  learningActivity    LearningActivity[]
 
   @@unique([tenantId, email])
 }
@@ -237,6 +241,24 @@ model Progress {
   lesson          Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, lessonId])
+}
+
+/// One row per student per active learning day (any progress write that day).
+/// Powers the streak counter and the journey activity calendar.
+model LearningActivity {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  studentId String   @db.Uuid
+  /// Calendar day in Asia/Jerusalem, stored as a DATE.
+  date      DateTime @db.Date
+  createdAt DateTime @default(now())
+
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, date])
+  @@index([tenantId])
+  @@index([tenantId, studentId])
 }
 
 model Enrollment {

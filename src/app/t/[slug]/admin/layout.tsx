@@ -32,6 +32,7 @@ export default async function AdminLayout({
       ? [
           { href: `/t/${slug}/admin/students`, label: he.students },
           { href: `/t/${slug}/admin/sessions`, label: he.sessions, liveDot: true },
+          { href: `/t/${slug}/admin/homepage`, label: he.homepageBuilder },
           { href: `/t/${slug}/admin/settings`, label: he.settings },
         ]
       : []),

@@ -58,6 +58,25 @@ describe('tenant scoping injection (layer 1)', () => {
     }
   });
 
+  it('forces tenantId on LearningActivity upsert create', () => {
+    const args = injectTenant(
+      'LearningActivity',
+      'upsert',
+      {
+        where: { studentId_date: { studentId: 's1', date: new Date('2026-07-11') } },
+        create: { studentId: 's1', date: new Date('2026-07-11') },
+        update: {},
+      },
+      TENANT,
+    );
+    expect(args.create.tenantId).toBe(TENANT);
+  });
+
+  it('scopes LearningActivity findMany', () => {
+    const args = injectTenant('LearningActivity', 'findMany', { where: { studentId: 's1' } }, TENANT);
+    expect(args.where).toEqual({ AND: [{ tenantId: TENANT }, { studentId: 's1' }] });
+  });
+
   it('leaves non-tenant models (Tenant) untouched', () => {
     const original = { where: { slug: 'demo' } };
     const args = injectTenant('Tenant', 'findMany', original, TENANT);

@@ -3,6 +3,7 @@ import { requireAuth, forbidden } from '@/lib/auth/guards';
 import { apiError, parseBody } from '@/lib/api';
 import { progressSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
+import { dayKey } from '@/lib/achievements';
 
 export async function GET(req: Request) {
   const auth = await requireAuth({ roles: ['STUDENT'] });
@@ -50,5 +51,19 @@ export async function POST(req: Request) {
     : await db.progress.create({
         data: { tenantId: auth.tenantId!, studentId: auth.userId, lessonId, ...data },
       });
+
+  // Mark today (Asia/Jerusalem) as an active learning day — powers streaks.
+  // Never let this write fail the progress save (e.g. concurrent-heartbeat race).
+  try {
+    const date = new Date(`${dayKey(new Date())}T00:00:00.000Z`);
+    await db.learningActivity.upsert({
+      where: { studentId_date: { studentId: auth.userId, date } },
+      create: { tenantId: auth.tenantId!, studentId: auth.userId, date },
+      update: {},
+    });
+  } catch {
+    // ignore
+  }
+
   return NextResponse.json({ progress });
 }

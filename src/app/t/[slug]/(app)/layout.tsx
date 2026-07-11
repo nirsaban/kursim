@@ -25,6 +25,9 @@ export default async function TenantAppLayout({
   });
 
   const links: NavLink[] = [{ href: `/t/${slug}`, label: he.myCourses, exact: true }];
+  if (auth.role === 'STUDENT') {
+    links.push({ href: `/t/${slug}/journey`, label: he.journeyTitle });
+  }
   if (auth.role === 'OWNER' || auth.role === 'INSTRUCTOR') {
     links.push({ href: `/t/${slug}/admin`, label: he.admin });
   }
