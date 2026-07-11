@@ -100,6 +100,27 @@ const config: Config = {
           from: { opacity: '0', transform: 'translateY(18px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
+        marquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(50%)' },
+        },
+        'cta-glow': {
+          '0%, 100%': { boxShadow: '0 8px 22px var(--glow, rgba(228,87,46,0.35))' },
+          '50%': { boxShadow: '0 8px 34px var(--glow-strong, rgba(228,87,46,0.6))' },
+        },
+        'badge-pulse': {
+          '0%': { boxShadow: '0 0 0 0 var(--glow, rgba(228,87,46,0.4))' },
+          '70%': { boxShadow: '0 0 0 10px transparent' },
+          '100%': { boxShadow: '0 0 0 0 transparent' },
+        },
+        'gradient-pan': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        'bounce-soft': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(6px)' },
+        },
       },
       animation: {
         'pulse-live': 'pulse-live 2.4s infinite',
@@ -110,6 +131,11 @@ const config: Config = {
         'drift-slow': 'drift 26s ease-in-out infinite',
         sheen: 'sheen 2.6s ease-in-out infinite',
         rise: 'rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both',
+        marquee: 'marquee 30s linear infinite',
+        'cta-glow': 'cta-glow 2.8s ease-in-out infinite',
+        'badge-pulse': 'badge-pulse 2.4s infinite',
+        'gradient-pan': 'gradient-pan 8s ease-in-out infinite',
+        'bounce-soft': 'bounce-soft 1.8s ease-in-out infinite',
       },
     },
   },

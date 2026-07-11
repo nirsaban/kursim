@@ -1,7 +1,18 @@
 import { z } from 'zod';
 
 /** Landing-page accent themes the owner can pick in the onboarding wizard. */
-export const LANDING_ACCENTS = ['petrol', 'copper', 'plum', 'forest', 'midnight'] as const;
+export const LANDING_ACCENTS = [
+  'petrol',
+  'copper',
+  'plum',
+  'forest',
+  'midnight',
+  'royal',
+  'rose',
+  'ocean',
+  'sunset',
+  'noir',
+] as const;
 export type LandingAccent = (typeof LANDING_ACCENTS)[number];
 
 export const marketingSchema = z.object({

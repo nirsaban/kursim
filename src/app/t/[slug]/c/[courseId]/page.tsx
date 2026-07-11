@@ -10,7 +10,13 @@ import { signedDeliveryUrl, VIDEO_URL_TTL_SEC } from '@/lib/cloudinary/sign-deli
 import Reveal from '@/components/landing/Reveal';
 import BeforeAfterSlider from '@/components/landing/BeforeAfterSlider';
 import CourseRevealSequence from '@/components/landing/CourseRevealSequence';
+import CountUp from '@/components/landing/CountUp';
+import SaleCountdown from '@/components/landing/SaleCountdown';
+import Marquee from '@/components/landing/Marquee';
+import StickyCta from '@/components/landing/StickyCta';
+import ScrollProgress from '@/components/landing/ScrollProgress';
 import TiltCard from '@/components/fx/TiltCard';
+import Aurora from '@/components/fx/Aurora';
 import { trackAffiliateVisit } from '@/lib/affiliates';
 import { headers } from 'next/headers';
 import { he } from '@/lib/he';
@@ -90,6 +96,9 @@ export default async function CourseLandingPage({ params, searchParams }: Params
     take: 6,
   });
 
+  // Social proof: real enrollment count, shown once it's meaningful.
+  const enrollCount = await forTenant(tenant.id).enrollment.count({ where: { courseId } });
+
   // Gallery: mint signed delivery URLs server-side (page is dynamic)
   const gallery = isCloudinaryConfigured()
     ? m.gallery.map((item) => ({
@@ -159,21 +168,50 @@ export default async function CourseLandingPage({ params, searchParams }: Params
     : (gallery.find((g) => g.kind === 'BEFORE_AFTER' && g.afterUrl) ?? gallery[0] ?? null);
   const galleryRest = heroMedia ? gallery.filter((g) => g !== heroMedia) : gallery;
 
-  const cta = (extra = '') => (
+  // Owners sometimes put an arrow in their own CTA text — don't double it.
+  const ctaHasArrow = /[←→⬅]/.test(ctaText);
+  const cta = (extra = '', glow = false) => (
     <a
       href={ctaHref}
       {...externalProps}
-      className={`inline-flex items-center justify-center gap-2 font-bold rounded-[14px] px-8 py-3.5 text-card transition-transform hover:scale-[1.02] active:scale-[0.99] ${extra}`}
-      style={{ background: theme.main, boxShadow: `0 8px 22px ${theme.main}59` }}
+      className={`group relative overflow-hidden fx-sheen inline-flex items-center justify-center gap-2.5 font-bold text-[17px] rounded-[16px] px-9 py-4 text-card transition-transform hover:scale-[1.03] active:scale-[0.99] ${
+        glow ? 'animate-cta-glow' : ''
+      } ${extra}`}
+      style={{
+        background: `linear-gradient(135deg, ${theme.main}, ${theme.deep})`,
+        boxShadow: `0 8px 22px ${theme.main}59`,
+      }}
     >
       {m.paymentLink && <span aria-hidden>🔒</span>}
       {ctaText}
       {m.priceText && <span className="font-medium opacity-90">· {m.priceText}</span>}
+      {!ctaHasArrow && (
+        <span aria-hidden className="transition-transform duration-300 group-hover:-translate-x-1">
+          ←
+        </span>
+      )}
     </a>
   );
 
+  // Trust bullets under the primary CTA — the quiet objection-killers.
+  const trustBullets = [
+    he.trustInstantAccess,
+    he.trustLifetime,
+    he.trustAnyDevice,
+    ...(m.paymentLink ? [he.trustSecurePayment] : []),
+  ];
+
   return (
-    <main className="bg-card text-ink">
+    <main
+      className="bg-card text-ink"
+      style={
+        {
+          '--glow': `${theme.main}47`,
+          '--glow-strong': `${theme.main}80`,
+        } as React.CSSProperties
+      }
+    >
+      <ScrollProgress accent={theme.main} />
       {previewMode && (
         <div className="bg-warn text-white text-center text-sm font-semibold py-2 px-4">
           {he.landingPreview} — {he.landingDraftBadge}
@@ -238,8 +276,8 @@ export default async function CourseLandingPage({ params, searchParams }: Params
           <a
             href={ctaHref}
             {...externalProps}
-            className="shrink-0 text-sm font-bold text-card rounded-[11px] px-5 py-2.5 transition-opacity hover:opacity-90"
-            style={{ background: theme.main }}
+            className="relative overflow-hidden fx-sheen shrink-0 text-sm font-bold text-card rounded-[11px] px-5 py-2.5 transition-transform hover:scale-[1.04]"
+            style={{ background: `linear-gradient(135deg, ${theme.main}, ${theme.deep})` }}
           >
             {ctaText}
           </a>
@@ -263,6 +301,17 @@ export default async function CourseLandingPage({ params, searchParams }: Params
         className="relative overflow-hidden"
         style={{ background: `linear-gradient(180deg, ${theme.soft} 0%, #FFFDF8 100%)` }}
       >
+        <Aurora colors={[`${theme.main}30`, `${theme.accent}22`]} />
+        <span
+          aria-hidden
+          className="absolute top-16 end-[8%] w-40 h-40 rounded-full blur-3xl animate-float pointer-events-none"
+          style={{ background: `${theme.main}26` }}
+        />
+        <span
+          aria-hidden
+          className="absolute bottom-10 start-[12%] w-28 h-28 rounded-full blur-2xl animate-float-slow pointer-events-none"
+          style={{ background: `${theme.accent}1F` }}
+        />
         <div
           className={`relative max-w-5xl mx-auto px-4 py-16 sm:py-20 ${
             heroMedia ? 'grid gap-12 items-center lg:grid-cols-[1.1fr,1fr]' : ''
@@ -271,13 +320,38 @@ export default async function CourseLandingPage({ params, searchParams }: Params
           <div>
             <Reveal>
               <span
-                className="inline-flex items-center gap-2 text-[13px] font-bold rounded-full px-3.5 py-1.5 mb-5"
+                className="inline-flex items-center gap-2 text-[13px] font-bold rounded-full px-3.5 py-1.5 mb-5 animate-badge-pulse"
                 style={{ color: theme.main, background: `${theme.main}1A` }}
               >
                 {m.emoji} {he.digitalCourseBadge}
+                <span className="relative flex w-2 h-2" aria-hidden>
+                  <span
+                    className="absolute inline-flex w-full h-full rounded-full opacity-60 animate-ping"
+                    style={{ background: theme.main }}
+                  />
+                  <span
+                    className="relative inline-flex w-2 h-2 rounded-full"
+                    style={{ background: theme.main }}
+                  />
+                </span>
               </span>
               <h1 className="font-display text-4xl sm:text-[52px] font-black leading-[1.15] max-w-3xl text-ink">
-                {headline}
+                {headline.split(' ').length > 1 ? (
+                  <>
+                    {headline.split(' ').slice(0, -1).join(' ')}{' '}
+                    <span
+                      className="bg-clip-text text-transparent animate-gradient-pan"
+                      style={{
+                        backgroundImage: `linear-gradient(90deg, ${theme.main}, ${theme.accent}, ${theme.main})`,
+                        backgroundSize: '200% 100%',
+                      }}
+                    >
+                      {headline.split(' ').at(-1)}
+                    </span>
+                  </>
+                ) : (
+                  headline
+                )}
               </h1>
               {m.subheadline && (
                 <p className="text-lg text-muted mt-5 max-w-2xl leading-relaxed">
@@ -287,33 +361,77 @@ export default async function CourseLandingPage({ params, searchParams }: Params
             </Reveal>
             <Reveal delay={150}>
               <div className="flex flex-wrap items-center gap-4 mt-8">
-                {cta()}
+                {cta('', true)}
                 {!heroMedia && m.instructorName && (
                   <span className="text-sm text-muted">
                     עם <b className="text-ink">{m.instructorName}</b>
                   </span>
                 )}
               </div>
-              <div className="flex flex-wrap items-stretch gap-x-6 gap-y-3 mt-9 text-[13px] text-muted">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 text-[13px] text-muted">
+                {trustBullets.map((t) => (
+                  <span key={t} className="inline-flex items-center gap-1.5">
+                    <span className="font-black" style={{ color: theme.main }} aria-hidden>
+                      ✓
+                    </span>
+                    {t}
+                  </span>
+                ))}
+              </div>
+              {enrollCount >= 3 && (
+                <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-ink">
+                  <span className="flex -space-x-2" aria-hidden>
+                    {['👩', '🧑', '👨'].map((e, i) => (
+                      <span
+                        key={i}
+                        className="w-7 h-7 rounded-full grid place-items-center text-sm border-2 border-card"
+                        style={{ background: theme.soft }}
+                      >
+                        {e}
+                      </span>
+                    ))}
+                  </span>
+                  <b dir="ltr">{enrollCount}+</b> {he.studentsEnrolled}
+                </p>
+              )}
+              <div className="flex flex-wrap items-stretch gap-x-6 gap-y-3 mt-8 text-[13px] text-muted">
                 {(
                   [
                     course.modules.length > 0 && {
-                      value: String(course.modules.length),
+                      num: course.modules.length,
+                      decimals: 0,
                       label: he.modules,
                     },
-                    lessonCount > 0 && { value: String(lessonCount), label: he.lessons },
-                    totalHours && { value: String(totalHours), label: he.hoursVideo },
-                    avgRating && { value: `★ ${avgRating}`, label: he.reviews },
-                  ] as Array<{ value: string; label: string } | false | 0 | null>
+                    lessonCount > 0 && { num: lessonCount, decimals: 0, label: he.lessons },
+                    totalHours && {
+                      num: totalHours,
+                      decimals: totalHours % 1 ? 1 : 0,
+                      label: he.hoursVideo,
+                    },
+                    avgRating && {
+                      num: avgRating,
+                      decimals: avgRating % 1 ? 1 : 0,
+                      prefix: '★ ',
+                      label: he.reviews,
+                    },
+                  ] as Array<
+                    { num: number; decimals: number; prefix?: string; label: string } | false | 0 | null
+                  >
                 )
-                  .filter((s): s is { value: string; label: string } => Boolean(s))
+                  .filter(
+                    (s): s is { num: number; decimals: number; prefix?: string; label: string } =>
+                      Boolean(s),
+                  )
                   .map((s, i) => (
                     <div key={s.label} className="flex items-stretch gap-6">
                       {i > 0 && <div className="w-px bg-line" aria-hidden />}
                       <div>
-                        <b className="font-display font-black text-xl text-ink block" dir="ltr">
-                          {s.value}
-                        </b>
+                        <CountUp
+                          value={s.num}
+                          decimals={s.decimals}
+                          prefix={s.prefix}
+                          className="font-display font-black text-xl text-ink block"
+                        />
                         {s.label}
                       </div>
                     </div>
@@ -371,7 +489,16 @@ export default async function CourseLandingPage({ params, searchParams }: Params
           )}
 
         </div>
+        <div className="relative hidden sm:flex justify-center pb-5" aria-hidden>
+          <span className="animate-bounce-soft text-muted text-lg">↓</span>
+        </div>
       </section>
+
+      {/* Outcomes marquee — the exclusive brand band */}
+      <Marquee
+        items={m.outcomes.length > 0 ? m.outcomes : m.audience}
+        accent={theme.main}
+      />
 
       {/* Who for + outcomes — one section, two columns per design 1e */}
       {(m.audience.length > 0 || m.outcomes.length > 0) && (
@@ -448,11 +575,16 @@ export default async function CourseLandingPage({ params, searchParams }: Params
           </Reveal>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {m.benefits.map((b, i) => (
-              <Reveal key={i} delay={i * 80}>
-                <div className="border border-line rounded-xl2 p-6 h-full shadow-card">
+              <Reveal key={i} delay={i * 80} className="h-full">
+                <div className="group relative overflow-hidden border border-line rounded-xl2 p-6 h-full shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift">
                   <span
-                    className="inline-flex w-10 h-10 rounded-xl text-card items-center justify-center font-display font-bold"
-                    style={{ background: theme.main }}
+                    aria-hidden
+                    className="absolute inset-x-0 top-0 h-1 origin-center scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
+                    style={{ background: `linear-gradient(90deg, ${theme.main}, ${theme.accent})` }}
+                  />
+                  <span
+                    className="inline-flex w-10 h-10 rounded-xl text-card items-center justify-center font-display font-bold transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6"
+                    style={{ background: `linear-gradient(135deg, ${theme.main}, ${theme.deep})` }}
                     aria-hidden
                   >
                     {i + 1}
@@ -517,8 +649,9 @@ export default async function CourseLandingPage({ params, searchParams }: Params
 
       {/* Curriculum — the dark ink chapter */}
       {lessonCount > 0 && (
-        <section id="curriculum" className="bg-ink">
-          <div className="max-w-3xl mx-auto px-4 py-16">
+        <section id="curriculum" className="relative overflow-hidden bg-ink fx-grain">
+          <Aurora colors={[`${theme.main}40`, `${theme.accent}26`]} />
+          <div className="relative max-w-3xl mx-auto px-4 py-16">
             <Reveal>
               <h2 className="font-display text-2xl sm:text-3xl font-black mb-1.5 text-paper">
                 {he.curriculum}
@@ -586,6 +719,15 @@ export default async function CourseLandingPage({ params, searchParams }: Params
                 </Reveal>
               ))}
             </div>
+
+            {/* Mid-page conversion moment — right after the syllabus sold them */}
+            <Reveal delay={120}>
+              <div className="mt-12 text-center">
+                <p className="font-display text-2xl font-black text-paper">{he.midCtaTitle}</p>
+                <p className="text-sm text-brand-300 mt-1.5">{he.midCtaSubtitle}</p>
+                <div className="mt-5 flex justify-center">{cta('', true)}</div>
+              </div>
+            </Reveal>
           </div>
         </section>
       )}
@@ -602,7 +744,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
             {m.testimonials.map((t, i) => (
               <Reveal key={i} delay={i * 80}>
                 <figure
-                  className="rounded-xl2 p-6 h-full border"
+                  className="rounded-xl2 p-6 h-full border transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
                   style={{ background: theme.soft, borderColor: `${theme.main}26` }}
                 >
                   <blockquote className="leading-relaxed">
@@ -644,7 +786,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
               <Reveal key={r.id} delay={i * 70}>
-                <figure className="border border-line rounded-2xl p-5 h-full bg-card">
+                <figure className="border border-line rounded-2xl p-5 h-full bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
                   <div className="text-coin text-[15px] tracking-[2px]" aria-label={`${r.rating}/5`}>
                     {'★'.repeat(r.rating)}
                     <span className="text-line">{'★'.repeat(5 - r.rating)}</span>
@@ -699,7 +841,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
               style={{ borderColor: theme.accent, background: theme.soft }}
             >
               <span
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-card rounded-full px-3 py-1"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-card rounded-full px-3 py-1 animate-badge-pulse"
                 style={{ background: theme.accent }}
               >
                 🎁 {he.saleBadge}
@@ -713,10 +855,13 @@ export default async function CourseLandingPage({ params, searchParams }: Params
                 </p>
               )}
               {m.sale.endsAt && (
-                <p className="text-sm font-semibold mt-3" style={{ color: theme.accent }}>
-                  ⏳ {he.saleEndsOn}{' '}
-                  {new Date(`${m.sale.endsAt}T00:00:00`).toLocaleDateString('he-IL')}
-                </p>
+                <>
+                  <SaleCountdown endsAt={m.sale.endsAt} accent={theme.accent} />
+                  <p className="text-xs text-muted mt-2">
+                    {he.saleEndsOn}{' '}
+                    {new Date(`${m.sale.endsAt}T00:00:00`).toLocaleDateString('he-IL')}
+                  </p>
+                </>
               )}
               {salePartner && (
                 <div className="mt-6 flex flex-wrap sm:flex-nowrap items-center gap-5 rounded-xl2 border border-line bg-card p-4">
@@ -760,11 +905,20 @@ export default async function CourseLandingPage({ params, searchParams }: Params
                 <a
                   href={saleHref}
                   {...saleExternalProps}
-                  className="inline-flex items-center justify-center gap-2 font-bold rounded-[14px] px-7 py-3.5 text-card transition-transform hover:scale-[1.02] active:scale-[0.99]"
-                  style={{ background: theme.main, boxShadow: `0 8px 22px ${theme.main}59` }}
+                  className="group relative overflow-hidden fx-sheen inline-flex items-center justify-center gap-2 font-bold rounded-[14px] px-8 py-3.5 text-card transition-transform hover:scale-[1.03] active:scale-[0.99] animate-cta-glow"
+                  style={{
+                    background: `linear-gradient(135deg, ${theme.main}, ${theme.deep})`,
+                    boxShadow: `0 8px 22px ${theme.main}59`,
+                  }}
                 >
                   {m.sale.paymentLink && <span aria-hidden>🔒</span>}
                   {he.saleCta}
+                  <span
+                    aria-hidden
+                    className="transition-transform duration-300 group-hover:-translate-x-1"
+                  >
+                    ←
+                  </span>
                 </a>
               </div>
             </div>
@@ -820,6 +974,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
                 background: `radial-gradient(ellipse at 15% 115%, ${theme.main}59, transparent 55%), #12151D`,
               }}
             >
+              <Aurora colors={[`${theme.main}4D`, `${theme.accent}33`]} />
               <div className="relative">
                 <h2 className="font-display text-3xl font-black text-paper leading-snug">
                   {headline}
@@ -842,29 +997,24 @@ export default async function CourseLandingPage({ params, searchParams }: Params
         </div>
       </section>
 
-      <footer className="py-6 border-t border-line bg-card">
+      {/* extra bottom padding keeps the fixed conversion bar from covering the footer */}
+      <footer className="pt-6 pb-24 border-t border-line bg-card">
         <p className="text-center text-sm text-muted">
           {tenant.name} · נבנה עם Kursim
         </p>
       </footer>
 
-      {/* Sticky mobile CTA — price beside the button per design 1e */}
-      <div className="sm:hidden sticky bottom-0 z-40 px-4 py-3 bg-card/95 backdrop-blur border-t border-line flex items-center gap-4">
-        {m.priceText && (
-          <div className="text-xs text-muted leading-tight shrink-0">
-            <b className="text-ink text-base font-display font-black block">{m.priceText}</b>
-          </div>
-        )}
-        <a
-          href={ctaHref}
-          {...externalProps}
-          className="flex-1 min-h-[48px] inline-flex items-center justify-center gap-2 font-bold rounded-[12px] px-5 text-card"
-          style={{ background: theme.main }}
-        >
-          {m.paymentLink && <span aria-hidden>🔒</span>}
-          {ctaText}
-        </a>
-      </div>
+      {/* Sticky conversion bar — slides up after the visitor scrolls past the hero */}
+      <StickyCta
+        href={ctaHref}
+        external={ctaExternal}
+        text={ctaText}
+        priceText={m.priceText || undefined}
+        note={he.ctaAccessNote.replace('{n}', String(tenant.sessionLimit))}
+        accent={theme.main}
+        deep={theme.deep}
+        locked={Boolean(m.paymentLink)}
+      />
     </main>
   );
 }
