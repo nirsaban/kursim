@@ -215,9 +215,11 @@ export async function generateImage(still: MediaPlan['stills'][number]): Promise
       parameters: {
         sampleCount: 1,
         aspectRatio: still.aspectRatio || '16:9',
-        // imagen-4.0-generate-001 accepts ONLY 'dont_allow' here;
-        // 'allow_all' and 'allow_adults' both 400. (Veo is the opposite — see above.)
-        personGeneration: 'dont_allow',
+        // personGeneration is deliberately omitted for imagen-4.0-generate-001:
+        // 'allow_all'/'allow_adults' both 400, and 'dont_allow' is accepted but
+        // silently RAI-filters any image containing people (returns {} with no
+        // bytes → "no image bytes in response"). The default permits adults, which
+        // course stills need. (Veo, by contrast, requires an explicit 'allow_all'.)
       },
     }),
   });
@@ -227,7 +229,11 @@ export async function generateImage(still: MediaPlan['stills'][number]): Promise
   const data = await res.json();
   const pred = data?.predictions?.[0];
   const bytesBase64: string | undefined = pred?.bytesBase64Encoded ?? pred?.image?.bytesBase64Encoded;
-  if (!bytesBase64) throw new Error('Imagen: no image bytes in response');
+  if (!bytesBase64) {
+    // A 200 with no bytes means the sample was RAI-filtered; surface the reason.
+    const reason = pred?.raiFilteredReason ?? data?.predictions?.[0]?.raiFilteredReason;
+    throw new Error(`Imagen: no image bytes in response${reason ? ` (RAI filtered: ${reason})` : ''}`);
+  }
   return {
     role: still.role,
     bytesBase64,
