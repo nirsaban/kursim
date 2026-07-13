@@ -135,6 +135,8 @@ export async function generateVeoVideo(video: MediaPlan['video']): Promise<strin
       parameters: {
         aspectRatio: video.aspectRatio || '16:9',
         negativePrompt: video.negativePrompt,
+        // veo-3.1-fast-generate-preview accepts ONLY 'allow_all' here;
+        // 'allow_adults' and 'dont_allow' both 400. (Imagen is the opposite — see below.)
         personGeneration: 'allow_all',
       },
     }),
@@ -213,7 +215,9 @@ export async function generateImage(still: MediaPlan['stills'][number]): Promise
       parameters: {
         sampleCount: 1,
         aspectRatio: still.aspectRatio || '16:9',
-        personGeneration: 'allow_adults',
+        // imagen-4.0-generate-001 accepts ONLY 'dont_allow' here;
+        // 'allow_all' and 'allow_adults' both 400. (Veo is the opposite — see above.)
+        personGeneration: 'dont_allow',
       },
     }),
   });
