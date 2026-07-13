@@ -135,7 +135,7 @@ export async function generateVeoVideo(video: MediaPlan['video']): Promise<strin
       parameters: {
         aspectRatio: video.aspectRatio || '16:9',
         negativePrompt: video.negativePrompt,
-        personGeneration: 'dont_allow',
+        personGeneration: 'allow_adults',
       },
     }),
   });
