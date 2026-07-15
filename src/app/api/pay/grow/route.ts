@@ -5,7 +5,19 @@ import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { hashPassword } from '@/lib/auth/password';
 import { sendWhatsappText } from '@/lib/whatsapp';
 import { notify } from '@/lib/notify';
+import { getRedis } from '@/lib/redis';
 import { he } from '@/lib/he';
+
+/** Durable diagnostic ring buffer of the last raw callbacks (read via redis: pay:grow:log). */
+async function captureRawCallback(entry: Record<string, unknown>): Promise<void> {
+  try {
+    const r = getRedis();
+    await r.lpush('pay:grow:log', JSON.stringify(entry));
+    await r.ltrim('pay:grow:log', 0, 49);
+  } catch {
+    /* diagnostics must never affect the response */
+  }
+}
 
 // Node runtime: needs crypto + argon2 (not edge-compatible).
 export const runtime = 'nodejs';
@@ -19,21 +31,27 @@ function tempPassword(): string {
   return out;
 }
 
-/** Grow POSTs JSON; some setups send form-encoded. Accept both. */
-async function readBody(req: Request): Promise<Record<string, string>> {
-  const ct = req.headers.get('content-type') ?? '';
-  try {
-    if (ct.includes('application/json')) {
-      const j = await req.json();
-      return j && typeof j === 'object' ? (j as Record<string, string>) : {};
-    }
-    const form = await req.formData();
+/** Grow may POST JSON or form-encoded. Parse from the already-read raw text,
+ *  trying JSON first then form, regardless of the declared content-type. */
+function parseGrowBody(raw: string, ct: string): Record<string, string> {
+  const asForm = (s: string): Record<string, string> => {
     const obj: Record<string, string> = {};
-    for (const [k, v] of form.entries()) obj[k] = String(v);
+    for (const [k, v] of new URLSearchParams(s)) obj[k] = v;
     return obj;
-  } catch {
-    return {};
+  };
+  const tryJson = (s: string): Record<string, string> | null => {
+    try {
+      const j = JSON.parse(s);
+      return j && typeof j === 'object' ? (j as Record<string, string>) : null;
+    } catch {
+      return null;
+    }
+  };
+  if (ct.includes('application/json')) {
+    const j = tryJson(raw);
+    if (j) return j;
   }
+  return tryJson(raw) ?? asForm(raw);
 }
 
 /**
@@ -50,13 +68,26 @@ export async function POST(req: Request) {
   const key = url.searchParams.get('k');
   if (!slug || !courseId || !key) return NextResponse.json({ error: 'missing_params' }, { status: 400 });
 
+  // Read the raw body once and capture it durably, so we can see exactly what
+  // Grow sends even when the parser doesn't recognise it as a completed payment.
+  const contentType = req.headers.get('content-type') ?? '';
+  const rawBody = await req.text().catch(() => '');
+  await captureRawCallback({
+    at: Date.now(),
+    ip: req.headers.get('x-forwarded-for') ?? '',
+    t: slug,
+    c: courseId,
+    ct: contentType,
+    raw: rawBody.slice(0, 4000),
+  });
+
   const tenant = await getTenantBySlug(slug);
   if (!tenant || tenant.status !== 'ACTIVE') return NextResponse.json({ error: 'tenant' }, { status: 404 });
   if (!tenant.webhookSecret || key !== tenant.webhookSecret) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
-  const body = await readBody(req);
+  const body = parseGrowBody(rawBody, contentType);
   const statusCode = String(body.statusCode ?? '');
   const status = String(body.status ?? '');
   // Only act on a confirmed, completed payment.
