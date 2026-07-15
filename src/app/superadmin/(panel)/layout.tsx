@@ -23,7 +23,10 @@ export default async function SuperAdminLayout({ children }: { children: React.R
         brandHref="/superadmin"
         brandEmoji="🛠️"
         roleLabel={he.superAdmin}
-        links={[{ href: '/superadmin', label: he.tenants, exact: true }]}
+        links={[
+          { href: '/superadmin', label: he.tenants, exact: true },
+          { href: '/superadmin/whatsapp', label: he.whatsappTitle },
+        ]}
         userEmail={user?.email}
       />
       <main className="max-w-6xl mx-auto px-4 py-8">{children}</main>

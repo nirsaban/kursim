@@ -469,6 +469,49 @@ export const he = {
   // landing footer
   landingBuiltWith: 'נבנה עם Kursim',
 
+  // ── payments (Grow webhook → auto-provision + WhatsApp) ──
+  payments: 'מכירות ותשלומים',
+  paymentsSubtitle: 'חיבור לדף התשלום של Grow — כל רכישה פותחת חשבון לתלמיד ושולחת לו את פרטי הכניסה בוואטסאפ',
+  paymentsHowTitle: 'איך מחברים',
+  paymentsHowStep1: 'מעתיקים את כתובת ה-Webhook של הקורס',
+  paymentsHowStep2: 'ב-Grow, בדף התשלום של הקורס, מדביקים אותה בשדה ה-Webhook / קריאה חוזרת לשרת',
+  paymentsHowStep3: 'זהו — כל תשלום שמאושר יפתח לתלמיד חשבון, ירשום אותו לקורס, וישלח לו בוואטסאפ שם משתמש וסיסמה',
+  webhookUrlLabel: 'כתובת ה-Webhook של הקורס',
+  copyWebhookUrl: 'העתקת הכתובת',
+  noPaymentLinkYet: 'עדיין לא הוגדר קישור תשלום לקורס הזה — מוסיפים אותו בלשונית השיווק',
+  whatsappStatus: 'שליחת וואטסאפ',
+  whatsappOn: 'מחוברת ✓',
+  whatsappOff: 'לא מוגדרת — פרטי הכניסה יישמרו כאן עד שתחוברת',
+  recentSales: 'רכישות אחרונות',
+  salePayer: 'רוכש/ת',
+  saleCourseCol: 'קורס',
+  saleAmount: 'סכום',
+  saleDelivered: 'נשלח בוואטסאפ',
+  saleNewAccount: 'חשבון חדש',
+  noSalesYet: 'עוד אין רכישות — ברגע שמישהו ישלם, זה יופיע כאן',
+  saleNotifyTitle: 'מכירה חדשה! 🎉',
+
+  // super-admin WhatsApp pairing
+  whatsappTitle: 'וואטסאפ',
+  whatsappSubtitle: 'חיבור מספר וואטסאפ אחד לפלטפורמה — ממנו נשלחים לתלמידים פרטי הכניסה אחרי רכישה',
+  waStatusPending: 'מתחבר…',
+  waStatusQr: 'ממתין לסריקה',
+  waStatusConnected: 'מחובר',
+  waStatusDisconnected: 'מנותק',
+  waStatusLoggedOut: 'לא מחובר',
+  waConnectedAs: 'מחובר כמספר',
+  waConnectedNote: 'הכול מוכן — הודעות הכניסה יישלחו אוטומטית מהמספר הזה.',
+  waScanHint: 'פותחים וואטסאפ בטלפון ← מכשירים מקושרים ← קישור מכשיר, וסורקים את הקוד',
+  waConnectHint: 'לוחצים "התחברות" כדי ליצור קוד QR לסריקה',
+  waConnect: 'התחברות',
+  waLogout: 'ניתוק המספר',
+
+  // WhatsApp message templates (placeholders replaced server-side)
+  waWelcomeNew:
+    'היי {name}! 🎉\nנרשמת לקורס "{course}".\n\nהכניסה שלך למערכת:\n🔗 {url}\n📧 {email}\n🔑 {pass}\n\nבכניסה הראשונה נבחר יחד סיסמה חדשה משלך. נתראה בפנים! 🚀',
+  waWelcomeExisting:
+    'היי {name}! 🎉\nנרשמת לקורס "{course}".\n\nאפשר להיכנס עם החשבון הקיים שלך:\n🔗 {url}\n📧 {email}\n\nנתראה בפנים! 🚀',
+
   // ── extended features: shared ──
   send: 'שליחה',
   reply: 'תגובה',

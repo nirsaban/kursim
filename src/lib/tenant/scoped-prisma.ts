@@ -23,6 +23,7 @@ const TENANT_MODELS = new Set([
   'Certificate',
   'LessonNote',
   'Wishlist',
+  'Purchase',
 ]);
 
 const WHERE_OPS = new Set([

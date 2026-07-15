@@ -8,6 +8,11 @@
 import { Worker } from 'bullmq';
 import { COURSE_MEDIA_QUEUE, getQueueConnection } from '@/lib/ai/queue';
 import { runCourseMediaJob, type CourseMediaJob } from '@/lib/ai/pipeline';
+import { startWhatsappGateway } from './whatsapp-gateway';
+
+// WhatsApp gateway (platform login-delivery number). Isolated: its own failures
+// are swallowed inside startWhatsappGateway and never take down the media worker.
+void startWhatsappGateway();
 
 const worker = new Worker<CourseMediaJob>(
   COURSE_MEDIA_QUEUE,
