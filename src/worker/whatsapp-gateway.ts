@@ -1,10 +1,10 @@
 /**
  * WhatsApp Web (Baileys) gateway — runs inside the worker process.
  *
- * Hosts ONE platform WhatsApp connection used to send students their login
- * details after a purchase. Auth/session state persists in Redis so a restart
- * re-hydrates without re-scanning the QR. The app talks to this only through
- * Redis (see src/lib/whatsapp.ts). Adapted from the Kesher BaileysProvider.
+ * Manages ONE WhatsApp connection PER TENANT (owners pair their own number).
+ * Auth/session state persists in Redis per tenant so a restart re-hydrates
+ * without re-scanning the QR. The app talks to this only through Redis (see
+ * src/lib/whatsapp.ts). Adapted from the Kesher BaileysProvider.
  */
 import { createRequire } from 'node:module';
 import {
@@ -19,11 +19,13 @@ import type { AuthenticationCreds, SignalDataTypeMap, SignalKeyStore, WASocket }
 import pino from 'pino';
 import QRCode from 'qrcode';
 import { getRedis, createSubscriber } from '@/lib/redis';
+import { forTenant } from '@/lib/tenant/scoped-prisma';
 import {
-  WA_STATUS_KEY,
-  WA_QR_KEY,
   WA_OUT_KEY,
   WA_CMD_KEY,
+  waStatusKey,
+  waQrKey,
+  waAuthKey,
   type WaStatus,
 } from '@/lib/whatsapp';
 
@@ -32,20 +34,26 @@ const { proto } = requireCjs('baileys') as {
   proto: { Message: { AppStateSyncKeyData: { fromObject(o: unknown): unknown } } };
 };
 
-const AUTH_KEY = 'wa:auth';
 const RECONNECT_DELAY_MS = 3000;
 const logger = pino({ level: process.env.BAILEYS_LOG_LEVEL ?? 'silent' });
-
-let sock: WASocket | null = null;
-let status: WaStatus = 'pending';
-let reconnecting = false;
-
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function setStatus(s: WaStatus, phone?: string): Promise<void> {
-  status = s;
-  await getRedis().set(WA_STATUS_KEY, JSON.stringify({ status: s, phone: phone ?? null, at: Date.now() }));
-  if (s === 'connected') await getRedis().del(WA_QR_KEY);
+interface Session {
+  sock: WASocket;
+  status: WaStatus;
+  reconnecting: boolean;
+}
+const sessions = new Map<string, Session>();
+
+function statusOf(tenantId: string): WaStatus {
+  return sessions.get(tenantId)?.status ?? 'disconnected';
+}
+
+async function setStatus(tenantId: string, status: WaStatus, phone?: string): Promise<void> {
+  const s = sessions.get(tenantId);
+  if (s) s.status = status;
+  await getRedis().set(waStatusKey(tenantId), JSON.stringify({ status, phone: phone ?? null, at: Date.now() }));
+  if (status === 'connected') await getRedis().del(waQrKey(tenantId));
 }
 
 interface AuthBlob {
@@ -53,12 +61,12 @@ interface AuthBlob {
   keys: Record<string, unknown>;
 }
 
-async function loadAuth(): Promise<{
+async function loadAuth(tenantId: string): Promise<{
   creds: AuthenticationCreds;
   keys: SignalKeyStore;
   persist: () => Promise<void>;
 }> {
-  const raw = await getRedis().get(AUTH_KEY);
+  const raw = await getRedis().get(waAuthKey(tenantId));
   const blob: AuthBlob = raw
     ? (JSON.parse(raw, BufferJSON.reviver) as AuthBlob)
     : { creds: initAuthCreds(), keys: {} };
@@ -66,7 +74,7 @@ async function loadAuth(): Promise<{
   const keyMap = blob.keys;
 
   const persist = async () => {
-    await getRedis().set(AUTH_KEY, JSON.stringify({ creds, keys: keyMap }, BufferJSON.replacer));
+    await getRedis().set(waAuthKey(tenantId), JSON.stringify({ creds, keys: keyMap }, BufferJSON.replacer));
   };
 
   const keys: SignalKeyStore = {
@@ -98,13 +106,16 @@ async function loadAuth(): Promise<{
   return { creds, keys, persist };
 }
 
-async function startSocket(): Promise<void> {
-  const { creds, keys, persist } = await loadAuth();
+async function startSocket(tenantId: string): Promise<void> {
+  const existing = sessions.get(tenantId);
+  if (existing && (existing.status === 'connected' || existing.status === 'qr')) return;
+
+  const { creds, keys, persist } = await loadAuth(tenantId);
   const { version } = await fetchLatestBaileysVersion().catch(() => ({
     version: undefined as [number, number, number] | undefined,
   }));
 
-  sock = makeWASocket({
+  const sock = makeWASocket({
     auth: { creds, keys: makeCacheableSignalKeyStore(keys, logger) },
     logger,
     ...(version ? { version } : {}),
@@ -112,6 +123,8 @@ async function startSocket(): Promise<void> {
     markOnlineOnConnect: false,
   });
 
+  const session: Session = { sock, status: 'pending', reconnecting: false };
+  sessions.set(tenantId, session);
   void persist();
   sock.ev.on('creds.update', () => void persist());
 
@@ -119,61 +132,73 @@ async function startSocket(): Promise<void> {
     const { connection, lastDisconnect, qr } = update;
     if (qr) {
       const dataUrl = await QRCode.toDataURL(qr).catch(() => null);
-      if (dataUrl) await getRedis().set(WA_QR_KEY, dataUrl);
-      await setStatus('qr');
+      if (dataUrl) await getRedis().set(waQrKey(tenantId), dataUrl);
+      await setStatus(tenantId, 'qr');
     }
     if (connection === 'open') {
-      const phone = sock?.user?.id?.split(':')[0];
-      await setStatus('connected', phone);
-      console.log(`[wa] connected as ${phone ?? '?'}`);
+      const phone = sock.user?.id?.split(':')[0];
+      await setStatus(tenantId, 'connected', phone);
+      console.log(`[wa:${tenantId}] connected as ${phone ?? '?'}`);
     }
     if (connection === 'close') {
       const code = (lastDisconnect?.error as { output?: { statusCode?: number } })?.output?.statusCode;
       if (code === DisconnectReason.loggedOut) {
-        sock = null;
-        await getRedis().del(AUTH_KEY);
-        await setStatus('logged_out');
-        console.log('[wa] logged out');
+        sessions.delete(tenantId);
+        await getRedis().del(waAuthKey(tenantId));
+        await setStatus(tenantId, 'logged_out');
+        console.log(`[wa:${tenantId}] logged out`);
       } else {
-        scheduleReconnect();
+        scheduleReconnect(tenantId, session);
       }
     }
   });
 }
 
-function scheduleReconnect(): void {
-  if (reconnecting) return;
-  reconnecting = true;
-  void setStatus('disconnected');
+function scheduleReconnect(tenantId: string, session: Session): void {
+  if (session.reconnecting) return;
+  session.reconnecting = true;
+  void setStatus(tenantId, 'disconnected');
   setTimeout(() => {
-    reconnecting = false;
-    sock = null;
-    startSocket().catch(() => {
+    sessions.delete(tenantId);
+    startSocket(tenantId).catch(() => {
       /* a later command / restart retries */
     });
   }, RECONNECT_DELAY_MS);
 }
 
-async function sendText(to: string, text: string): Promise<void> {
-  if (!sock || status !== 'connected') throw new Error('not_connected');
-  const jid = to.includes('@') ? to : `${to.replace(/\D/g, '')}@s.whatsapp.net`;
-  await sock.sendMessage(jid, { text });
+async function markMessage(tenantId: string, messageId: string, ok: boolean, error?: string): Promise<void> {
+  if (!messageId) return;
+  try {
+    await forTenant(tenantId).whatsappMessage.update({
+      where: { id: messageId },
+      data: { status: ok ? 'sent' : 'failed', sentAt: ok ? new Date() : null, error: ok ? null : error ?? 'send_failed' },
+    });
+  } catch {
+    /* log update is best-effort */
+  }
 }
 
 async function outboundLoop(): Promise<void> {
   const sub = createSubscriber();
   for (;;) {
     try {
-      if (status !== 'connected') {
+      const res = await sub.brpop(WA_OUT_KEY, 5);
+      if (!res) continue;
+      const job = JSON.parse(res[1]) as { tenantId: string; messageId: string; to: string; text: string };
+      const session = sessions.get(job.tenantId);
+      if (!session || session.status !== 'connected') {
+        // tenant not ready — put it back and breathe so we don't hot-loop
+        await getRedis().lpush(WA_OUT_KEY, res[1]);
         await sleep(3000);
         continue;
       }
-      const res = await sub.brpop(WA_OUT_KEY, 5);
-      if (!res) continue;
-      const { to, text } = JSON.parse(res[1]) as { to: string; text: string };
-      await sendText(to, text).catch((e) => {
-        console.error(`[wa] send failed: ${e instanceof Error ? e.message : e}`);
-      });
+      const jid = job.to.includes('@') ? job.to : `${job.to.replace(/\D/g, '')}@s.whatsapp.net`;
+      try {
+        await session.sock.sendMessage(jid, { text: job.text });
+        await markMessage(job.tenantId, job.messageId, true);
+      } catch (e) {
+        await markMessage(job.tenantId, job.messageId, false, e instanceof Error ? e.message.slice(0, 200) : 'send_failed');
+      }
     } catch (e) {
       console.error(`[wa] outbound loop error: ${e instanceof Error ? e.message : e}`);
       await sleep(2000);
@@ -187,22 +212,24 @@ async function commandLoop(): Promise<void> {
     try {
       const res = await sub.brpop(WA_CMD_KEY, 10);
       if (!res) continue;
-      const cmd = res[1];
-      if (cmd === 'connect') {
-        if (status !== 'connected') {
-          sock = null;
-          await startSocket();
+      const { tenantId, action } = JSON.parse(res[1]) as { tenantId: string; action: string };
+      if (!tenantId) continue;
+      if (action === 'connect') {
+        if (statusOf(tenantId) !== 'connected') {
+          sessions.delete(tenantId);
+          await startSocket(tenantId);
         }
-      } else if (cmd === 'logout') {
+      } else if (action === 'logout') {
+        const s = sessions.get(tenantId);
         try {
-          await sock?.logout();
+          await s?.sock.logout();
         } catch {
           /* ignore */
         }
-        sock = null;
-        await getRedis().del(AUTH_KEY);
-        await getRedis().del(WA_QR_KEY);
-        await setStatus('logged_out');
+        sessions.delete(tenantId);
+        await getRedis().del(waAuthKey(tenantId));
+        await getRedis().del(waQrKey(tenantId));
+        await setStatus(tenantId, 'logged_out');
       }
     } catch (e) {
       console.error(`[wa] command loop error: ${e instanceof Error ? e.message : e}`);
@@ -211,14 +238,28 @@ async function commandLoop(): Promise<void> {
   }
 }
 
+/** Re-hydrate every tenant that already has a stored session. */
+async function reconnectExisting(): Promise<void> {
+  const r = getRedis();
+  let cursor = '0';
+  const prefix = waAuthKey('');
+  do {
+    const [next, keys] = await r.scan(cursor, 'MATCH', `${prefix}*`, 'COUNT', 100);
+    cursor = next;
+    for (const key of keys) {
+      const tenantId = key.slice(prefix.length);
+      if (tenantId) await startSocket(tenantId).catch(() => {});
+    }
+  } while (cursor !== '0');
+}
+
 /** Start the gateway. Safe to call once at worker boot; never throws. */
 export async function startWhatsappGateway(): Promise<void> {
   try {
-    await setStatus('pending');
-    await startSocket();
     void outboundLoop();
     void commandLoop();
-    console.log('[wa] gateway started');
+    await reconnectExisting();
+    console.log('[wa] gateway started (per-tenant)');
   } catch (e) {
     console.error(`[wa] gateway start failed: ${e instanceof Error ? e.message : e}`);
   }

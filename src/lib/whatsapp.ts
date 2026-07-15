@@ -1,20 +1,24 @@
 /**
- * App-side WhatsApp interface. The actual WhatsApp Web (Baileys) socket lives in
- * the worker process (src/worker/whatsapp-gateway.ts); the app only talks to it
- * through Redis — so baileys is never bundled into the Next app.
+ * App-side WhatsApp interface. The actual WhatsApp Web (Baileys) sockets live in
+ * the worker process (src/worker/whatsapp-gateway.ts) — one connection PER TENANT.
+ * The app talks to the worker only through Redis, so baileys is never bundled
+ * into the Next app.
  *
- * Redis keys (shared with the worker gateway):
- *   wa:status  JSON { status, phone, at }   — connection state
- *   wa:qr      data-URL PNG                  — current pairing QR (when status=qr)
- *   wa:out     LIST of { to, text } JSON     — outbound queue (worker sends)
- *   wa:cmd     LIST of 'connect' | 'logout'  — control commands
+ * Redis keys:
+ *   wa:status:{tenantId}  JSON { status, phone, at }     — per-tenant connection state
+ *   wa:qr:{tenantId}      data-URL PNG                    — per-tenant pairing QR
+ *   wa:auth:{tenantId}    JSON                            — per-tenant session (worker only)
+ *   wa:out               LIST of { tenantId, messageId, to, text }  — outbound queue
+ *   wa:cmd               LIST of { tenantId, action }     — control commands
  */
 import { getRedis } from '@/lib/redis';
+import { forTenant } from '@/lib/tenant/scoped-prisma';
 
-export const WA_STATUS_KEY = 'wa:status';
-export const WA_QR_KEY = 'wa:qr';
 export const WA_OUT_KEY = 'wa:out';
 export const WA_CMD_KEY = 'wa:cmd';
+export const waStatusKey = (tenantId: string) => `wa:status:${tenantId}`;
+export const waQrKey = (tenantId: string) => `wa:qr:${tenantId}`;
+export const waAuthKey = (tenantId: string) => `wa:auth:${tenantId}`;
 
 export type WaStatus = 'pending' | 'qr' | 'connected' | 'disconnected' | 'logged_out' | 'unknown';
 
@@ -40,9 +44,9 @@ export function normalizeIlPhone(raw: string): string | null {
   return d.length >= 11 && d.length <= 15 ? d : null;
 }
 
-export async function getWhatsappState(): Promise<WaState> {
+export async function getWhatsappState(tenantId: string): Promise<WaState> {
   try {
-    const raw = await getRedis().get(WA_STATUS_KEY);
+    const raw = await getRedis().get(waStatusKey(tenantId));
     if (!raw) return { status: 'disconnected', phone: null, connected: false };
     const j = JSON.parse(raw) as { status?: WaStatus; phone?: string | null };
     const status = (j.status ?? 'unknown') as WaStatus;
@@ -52,36 +56,59 @@ export async function getWhatsappState(): Promise<WaState> {
   }
 }
 
-export async function getWhatsappQr(): Promise<string | null> {
+export async function getWhatsappQr(tenantId: string): Promise<string | null> {
   try {
-    return await getRedis().get(WA_QR_KEY);
+    return await getRedis().get(waQrKey(tenantId));
   } catch {
     return null;
   }
 }
 
-export async function pushWhatsappCommand(cmd: 'connect' | 'logout'): Promise<void> {
-  await getRedis().lpush(WA_CMD_KEY, cmd);
+export async function pushWhatsappCommand(tenantId: string, action: 'connect' | 'logout'): Promise<void> {
+  await getRedis().lpush(WA_CMD_KEY, JSON.stringify({ tenantId, action }));
 }
 
 export interface WhatsappResult {
   ok: boolean;
   error?: string;
+  messageId?: string;
 }
 
 /**
- * Queue a WhatsApp text for delivery. The worker sends it as soon as the
- * platform number is connected — so a message queued while disconnected is not
- * lost, it just waits. `ok` reflects whether we're connected right now.
+ * Queue a WhatsApp text for one tenant and log it. The tenant's worker socket
+ * sends it once connected, so a message queued while disconnected still goes out
+ * later. `ok` reflects whether that tenant is connected right now.
  */
-export async function sendWhatsappText(to: string, text: string): Promise<WhatsappResult> {
+export async function sendWhatsappText(
+  tenantId: string,
+  to: string,
+  text: string,
+  kind = 'login',
+): Promise<WhatsappResult> {
+  const db = forTenant(tenantId);
   const phone = normalizeIlPhone(to);
-  if (!phone) return { ok: false, error: 'bad_phone' };
-  try {
-    await getRedis().lpush(WA_OUT_KEY, JSON.stringify({ to: phone, text }));
-  } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : 'enqueue_failed' };
+  if (!phone) {
+    await db.whatsappMessage.create({
+      data: { tenantId, toPhone: to, body: text, kind, status: 'failed', error: 'bad_phone' },
+    });
+    return { ok: false, error: 'bad_phone' };
   }
-  const st = await getWhatsappState();
-  return st.connected ? { ok: true } : { ok: false, error: `wa_${st.status}` };
+
+  const msg = await db.whatsappMessage.create({
+    data: { tenantId, toPhone: phone, body: text, kind, status: 'queued' },
+    select: { id: true },
+  });
+
+  try {
+    await getRedis().lpush(WA_OUT_KEY, JSON.stringify({ tenantId, messageId: msg.id, to: phone, text }));
+  } catch (e) {
+    await db.whatsappMessage.update({
+      where: { id: msg.id },
+      data: { status: 'failed', error: e instanceof Error ? e.message : 'enqueue_failed' },
+    });
+    return { ok: false, error: 'enqueue_failed', messageId: msg.id };
+  }
+
+  const st = await getWhatsappState(tenantId);
+  return { ok: st.connected, error: st.connected ? undefined : `wa_${st.status}`, messageId: msg.id };
 }

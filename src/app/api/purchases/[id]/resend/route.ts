@@ -75,7 +75,7 @@ export async function POST(req: Request, { params }: Params) {
       .replace('{email}', user.email);
   }
 
-  const result = await sendWhatsappText(phone, message);
+  const result = await sendWhatsappText(auth.tenantId!, phone, message);
   await db.purchase.update({
     where: { id },
     data: {

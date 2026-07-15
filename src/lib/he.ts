@@ -517,6 +517,18 @@ export const he = {
   waWelcomeExisting:
     'היי {name}! 🎉\nנרשמת לקורס "{course}".\n\nאפשר להיכנס עם החשבון הקיים שלך:\n🔗 {url}\n📧 {email}\n\nנתראה בפנים! 🚀',
 
+  // owner WhatsApp page + message log
+  whatsappOwnerSubtitle: 'חברו את הוואטסאפ שלכם — פרטי הכניסה יישלחו לתלמידים מהמספר הזה',
+  waMessageLog: 'יומן הודעות',
+  waNoMessages: 'עוד לא נשלחו הודעות',
+  waMessageBody: 'הודעה',
+  waMsgSent: 'נשלח',
+  waMsgFailed: 'נכשל',
+  waMsgQueued: 'בתור',
+
+  // nav group labels
+  navMarketing: 'שיווק ומכירות',
+
   // ── extended features: shared ──
   send: 'שליחה',
   reply: 'תגובה',

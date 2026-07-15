@@ -178,7 +178,7 @@ export async function POST(req: Request) {
     .replace('{email}', payerEmail)
     .replace('{pass}', plainPassword ?? '');
   const delivery = payerPhone
-    ? await sendWhatsappText(payerPhone, message)
+    ? await sendWhatsappText(tenant.id, payerPhone, message)
     : { ok: false, error: 'no_phone' };
 
   await db.purchase.create({

@@ -57,7 +57,7 @@ export default async function PaymentsPage({
     createdAt: p.createdAt.toISOString(),
   }));
 
-  const wa = await getWhatsappState();
+  const wa = await getWhatsappState(tenant.id);
 
   return (
     <div>

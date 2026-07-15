@@ -24,6 +24,7 @@ const TENANT_MODELS = new Set([
   'LessonNote',
   'Wishlist',
   'Purchase',
+  'WhatsappMessage',
 ]);
 
 const WHERE_OPS = new Set([

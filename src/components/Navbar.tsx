@@ -16,6 +16,19 @@ export interface NavLink {
   liveDot?: boolean;
 }
 
+/** A labelled dropdown of related links, to keep the bar uncluttered. */
+export interface NavGroup {
+  label: string;
+  items: NavLink[];
+  liveDot?: boolean;
+}
+
+export type NavEntry = NavLink | NavGroup;
+
+function isGroup(e: NavEntry): e is NavGroup {
+  return (e as NavGroup).items !== undefined;
+}
+
 export default function Navbar({
   brandName,
   brandHref,
@@ -30,7 +43,7 @@ export default function Navbar({
   brandName: string;
   brandHref: string;
   brandEmoji?: string;
-  links: NavLink[];
+  links: NavEntry[];
   userEmail?: string;
   roleLabel?: string;
   changePasswordHref?: string;
@@ -74,9 +87,13 @@ export default function Navbar({
           </Link>
 
           <nav className="hidden md:flex items-center gap-1" aria-label={he.navMain}>
-            {links.map((l) => (
-              <NavItem key={l.href} link={l} pathname={pathname} ink={ink} />
-            ))}
+            {links.map((e, i) =>
+              isGroup(e) ? (
+                <NavGroupItem key={`g${i}`} group={e} pathname={pathname} ink={ink} />
+              ) : (
+                <NavItem key={e.href} link={e} pathname={pathname} ink={ink} />
+              ),
+            )}
           </nav>
 
           <div className="flex items-center gap-1.5 shrink-0">
@@ -91,9 +108,9 @@ export default function Navbar({
           </div>
         </div>
 
-        {/* Mobile nav row */}
+        {/* Mobile nav row — groups flatten into their links */}
         <nav className="md:hidden flex gap-1 overflow-x-auto pb-2 -mt-1" aria-label={he.navMain}>
-          {links.map((l) => (
+          {links.flatMap((e) => (isGroup(e) ? e.items : [e])).map((l) => (
             <NavItem key={l.href} link={l} pathname={pathname} ink={ink} />
           ))}
         </nav>
@@ -132,6 +149,76 @@ function NavItem({
       )}
       {link.label}
     </Link>
+  );
+}
+
+function NavGroupItem({
+  group,
+  pathname,
+  ink,
+}: {
+  group: NavGroup;
+  pathname: string;
+  ink: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [open]);
+
+  const isActive = (l: NavLink) => (l.exact ? pathname === l.href : pathname.startsWith(l.href));
+  const active = group.items.some(isActive);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          'inline-flex items-center gap-1.5 text-sm font-medium rounded-lg px-3 py-1.5 whitespace-nowrap transition-colors',
+          active
+            ? ink
+              ? 'bg-paper/10 text-paper font-semibold'
+              : 'bg-ink/5 text-ink font-semibold'
+            : ink
+              ? 'text-brand-300 hover:text-paper hover:bg-paper/5'
+              : 'text-muted hover:text-ink hover:bg-ink/5',
+        )}
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        {group.liveDot && <span className="w-[7px] h-[7px] rounded-full bg-live animate-pulse-live" />}
+        {group.label}
+        <span aria-hidden className="text-[10px] opacity-70">▾</span>
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute end-0 mt-2 w-52 bg-card text-ink border border-line rounded-xl shadow-lift py-1.5 z-50"
+        >
+          {group.items.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className={cn(
+                'flex items-center gap-2 px-4 py-2 text-sm hover:bg-paper',
+                isActive(l) && 'font-semibold text-ink',
+              )}
+            >
+              {l.liveDot && <span className="w-[7px] h-[7px] rounded-full bg-live animate-pulse-live" />}
+              {l.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
