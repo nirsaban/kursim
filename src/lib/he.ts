@@ -285,6 +285,7 @@ export const he = {
   midCtaTitle: 'אז מה, נצא לדרך?',
   midCtaSubtitle: 'נרשמים עכשיו — וכל השיעורים נפתחים מיד, לכל החיים',
   limitedOffer: 'ההרשמה פתוחה עכשיו',
+  landingHaveCode: 'יש לכם קוד גישה? למימוש הקוד',
 
   // student reviews
   reviews: 'ביקורות',

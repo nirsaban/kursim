@@ -378,6 +378,13 @@ export default async function CourseLandingPage({ params, searchParams }: Params
                   </span>
                 ))}
               </div>
+              <a
+                href={`/t/${slug}/redeem`}
+                className="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold text-muted hover:text-ink underline underline-offset-4 decoration-dotted"
+              >
+                <span aria-hidden>🎟️</span>
+                {he.landingHaveCode}
+              </a>
               {enrollCount >= 3 && (
                 <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-ink">
                   <span className="flex -space-x-2" aria-hidden>
