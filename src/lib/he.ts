@@ -525,6 +525,16 @@ export const he = {
   waMsgSent: 'נשלח',
   waMsgFailed: 'נכשל',
   waMsgQueued: 'בתור',
+  waResend: 'שליחה מחדש',
+  // test message
+  waTestTitle: 'בדיקת חיבור',
+  waTestHint: 'שלחו לעצמכם הודעת בדיקה כדי לוודא שהחיבור עובד',
+  waTestPhoneLabel: 'הטלפון שלכם',
+  waTestSend: 'שליחת הודעת בדיקה',
+  waTestMessage: 'זו הודעת בדיקה מ-Kursim ✅ אם קיבלתם אותה — החיבור עובד מצוין!',
+  waTestSent: 'נשלח! בדקו את הוואטסאפ 📱',
+  waTestQueued: 'בתור — ממתין לחיבור',
+  waTestFailed: 'השליחה נכשלה — בדקו את הטלפון',
 
   // nav group labels
   navMarketing: 'שיווק ומכירות',

@@ -183,3 +183,8 @@ export const wishlistSchema = z.object({
 export const resendSchema = z.object({
   phone: z.string().max(30).optional(),
 });
+
+/** Owner sends a WhatsApp test message to a phone (usually their own). */
+export const whatsappTestSchema = z.object({
+  phone: z.string().min(6).max(30),
+});

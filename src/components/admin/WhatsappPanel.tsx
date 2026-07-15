@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/client/api';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Field';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import EmptyState from '@/components/ui/EmptyState';
 import { Table, TableWrap, Td, Th } from '@/components/ui/Table';
@@ -100,6 +101,8 @@ export default function WhatsappPanel({ messages }: { messages: WaMessageRow[] }
               </Button>
             )}
           </div>
+
+          {connected && <TestSendBlock defaultPhone={phone ?? ''} />}
         </CardBody>
       </Card>
 
@@ -115,6 +118,7 @@ export default function WhatsappPanel({ messages }: { messages: WaMessageRow[] }
                   <Th>{he.salePhoneLabel}</Th>
                   <Th>{he.waMessageBody}</Th>
                   <Th>{he.saleDelivered}</Th>
+                  <Th>{he.waResend}</Th>
                   <Th>{he.announcementDate}</Th>
                 </tr>
               </thead>
@@ -136,6 +140,7 @@ export default function WhatsappPanel({ messages }: { messages: WaMessageRow[] }
                         <Badge tone="warn">{he.waMsgQueued}</Badge>
                       )}
                     </Td>
+                    <Td><MsgResendCell id={m.id} phone={m.toPhone} /></Td>
                     <Td className="text-xs text-muted">{relativeHe(new Date(m.createdAt).getTime())}</Td>
                   </tr>
                 ))}
@@ -144,6 +149,104 @@ export default function WhatsappPanel({ messages }: { messages: WaMessageRow[] }
           </TableWrap>
         )}
       </Card>
+    </div>
+  );
+}
+
+function TestSendBlock({ defaultPhone }: { defaultPhone: string }) {
+  const [phone, setPhone] = useState(defaultPhone);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<'sent' | 'queued' | 'failed' | null>(null);
+
+  async function send() {
+    if (!phone.trim() || busy) return;
+    setBusy(true);
+    setResult(null);
+    const res = await apiFetch('/api/whatsapp/test', {
+      method: 'POST',
+      body: JSON.stringify({ phone }),
+    });
+    setBusy(false);
+    if (res.ok) {
+      const d = await res.json();
+      if (d.ok) setResult('sent');
+      else if (typeof d.error === 'string' && d.error.startsWith('wa_')) setResult('queued');
+      else setResult('failed');
+    } else {
+      setResult('failed');
+    }
+  }
+
+  return (
+    <div className="border-t border-line pt-4">
+      <p className="text-sm font-semibold text-ink">{he.waTestTitle}</p>
+      <p className="text-xs text-muted mt-0.5 mb-2.5">{he.waTestHint}</p>
+      <div className="flex flex-wrap gap-2 items-center">
+        <Input
+          value={phone}
+          onChange={(e) => {
+            setPhone(e.target.value);
+            setResult(null);
+          }}
+          dir="ltr"
+          aria-label={he.waTestPhoneLabel}
+          className="!w-40 !py-1.5 font-mono text-sm"
+        />
+        <Button size="sm" variant="secondary" onClick={send} disabled={busy || !phone.trim()}>
+          {he.waTestSend}
+        </Button>
+        {result === 'sent' && <span className="text-xs font-semibold text-ok">{he.waTestSent}</span>}
+        {result === 'queued' && <span className="text-xs font-semibold text-warn">{he.waTestQueued}</span>}
+        {result === 'failed' && <span className="text-xs font-semibold text-danger">{he.waTestFailed}</span>}
+      </div>
+    </div>
+  );
+}
+
+function MsgResendCell({ id, phone }: { id: string; phone: string }) {
+  const [value, setValue] = useState(phone);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<'sent' | 'queued' | 'failed' | null>(null);
+
+  async function resend() {
+    if (!value.trim() || busy) return;
+    setBusy(true);
+    setResult(null);
+    const res = await apiFetch(`/api/whatsapp/${id}/resend`, {
+      method: 'POST',
+      body: JSON.stringify({ phone: value }),
+    });
+    setBusy(false);
+    if (res.ok) {
+      const d = await res.json();
+      if (d.ok) setResult('sent');
+      else if (typeof d.error === 'string' && d.error.startsWith('wa_')) setResult('queued');
+      else setResult('failed');
+    } else {
+      setResult('failed');
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-1 min-w-36">
+      <div className="flex gap-1.5">
+        <input
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setResult(null);
+          }}
+          dir="ltr"
+          aria-label={he.salePhoneLabel}
+          className="w-24 bg-card border border-line rounded-lg px-2 py-1 text-xs font-mono"
+        />
+        <Button size="sm" variant="ghost" onClick={resend} disabled={busy || !value.trim()}>
+          {he.waResend}
+        </Button>
+      </div>
+      {result === 'sent' && <span className="text-[11px] font-semibold text-ok">{he.waMsgSent} ✓</span>}
+      {result === 'queued' && <span className="text-[11px] font-semibold text-warn">{he.waMsgQueued}</span>}
+      {result === 'failed' && <span className="text-[11px] font-semibold text-danger">{he.waMsgFailed}</span>}
     </div>
   );
 }
