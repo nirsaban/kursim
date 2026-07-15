@@ -90,16 +90,26 @@ export async function POST(req: Request) {
   const body = parseGrowBody(rawBody, contentType);
   const statusCode = String(body.statusCode ?? '');
   const status = String(body.status ?? '');
-  // Only act on a confirmed, completed payment.
-  const paid = statusCode === '2' || status === 'שולם';
+  // Grow's Payment-Links webhook fires ONLY on a successful charge and signals it
+  // with a reference number (asmachta) — there is no statusCode. Older/other Grow
+  // formats use statusCode "2" / status "שולם". Accept any of these as paid.
+  const asmachta = String(body.asmachta || '').trim();
+  const transactionCode = String(body.transactionCode || '').trim();
+  const paid = statusCode === '2' || status === 'שולם' || Boolean(asmachta || transactionCode);
   if (!paid) return NextResponse.json({ ignored: true }, { status: 200 });
 
-  const transactionId = String(body.transactionId || body.asmachta || '').trim();
-  const payerEmail = String(body.payerEmail || '').trim().toLowerCase();
+  const transactionId = (asmachta || transactionCode || String(body.transactionId || '')).trim();
+  if (!transactionId) return NextResponse.json({ error: 'no_transaction' }, { status: 200 });
+
   const payerPhone = String(body.payerPhone || '').trim();
   const payerName = String(body.fullName || '').trim();
-  const amount = String(body.sum || '').trim();
-  if (!transactionId) return NextResponse.json({ error: 'no_transaction' }, { status: 200 });
+  const amount = String(body.paymentSum || body.sum || '').trim();
+
+  // Identity: prefer the buyer's email; if Grow didn't send one (e.g. Apple Pay),
+  // fall back to a stable phone-derived login so we can still provision + WhatsApp.
+  const rawEmail = String(body.payerEmail || '').trim().toLowerCase();
+  const normPhone = payerPhone.replace(/\D/g, '');
+  const payerEmail = rawEmail || (normPhone ? `wa-${normPhone}@kursim.local` : '');
 
   const db = forTenant(tenant.id);
 
