@@ -32,10 +32,14 @@ export default async function AdminLayout({
       ? [
           { href: `/t/${slug}/admin/students`, label: he.students },
           { href: `/t/${slug}/admin/sessions`, label: he.sessions, liveDot: true },
+          { href: `/t/${slug}/admin/broadcasts`, label: he.broadcasts },
+          { href: `/t/${slug}/admin/access-codes`, label: he.accessCodes },
+          { href: `/t/${slug}/admin/analytics`, label: he.analytics },
           { href: `/t/${slug}/admin/homepage`, label: he.homepageBuilder },
           { href: `/t/${slug}/admin/settings`, label: he.settings },
         ]
       : []),
+    { href: `/t/${slug}/community`, label: he.community },
     { href: `/t/${slug}`, label: he.myCourses, exact: true },
   ];
 
@@ -50,6 +54,7 @@ export default async function AdminLayout({
         userEmail={user?.email}
         changePasswordHref={`/t/${slug}/change-password`}
         tone="ink"
+        notifSlug={slug}
       />
       <main className="max-w-6xl mx-auto px-4 py-8">{children}</main>
     </div>

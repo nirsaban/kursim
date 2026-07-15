@@ -24,6 +24,7 @@ interface Lesson {
 interface Module {
   id: string;
   title: string;
+  dripDays?: number;
   lessons: Lesson[];
 }
 export interface CourseStructure {
@@ -67,6 +68,14 @@ export default function ContentTab({
     await apiFetch(`/api/modules/${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ title }),
+    });
+    reload();
+  }
+
+  async function setDripDays(id: string, dripDays: number) {
+    await apiFetch(`/api/modules/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ dripDays }),
     });
     reload();
   }
@@ -116,6 +125,23 @@ export default function ContentTab({
                 }
               }}
             />
+            <label
+              className="flex items-center gap-1.5 text-xs text-muted shrink-0"
+              title={he.dripHint}
+            >
+              <span aria-hidden>🔓</span>
+              <input
+                type="number"
+                min={0}
+                defaultValue={mod.dripDays ?? 0}
+                aria-label={he.dripDaysLabel}
+                className="w-14 bg-card border border-line rounded-lg px-2 py-1 text-sm text-center outline-none focus:border-brand-300"
+                onBlur={(e) => {
+                  const v = Math.max(0, parseInt(e.target.value || '0', 10) || 0);
+                  if (v !== (mod.dripDays ?? 0)) setDripDays(mod.id, v);
+                }}
+              />
+            </label>
             <button
               onClick={() => deleteModule(mod.id)}
               className="text-xs font-medium text-muted hover:text-danger transition-colors"

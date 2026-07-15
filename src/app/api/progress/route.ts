@@ -4,6 +4,8 @@ import { apiError, parseBody } from '@/lib/api';
 import { progressSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { dayKey } from '@/lib/achievements';
+import { notify } from '@/lib/notify';
+import { he } from '@/lib/he';
 
 export async function GET(req: Request) {
   const auth = await requireAuth({ roles: ['STUDENT'] });
@@ -63,6 +65,61 @@ export async function POST(req: Request) {
     });
   } catch {
     // ignore
+  }
+
+  // Course completion → issue a certificate once and notify the student.
+  // Never let this block the progress save.
+  if (completed) {
+    try {
+      const courseId = lesson.module.courseId;
+      const courseLessons = await db.lesson.findMany({
+        where: { module: { courseId } },
+        select: { id: true },
+      });
+      const lessonIds = courseLessons.map((l) => l.id);
+      if (lessonIds.length > 0) {
+        const done = await db.progress.count({
+          where: {
+            studentId: auth.userId,
+            lessonId: { in: lessonIds },
+            completedAt: { not: null },
+          },
+        });
+        if (done >= lessonIds.length) {
+          const existingCert = await db.certificate.findFirst({
+            where: { courseId, studentId: auth.userId },
+          });
+          if (!existingCert) {
+            const [student, course] = await Promise.all([
+              db.user.findFirst({ where: { id: auth.userId }, select: { email: true } }),
+              db.course.findFirst({ where: { id: courseId }, select: { title: true } }),
+            ]);
+            const serial = `KURS-${courseId.slice(0, 4).toUpperCase()}-${Date.now()
+              .toString(36)
+              .toUpperCase()}`;
+            await db.certificate.create({
+              data: {
+                tenantId: auth.tenantId!,
+                courseId,
+                studentId: auth.userId,
+                studentName: (student?.email ?? '').split('@')[0],
+                courseTitle: course?.title ?? '',
+                serial,
+              },
+            });
+            await notify(db, auth.tenantId!, {
+              userId: auth.userId,
+              type: 'certificate',
+              title: he.certificateReady,
+              body: course?.title ?? '',
+              link: `/t/${auth.tenantSlug}/certificate/${courseId}`,
+            });
+          }
+        }
+      }
+    } catch {
+      // certificate/notification is best-effort; ignore races and errors
+    }
   }
 
   return NextResponse.json({ progress });

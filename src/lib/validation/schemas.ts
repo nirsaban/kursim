@@ -26,6 +26,7 @@ export const courseSchema = z.object({
 export const moduleSchema = z.object({
   title: z.string().min(1).max(200),
   sortOrder: z.number().int().min(0).optional(),
+  dripDays: z.number().int().min(0).max(365).optional(),
 });
 
 export const lessonSchema = z.object({
@@ -118,4 +119,62 @@ export const attachMediaSchema = z.object({
   publicId: z.string().min(1).max(512),
   durationSec: z.number().int().min(0).nullish(),
   bytes: z.number().int().min(0).nullish(),
+});
+
+// ── Extended platform features ───────────────────────────────────────────────
+
+/** Owner broadcasts a message to students (all, or one course's). */
+export const broadcastSchema = z.object({
+  subject: z.string().min(1).max(200),
+  body: z.string().min(1).max(5000),
+  courseId: z.string().uuid().nullish(),
+});
+
+export const communityPostSchema = z.object({
+  title: z.string().min(1).max(200),
+  body: z.string().min(1).max(5000),
+});
+
+/** Owner/instructor moderation of a community post. */
+export const communityPostModerationSchema = z.object({
+  pinned: z.boolean().optional(),
+});
+
+export const communityReplySchema = z.object({
+  body: z.string().min(1).max(5000),
+});
+
+/** Student asks a question on a lesson. */
+export const lessonQuestionSchema = z.object({
+  lessonId: z.string().uuid(),
+  body: z.string().min(3).max(2000),
+});
+
+/** Staff answers a lesson question. */
+export const lessonAnswerSchema = z.object({
+  answer: z.string().min(1).max(2000),
+});
+
+/** Owner creates a free-enrollment access code for a course. */
+export const accessCodeCreateSchema = z.object({
+  courseId: z.string().uuid(),
+  maxUses: z.number().int().min(1).max(10000).default(1),
+  expiresInDays: z.number().int().min(1).max(365).nullish(),
+});
+
+/** Student redeems an access code. */
+export const redeemCodeSchema = z.object({
+  code: z.string().min(4).max(32),
+});
+
+/** Student saves personal notes on a lesson. */
+export const lessonNoteSchema = z.object({
+  lessonId: z.string().uuid(),
+  courseId: z.string().uuid(),
+  body: z.string().max(20000).default(''),
+});
+
+/** Student toggles a course in their wishlist. */
+export const wishlistSchema = z.object({
+  courseId: z.string().uuid(),
 });

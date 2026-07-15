@@ -193,6 +193,8 @@ model Module {
   courseId  String    @db.Uuid
   title     String
   sortOrder Int       @default(0)
+  /// Drip release: unlock this module only N days after the student enrolls (0 = immediate).
+  dripDays  Int       @default(0)
 
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -273,4 +275,146 @@ model Enrollment {
   course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, courseId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Extended platform features. All are tenant-owned (denormalized tenantId +
+// RLS in the matching migration + registered in scoped-prisma TENANT_MODELS).
+// FKs (incl. ON DELETE CASCADE) live in the migration SQL; author/student
+// display names are denormalized to avoid a web of User back-relations.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// In-app notification for one user (bell menu). Fed by broadcasts, Q&A answers,
+/// community replies, new reviews, certificates, etc.
+model Notification {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @db.Uuid
+  userId    String    @db.Uuid
+  /// broadcast | qa_answer | community_reply | review | certificate | enroll
+  type      String
+  title     String
+  body      String    @default("") @db.Text
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([tenantId, userId, createdAt])
+}
+
+/// A message an owner blasts to students; delivery fans out into Notifications.
+model Broadcast {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  authorId  String   @db.Uuid
+  /// null = all students in the tenant; otherwise students enrolled in this course.
+  courseId  String?  @db.Uuid
+  subject   String
+  body      String   @db.Text
+  sentCount Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+}
+
+/// A discussion thread in the tenant community.
+model CommunityPost {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid
+  authorId   String   @db.Uuid
+  authorName String
+  authorRole String
+  title      String
+  body       String   @db.Text
+  pinned     Boolean  @default(false)
+  replyCount Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([tenantId, pinned, createdAt])
+}
+
+/// A reply under a CommunityPost.
+model CommunityReply {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid
+  postId     String   @db.Uuid
+  authorId   String   @db.Uuid
+  authorName String
+  authorRole String
+  body       String   @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([tenantId, postId, createdAt])
+}
+
+/// A student's question on a lesson, answered by staff.
+model LessonQuestion {
+  id           String    @id @default(uuid()) @db.Uuid
+  tenantId     String    @db.Uuid
+  lessonId     String    @db.Uuid
+  courseId     String    @db.Uuid
+  studentId    String    @db.Uuid
+  studentName  String
+  body         String    @db.Text
+  answer       String    @default("") @db.Text
+  answeredById String?   @db.Uuid
+  answeredAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([tenantId, lessonId, createdAt])
+}
+
+/// A code a student redeems to enroll in a course for free (giveaways / manual sales).
+model AccessCode {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @db.Uuid
+  courseId  String    @db.Uuid
+  code      String    @unique
+  maxUses   Int       @default(1)
+  uses      Int       @default(0)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([tenantId, courseId])
+}
+
+/// A certificate issued when a student completes a course.
+model Certificate {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  courseId  String   @db.Uuid
+  studentId String   @db.Uuid
+  studentName String @default("")
+  courseTitle String @default("")
+  serial    String   @unique
+  issuedAt  DateTime @default(now())
+
+  @@unique([courseId, studentId])
+  @@index([tenantId])
+}
+
+/// A student's private notes on one lesson.
+model LessonNote {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  studentId String   @db.Uuid
+  lessonId  String   @db.Uuid
+  courseId  String   @db.Uuid
+  body      String   @default("") @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, lessonId])
+  @@index([tenantId, studentId])
+}
+
+/// A catalog course a student saved for later.
+model Wishlist {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  studentId String   @db.Uuid
+  courseId  String   @db.Uuid
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, courseId])
+  @@index([tenantId, studentId])
 }

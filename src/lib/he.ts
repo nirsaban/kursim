@@ -467,6 +467,151 @@ export const he = {
 
   // landing footer
   landingBuiltWith: 'נבנה עם Kursim',
+
+  // ── extended features: shared ──
+  send: 'שליחה',
+  reply: 'תגובה',
+  by: 'מאת',
+  justNow: 'ממש עכשיו',
+
+  // notifications
+  notifications: 'התראות',
+  notificationsEmpty: 'אין התראות חדשות',
+  markAllRead: 'סימון הכול כנקרא',
+  notifsAllRead: 'הכול נקרא ✓',
+  viewAllNotifications: 'לכל ההתראות',
+
+  // broadcasts (owner → students)
+  broadcasts: 'הודעות לתלמידים',
+  broadcastsSubtitle: 'שלחו הודעה לכל התלמידים, או רק לתלמידי קורס מסוים',
+  newBroadcast: 'הודעה חדשה',
+  broadcastSubject: 'נושא',
+  broadcastBody: 'תוכן ההודעה',
+  broadcastAudience: 'למי שולחים',
+  broadcastAll: 'כל התלמידים',
+  broadcastSend: 'יאללה, שולחים',
+  broadcastSent: 'ההודעה יצאה ל-{n} תלמידים 🎉',
+  broadcastNoRecipients: 'אין תלמידים לשלוח אליהם עדיין',
+  broadcastsEmpty: 'עוד לא שלחתם הודעות — הראשונה מחכה',
+  broadcastSentTo: 'נשלח ל-{n}',
+
+  // community
+  community: 'קהילה',
+  communitySubtitle: 'שאלות, רעיונות ושיחות — כולנו כאן ביחד',
+  newPost: 'פוסט חדש',
+  postTitle: 'כותרת',
+  postBody: 'מה בא לכם לשתף?',
+  postPublish: 'פרסום',
+  postReplyLabel: 'תגובה',
+  replyPlaceholder: 'מוסיפים תגובה...',
+  communityEmpty: 'עוד שקט כאן — היו הראשונים לפתוח שיחה',
+  pinPost: 'הצמדה',
+  unpinPost: 'ביטול הצמדה',
+  pinnedBadge: 'מוצמד',
+  repliesCount: 'תגובות',
+  deletePost: 'מחיקת הפוסט',
+  backToCommunity: 'חזרה לקהילה',
+  communityModeration: 'ניהול הקהילה',
+  roleOwnerBadge: 'צוות',
+
+  // lesson Q&A
+  lessonQa: 'שאלות ותשובות',
+  askQuestion: 'שאלו כאן',
+  questionPlaceholder: 'לא הבנתם משהו? שאלו — ונחזור אליכם',
+  sendQuestion: 'שליחת השאלה',
+  qaEmpty: 'אין עדיין שאלות על השיעור הזה',
+  qaAnswerLabel: 'תשובה',
+  qaAnswerPlaceholder: 'כתבו תשובה לתלמיד...',
+  qaAnswerSend: 'שליחת תשובה',
+  qaAnswered: 'נענתה',
+  qaWaiting: 'ממתינה לתשובה',
+  qaAskedBy: 'נשאל/ה על ידי',
+
+  // access codes (free-enroll coupons)
+  accessCodes: 'קודי גישה',
+  accessCodesSubtitle: 'קודים שמאפשרים הרשמה חינם לקורס — למתנות, מכירות ידניות או קמפיינים',
+  newAccessCode: 'קוד חדש',
+  accessCodeCourse: 'קורס',
+  accessCodeMaxUses: 'מספר שימושים',
+  accessCodeExpiry: 'תוקף בימים (לא חובה)',
+  accessCodeCreate: 'יצירת הקוד',
+  accessCodesEmpty: 'עוד לא יצרתם קודים',
+  accessCodeUses: 'שימושים',
+  accessCodeExpired: 'פג תוקף',
+  redeem: 'מימוש קוד',
+  redeemTitle: 'יש לכם קוד גישה?',
+  redeemHint: 'הזינו את הקוד וקבלו גישה מיידית לקורס',
+  redeemCode: 'הקוד שלכם',
+  redeemSubmit: 'מימוש והצטרפות',
+  redeemSuccess: 'מעולה! נכנסתם לקורס 🎉',
+  redeemInvalid: 'הקוד לא תקף, כבר נוצל או שפג תוקפו',
+  codeCopied: 'הקוד הועתק!',
+
+  // certificates
+  certificate: 'תעודה',
+  certificatesTitle: 'התעודות שלי',
+  certificateHeading: 'תעודת סיום',
+  certificateAwardedTo: 'ניתנת בזאת ל־',
+  certificateForCompleting: 'על השלמת הקורס',
+  certificateIssuedOn: 'הונפקה בתאריך',
+  certificateSerial: 'מספר תעודה',
+  viewCertificate: 'לצפייה בתעודה',
+  printCertificate: 'הדפסה / שמירה כ-PDF',
+  certificateReady: 'סיימתם — התעודה שלכם מוכנה! 🎓',
+  noCertificates: 'עוד אין תעודות — סיימו קורס, והראשונה כבר מחכה',
+  certificateIssuedBy: 'הונפקה על ידי',
+
+  // lesson notes (private)
+  myNotes: 'הפתקים שלי',
+  lessonNotesLabel: 'פתקים אישיים',
+  lessonNotesHint: 'כתבו לעצמכם — אף אחד חוץ מכם לא רואה את זה',
+  notesSaved: 'הפתק נשמר ✓',
+  notesPlaceholder: 'משהו ששווה לזכור מהשיעור...',
+  saveNote: 'שמירת הפתק',
+  myNotesEmpty: 'עוד לא כתבתם פתקים — הם יופיעו כאן',
+
+  // wishlist
+  wishlistTitle: 'לצפייה בהמשך',
+  addToWishlist: 'שמירה לרשימה',
+  removeFromWishlist: 'הסרה מהרשימה',
+  wishlistSaved: 'נשמר לרשימה 🔖',
+  wishlistEmpty: 'הרשימה ריקה — הוסיפו קורסים שבא לכם לחזור אליהם',
+
+  // owner analytics
+  analytics: 'נתונים ותובנות',
+  analyticsSubtitle: 'מבט־על על כל מה שקורה בבית הספר',
+  totalStudents: 'סה״כ תלמידים',
+  activeStudents7: 'פעילים השבוע',
+  activeStudents30: 'פעילים החודש',
+  totalEnrollments: 'סה״כ רישומים',
+  avgCompletion: 'אחוז השלמה ממוצע',
+  analyticsLessonsCompleted: 'שיעורים שהושלמו',
+  totalLearningMinutes: 'דקות למידה בסך הכול',
+  completionByCourse: 'השלמה לפי קורס',
+  certificatesIssued: 'תעודות שהונפקו',
+  analyticsNoData: 'עוד אין מספיק נתונים להצגה',
+
+  // super-admin platform stats
+  platformStats: 'נתוני הפלטפורמה',
+  totalTenants: 'בתי ספר',
+  totalUsers: 'משתמשים',
+  totalCoursesStat: 'קורסים',
+  liveNow: 'מחוברים כרגע',
+
+  // leaderboard
+  leaderboard: 'טבלת המובילים',
+  leaderboardSubtitle: 'מי צובר הכי הרבה? כל שיעור מקרב אתכם לצמרת',
+  leaderboardEmpty: 'הטבלה עוד מתמלאת — סיימו שיעורים כדי לטפס',
+  rankLabel: 'מקום',
+  learnerLabel: 'תלמיד/ה',
+  youLabel: 'אתם',
+  leaderLessonsLabel: 'שיעורים',
+
+  // drip content
+  dripDaysLabel: 'שחרור מדורג (ימים)',
+  dripHint: 'הפרק ייפתח רק כעבור מספר הימים הזה מרגע ההרשמה (0 = נפתח מיד)',
+  dripLockedIn: 'נפתח בעוד {n} ימים',
+  moduleLockedTitle: 'הפרק עוד לא נפתח',
 } as const;
 
 export type HeKey = keyof typeof he;

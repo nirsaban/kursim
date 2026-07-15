@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { he } from '@/lib/he';
 import { loginPathFor } from '@/lib/client/api';
+import NotificationBell from '@/components/NotificationBell';
 
 export interface NavLink {
   href: string;
@@ -24,6 +25,7 @@ export default function Navbar({
   roleLabel,
   changePasswordHref,
   tone = 'light',
+  notifSlug,
 }: {
   brandName: string;
   brandHref: string;
@@ -33,6 +35,8 @@ export default function Navbar({
   roleLabel?: string;
   changePasswordHref?: string;
   tone?: 'light' | 'ink';
+  /** When set, renders the notification bell (student-facing routes). */
+  notifSlug?: string;
 }) {
   const pathname = usePathname();
   const ink = tone === 'ink';
@@ -75,13 +79,16 @@ export default function Navbar({
             ))}
           </nav>
 
-          {userEmail && (
-            <UserMenu
-              email={userEmail}
-              changePasswordHref={changePasswordHref}
-              ink={ink}
-            />
-          )}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {notifSlug && <NotificationBell slug={notifSlug} />}
+            {userEmail && (
+              <UserMenu
+                email={userEmail}
+                changePasswordHref={changePasswordHref}
+                ink={ink}
+              />
+            )}
+          </div>
         </div>
 
         {/* Mobile nav row */}

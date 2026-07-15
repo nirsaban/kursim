@@ -21,6 +21,7 @@ import { Card, CardBody } from '@/components/ui/Card';
 import JourneyCourseCard from '@/components/student/JourneyCourseCard';
 import AchievementsStrip from '@/components/student/AchievementsStrip';
 import AnnouncementsCard from '@/components/student/AnnouncementsCard';
+import WishlistButton from '@/components/WishlistButton';
 import { he } from '@/lib/he';
 
 export default async function StudentHomePage({
@@ -80,6 +81,16 @@ export default async function StudentHomePage({
   const target = dash.continueTarget;
   const targetTheme = target ? LANDING_THEMES[target.accent] : theme;
   const hasCourses = dash.courses.length > 0;
+
+  // Wishlist state for catalog toggles (students only).
+  const wishlistIds = new Set(
+    (await db.wishlist.findMany({ where: { studentId: auth.userId }, select: { courseId: true } })).map(
+      (w) => w.courseId,
+    ),
+  );
+  const isStudent = auth.role === 'STUDENT';
+  const quickLink =
+    'inline-flex items-center gap-1.5 text-sm font-semibold rounded-full px-4 py-2 bg-card border border-line shadow-card hover:shadow-lift hover:-translate-y-0.5 transition-all';
 
   return (
     <div>
@@ -142,6 +153,24 @@ export default async function StudentHomePage({
           )}
         </div>
       </section>
+
+      {/* Quick links to the extended student features */}
+      {isStudent && (
+        <div className="flex flex-wrap gap-2.5 mb-8">
+          <Link href={`/t/${slug}/certificates`} className={quickLink}>
+            🎓 {he.certificatesTitle}
+          </Link>
+          <Link href={`/t/${slug}/wishlist`} className={quickLink}>
+            🔖 {he.wishlistTitle}
+          </Link>
+          <Link href={`/t/${slug}/leaderboard`} className={quickLink}>
+            🏆 {he.leaderboard}
+          </Link>
+          <Link href={`/t/${slug}/redeem`} className={quickLink}>
+            🎟️ {he.redeem}
+          </Link>
+        </div>
+      )}
 
       {/* Personal stats */}
       {hp.showStats && hasCourses && (
@@ -236,6 +265,9 @@ export default async function StudentHomePage({
                       {m.emoji}
                     </span>
                     <span className="flex items-center gap-2">
+                      {isStudent && (
+                        <WishlistButton courseId={course.id} initialSaved={wishlistIds.has(course.id)} />
+                      )}
                       {featured && <Badge tone="copper">⭐ {he.featuredCourse}</Badge>}
                       {m.priceText && (
                         <span

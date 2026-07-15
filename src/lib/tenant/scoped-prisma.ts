@@ -14,6 +14,15 @@ const TENANT_MODELS = new Set([
   'AffiliateLink',
   'CourseMedia',
   'LearningActivity',
+  'Notification',
+  'Broadcast',
+  'CommunityPost',
+  'CommunityReply',
+  'LessonQuestion',
+  'AccessCode',
+  'Certificate',
+  'LessonNote',
+  'Wishlist',
 ]);
 
 const WHERE_OPS = new Set([
