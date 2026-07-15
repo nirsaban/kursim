@@ -7,9 +7,9 @@ export default function SuperAdminLoginPage() {
   return (
     <AuthShell
       title={he.superAdmin}
-      subtitle="כניסה למנהלי הפלטפורמה בלבד"
-      panelTitle="שליטה מלאה בפלטפורמה"
-      panelText="ניהול בתי ספר, השעיות ומעקב שימוש — מכל מקום, בבטחה."
+      subtitle={he.superAdminLoginSubtitle}
+      panelTitle={he.superAdminPanelTitle}
+      panelText={he.superAdminPanelText}
     >
       <Suspense>
         <LoginForm />

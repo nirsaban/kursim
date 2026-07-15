@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Heebo, Frank_Ruhl_Libre } from 'next/font/google';
 import './globals.css';
+import { he } from '@/lib/he';
 
 const heebo = Heebo({
   subsets: ['hebrew', 'latin'],
@@ -17,8 +18,8 @@ const frank = Frank_Ruhl_Libre({
 });
 
 export const metadata: Metadata = {
-  title: 'Kursim — פלטפורמת קורסים',
-  description: 'פלטפורמה רב-ארגונית לבתי ספר דיגיטליים',
+  title: he.metaTitle,
+  description: he.metaDescription,
 };
 
 export default function RootLayout({

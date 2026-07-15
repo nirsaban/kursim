@@ -364,7 +364,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
                 {cta('', true)}
                 {!heroMedia && m.instructorName && (
                   <span className="text-sm text-muted">
-                    עם <b className="text-ink">{m.instructorName}</b>
+                    {he.withInstructor} <b className="text-ink">{m.instructorName}</b>
                   </span>
                 )}
               </div>
@@ -1000,7 +1000,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
       {/* extra bottom padding keeps the fixed conversion bar from covering the footer */}
       <footer className="pt-6 pb-24 border-t border-line bg-card">
         <p className="text-center text-sm text-muted">
-          {tenant.name} · נבנה עם Kursim
+          {tenant.name} · {he.landingBuiltWith}
         </p>
       </footer>
 

@@ -140,7 +140,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
       </div>
 
       {/* Step indicator */}
-      <ol className="flex items-center justify-center gap-1.5 mb-8" aria-label="שלבים">
+      <ol className="flex items-center justify-center gap-1.5 mb-8" aria-label={he.wizardStepsAria}>
         {STEPS.map((s, i) => (
           <li key={s.key} className="flex items-center gap-1.5">
             <button
@@ -174,17 +174,17 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="למשל: שיווק דיגיטלי למתחילים"
+                  placeholder={he.courseTitlePlaceholder}
                 />
               </Field>
-              <Field label={he.courseDescription} hint="יוצג לתלמידים בתוך המערכת">
+              <Field label={he.courseDescription} hint={he.courseTitleHint}>
                 <Textarea
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </Field>
-              <Field label={he.headline} hint="הכותרת הגדולה בדף הנחיתה — אם ריק, נשתמש בשם הקורס">
+              <Field label={he.headline} hint={he.headlineHint}>
                 <Input
                   value={m.headline}
                   placeholder={title}
@@ -195,7 +195,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
                 <Textarea
                   rows={2}
                   value={m.subheadline}
-                  placeholder="משפט אחד שגורם למבקר להבין למה הקורס הזה בשבילו"
+                  placeholder={he.subheadlinePlaceholder}
                   onChange={(e) => set({ subheadline: e.target.value })}
                 />
               </Field>
@@ -299,7 +299,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
                   onChange={(e) => set({ ctaText: e.target.value })}
                 />
               </Field>
-              <Field label={he.ctaLink} hint="קישור חלופי כשאין דף תשלום — וואטסאפ או טופס הרשמה">
+              <Field label={he.ctaLink} hint={he.ctaLinkHint}>
                 <Input
                   dir="ltr"
                   value={m.ctaLink}
@@ -340,7 +340,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
                 <Textarea
                   rows={3}
                   value={m.aboutSchool}
-                  placeholder="כמה מילים עליכם — ניסיון, גישה, ולמה כדאי ללמוד דווקא אצלכם"
+                  placeholder={he.aboutSchoolPlaceholder}
                   onChange={(e) => set({ aboutSchool: e.target.value })}
                 />
               </Field>

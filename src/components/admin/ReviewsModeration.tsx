@@ -61,7 +61,7 @@ export default function ReviewsModeration({ courseId }: { courseId: string }) {
       <EmptyState
         icon="⭐"
         title={he.noReviews}
-        hint="תלמידים שיסיימו את הקורס יתבקשו להשאיר ביקורת — היא תופיע כאן לאישור"
+        hint={he.reviewsEmptyHint}
       />
     );
   }

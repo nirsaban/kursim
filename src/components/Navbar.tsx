@@ -69,7 +69,7 @@ export default function Navbar({
             )}
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1" aria-label="ראשי">
+          <nav className="hidden md:flex items-center gap-1" aria-label={he.navMain}>
             {links.map((l) => (
               <NavItem key={l.href} link={l} pathname={pathname} ink={ink} />
             ))}
@@ -85,7 +85,7 @@ export default function Navbar({
         </div>
 
         {/* Mobile nav row */}
-        <nav className="md:hidden flex gap-1 overflow-x-auto pb-2 -mt-1" aria-label="ראשי">
+        <nav className="md:hidden flex gap-1 overflow-x-auto pb-2 -mt-1" aria-label={he.navMain}>
           {links.map((l) => (
             <NavItem key={l.href} link={l} pathname={pathname} ink={ink} />
           ))}

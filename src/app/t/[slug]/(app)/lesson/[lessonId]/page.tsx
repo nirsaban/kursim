@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getAuth } from '@/lib/auth/guards';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import LessonPlayer from '@/components/LessonPlayer';
+import { he } from '@/lib/he';
 
 export default async function LessonPage({
   params,
@@ -67,7 +68,7 @@ export default async function LessonPage({
 
       {lesson.notes && (
         <div className="mt-6 bg-card border border-line rounded-xl2 shadow-card p-6">
-          <p className="kicker mb-2">הערות לשיעור</p>
+          <p className="kicker mb-2">{he.lessonNotes}</p>
           <div className="whitespace-pre-wrap text-ink leading-relaxed">{lesson.notes}</div>
         </div>
       )}

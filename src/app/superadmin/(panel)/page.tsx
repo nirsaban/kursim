@@ -8,7 +8,7 @@ export default function SuperAdminHome() {
       <PageHeader
         kicker={he.superAdmin}
         title={he.tenants}
-        subtitle="כל בתי הספר בפלטפורמה — יצירה, השעיה ומחיקה"
+        subtitle={he.tenantsSubtitle}
       />
       <TenantsManager />
     </div>

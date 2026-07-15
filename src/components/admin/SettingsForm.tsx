@@ -44,13 +44,13 @@ export default function SettingsForm() {
     {
       value: 'BLOCK' as const,
       title: he.policyBlock,
-      hint: 'מכשיר נוסף מעבר למגבלה לא יצליח להתחבר עד שמכשיר קיים יתנתק',
+      hint: he.policyBlockHint,
       icon: '🚫',
     },
     {
       value: 'EVICT_OLDEST' as const,
       title: he.policyEvictOldest,
-      hint: 'התחברות חדשה תנתק אוטומטית את המכשיר הכי פחות פעיל',
+      hint: he.policyEvictOldestHint,
       icon: '🔄',
     },
   ];
@@ -73,7 +73,7 @@ export default function SettingsForm() {
       <Card>
         <CardHeader
           title={he.sessionLimit}
-          subtitle="כמה מכשירים יכולים להיות מחוברים בו-זמנית לאותו חשבון"
+          subtitle={he.sessionLimitSubtitle}
         />
         <CardBody className="space-y-5">
           <Field label={he.sessionLimit}>

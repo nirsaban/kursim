@@ -85,7 +85,7 @@ export default function EnrollmentsTab({ courseId }: { courseId: string }) {
         }
       />
       {enrollments.length === 0 ? (
-        <EmptyState icon="🧑‍🎓" title={he.noEnrollmentsYet} hint="תלמידים שיירשמו לקורס יופיעו כאן" />
+        <EmptyState icon="🧑‍🎓" title={he.noEnrollmentsYet} hint={he.enrollmentsEmptyHint} />
       ) : (
         <ul className="divide-y divide-line/70">
           {enrollments.map((e) => (

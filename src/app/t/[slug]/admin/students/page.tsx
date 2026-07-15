@@ -8,7 +8,7 @@ export default function AdminStudentsPage() {
       <PageHeader
         kicker={he.admin}
         title={he.students}
-        subtitle="ניהול חשבונות, הזמנות וחיבורים של התלמידים"
+        subtitle={he.studentsSubtitle}
       />
       <StudentsManager />
     </div>

@@ -96,7 +96,7 @@ export default function ContentTab({
         <EmptyState
           icon="📦"
           title={he.noLessons}
-          hint="מתחילים בפרק ראשון — ואז מוסיפים אליו שיעורים"
+          hint={he.modulesEmptyHint}
         />
       )}
 

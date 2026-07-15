@@ -78,7 +78,7 @@ export default function TenantsManager() {
       <Button onClick={() => setShowForm(true)}>+ {he.newTenant}</Button>
 
       {tenants.length === 0 ? (
-        <EmptyState icon="🏫" title={he.noTenantsYet} hint="צרו את בית הספר הראשון בפלטפורמה" />
+        <EmptyState icon="🏫" title={he.noTenantsYet} hint={he.tenantsEmptyHint} />
       ) : (
         <TableWrap>
           <Table>
@@ -137,7 +137,7 @@ export default function TenantsManager() {
 
       <Modal open={showForm} onClose={() => setShowForm(false)} title={he.newTenant}>
         <form onSubmit={createTenant} className="space-y-4">
-          <Field label={he.tenantSlug} hint="אותיות לועזיות קטנות ומקפים בלבד — יופיע בכתובת">
+          <Field label={he.tenantSlug} hint={he.tenantSlugHint}>
             <Input
               required
               dir="ltr"
@@ -162,7 +162,7 @@ export default function TenantsManager() {
               onChange={(e) => setForm({ ...form, ownerEmail: e.target.value })}
             />
           </Field>
-          <Field label={he.ownerPassword} hint="הבעלים יתבקש להחליף סיסמה בכניסה הראשונה">
+          <Field label={he.ownerPassword} hint={he.ownerPasswordHint}>
             <Input
               required
               type="text"

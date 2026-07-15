@@ -163,7 +163,7 @@ export default function StudentsManager() {
         <EmptyState
           icon="🧑‍🎓"
           title={he.noStudentsYet}
-          hint="הוסיפו תלמיד ראשון או שלחו קישור הזמנה"
+          hint={he.studentsEmptyHint}
           action={<Button onClick={() => setCreateOpen(true)}>+ {he.newStudent}</Button>}
         />
       ) : (
@@ -272,7 +272,7 @@ export default function StudentsManager() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Field>
-          <Field label={he.password} hint="התלמיד יתבקש להחליף סיסמה בכניסה הראשונה">
+          <Field label={he.password} hint={he.newStudentPasswordHint}>
             <Input
               type="text"
               required

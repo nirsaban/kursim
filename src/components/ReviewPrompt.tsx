@@ -67,7 +67,7 @@ export default function ReviewPrompt({ courseId }: { courseId: string }) {
             ))}
           </div>
         </div>
-        <Field label={`${he.testimonialName} (לא חובה)`}>
+        <Field label={`${he.testimonialName} ${he.optional}`}>
           <Input value={name} maxLength={100} onChange={(e) => setName(e.target.value)} />
         </Field>
         <Field label={he.reviewText}>

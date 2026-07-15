@@ -51,7 +51,7 @@ export default function AcceptInviteForm({
           autoComplete="email"
         />
       </Field>
-      <Field label={he.password} hint="לפחות 8 תווים">
+      <Field label={he.password} hint={he.passwordHint}>
         <Input
           type="password"
           required

@@ -45,7 +45,7 @@ export default async function AdminDashboard({
     <div>
       <PageHeader
         kicker={he.dashboard}
-        title="מה קורה בבית הספר"
+        title={he.adminOverviewTitle}
         actions={
           <Link
             href={`/t/${slug}/admin/courses/new`}
@@ -105,7 +105,7 @@ export default async function AdminDashboard({
           }
         />
         {liveSessions.length === 0 ? (
-          <EmptyState icon="🌙" title={he.noLiveSessions} hint="חיבורים חיים יופיעו כאן ברגע שתלמידים ייכנסו" />
+          <EmptyState icon="🌙" title={he.noLiveSessions} hint={he.adminSessionsEmptyHint} />
         ) : (
           <ul className="divide-y divide-line/70">
             {liveSessions.slice(0, 8).map((s) => (

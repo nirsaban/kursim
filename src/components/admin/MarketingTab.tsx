@@ -139,7 +139,7 @@ export default function MarketingTab({
 
       {/* Hero copy */}
       <Card>
-        <CardHeader title={he.headline} subtitle="הכותרת שמקבלת את הפנים בדף הנחיתה" />
+        <CardHeader title={he.headline} subtitle={he.headlineSubtitle} />
         <CardBody className="space-y-4">
           <Field label={he.headline}>
             <Input
@@ -352,7 +352,7 @@ export default function MarketingTab({
 
       {/* CTA + contact */}
       <Card>
-        <CardHeader title={he.enrollNow} subtitle="לאן מגיעים לחיצה על כפתור ההרשמה" />
+        <CardHeader title={he.enrollNow} subtitle={he.ctaLinkSubtitle} />
         <CardBody className="grid sm:grid-cols-2 gap-4">
           <Field label={he.paymentLink} hint={he.paymentLinkHint} className="sm:col-span-2">
             <Input
@@ -405,7 +405,7 @@ export default function MarketingTab({
         </Button>
         {saved && <span className="text-sm font-medium text-ok">{he.saved} ✓</span>}
         {dirty && !busy && (
-          <span className="text-sm font-medium text-warn">יש שינויים שלא נשמרו</span>
+          <span className="text-sm font-medium text-warn">{he.unsavedChanges}</span>
         )}
         <span className="ms-auto text-xs text-muted">{he.optionalStep}</span>
       </div>

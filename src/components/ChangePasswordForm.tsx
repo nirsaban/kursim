@@ -47,7 +47,7 @@ export default function ChangePasswordForm({ redirectTo }: { redirectTo: string 
               autoComplete="current-password"
             />
           </Field>
-          <Field label={he.newPassword} hint="לפחות 8 תווים">
+          <Field label={he.newPassword} hint={he.passwordHint}>
             <Input
               type="password"
               required

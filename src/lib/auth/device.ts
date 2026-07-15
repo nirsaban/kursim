@@ -1,6 +1,8 @@
+import { he } from '@/lib/he';
+
 /** Rough, dependency-free device label from a User-Agent string (shown in "active devices" lists). */
 export function deviceLabelFromUa(ua: string | null | undefined): string {
-  if (!ua) return 'מכשיר לא מזוהה';
+  if (!ua) return he.deviceUnknown;
   const os = /iPhone|iPad/i.test(ua)
     ? 'iOS'
     : /Android/i.test(ua)
@@ -24,5 +26,5 @@ export function deviceLabelFromUa(ua: string | null | undefined): string {
             ? 'Firefox'
             : '';
   const label = [browser, os].filter(Boolean).join(' · ');
-  return label || 'מכשיר לא מזוהה';
+  return label || he.deviceUnknown;
 }

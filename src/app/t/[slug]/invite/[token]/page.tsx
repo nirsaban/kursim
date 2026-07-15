@@ -17,8 +17,8 @@ export default async function InvitePage({
     <AuthShell
       title={tenant.name}
       subtitle={he.acceptInviteTitle}
-      panelTitle="הוזמנתם ללמוד איתנו"
-      panelText="דקה של הרשמה — וכל הקורסים, השיעורים והחומרים מחכים לכם."
+      panelTitle={he.inviteePanelTitle}
+      panelText={he.inviteePanelText}
     >
       <AcceptInviteForm token={token} tenantSlug={slug} />
     </AuthShell>

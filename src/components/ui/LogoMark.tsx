@@ -1,6 +1,8 @@
 /**
  * The «קורסים.» logo mark — ק on a rounded tile with the vermilion Live dot.
  */
+import { he } from '@/lib/he';
+
 export default function LogoMark({
   size = 34,
   variant = 'ink',
@@ -14,7 +16,7 @@ export default function LogoMark({
     vermilion: { tile: '#E4572E', glyph: '#FFFDF8', dot: '#12151D' },
   }[variant];
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-label="לוגו קורסים">
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-label={he.logoAria}>
       <rect x="2" y="2" width="60" height="60" rx="17" fill={fills.tile} />
       <text
         x="34"

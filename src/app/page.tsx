@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { he } from '@/lib/he';
 
 export default function Home() {
   return (
@@ -15,7 +16,7 @@ export default function Home() {
             href="/superadmin/login"
             className="text-sm text-muted hover:text-ink font-medium"
           >
-            ניהול מערכת
+            {he.superAdmin}
           </Link>
         </div>
       </header>
@@ -23,26 +24,25 @@ export default function Home() {
       <section className="flex-1 flex items-center">
         <div className="max-w-6xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-14 items-center">
           <div>
-            <p className="kicker mb-3">פלטפורמת קורסים רב-ארגונית</p>
+            <p className="kicker mb-3">{he.platformTagline}</p>
             <h1 className="font-display text-4xl sm:text-5xl font-bold leading-[1.15]">
-              בית ספר דיגיטלי משלכם,
+              {he.platformHeroTitle1}
               <br />
-              <span className="text-brand-700">בלי לשתף סיסמאות</span>
+              <span className="text-brand-700">{he.platformHeroTitle2}</span>
             </h1>
             <p className="text-muted text-lg mt-5 max-w-lg leading-relaxed">
-              העלאת שיעורי וידאו, ניהול תלמידים ודפי נחיתה משווקים — עם הגבלת מכשירים
-              חכמה שמגינה על התוכן שלכם.
+              {he.platformHeroText}
             </p>
             <div className="flex flex-wrap gap-3 mt-8">
               <Link
                 href="/superadmin/login"
                 className="inline-flex items-center bg-brand-700 hover:bg-brand-800 text-white font-semibold rounded-xl px-6 py-3 transition-colors"
               >
-                כניסת מנהל המערכת
+                {he.platformCtaAdmin}
               </Link>
             </div>
             <p className="text-sm text-muted mt-4">
-              תלמידים ובעלי קורסים נכנסים דרך הכתובת של בית הספר שלהם: ‎/t/שם-בית-הספר
+              {he.platformTenantHint}
             </p>
           </div>
 
@@ -55,16 +55,16 @@ export default function Home() {
                     <span className="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center">
                       📈
                     </span>
-                    <span className="font-semibold text-sm">מי מחובר עכשיו</span>
+                    <span className="font-semibold text-sm">{he.whoIsWatching}</span>
                   </div>
                   <span className="text-xs bg-ok/10 text-ok font-semibold rounded-full px-2.5 py-1">
-                    3 חיבורים
+                    {he.platformDemoConnections}
                   </span>
                 </div>
                 {[
-                  ['dana@school.co.il', 'Chrome · Mac', 'עכשיו'],
-                  ['yossi@gmail.com', 'Safari · iOS', 'לפני דקה'],
-                  ['maya@outlook.com', 'Chrome · Windows', 'לפני 4 דקות'],
+                  ['dana@school.co.il', 'Chrome · Mac', he.platformDemoNow],
+                  ['yossi@gmail.com', 'Safari · iOS', he.platformDemoAgoMin],
+                  ['maya@outlook.com', 'Chrome · Windows', he.platformDemoAgo4Min],
                 ].map(([mail, device, time]) => (
                   <div
                     key={mail}
@@ -76,7 +76,7 @@ export default function Home() {
                   </div>
                 ))}
                 <div className="rounded-xl bg-warn/10 border border-warn/20 px-4 py-2.5 text-xs font-medium text-warn">
-                  מכשיר רביעי נחסם — חריגה ממגבלת המכשירים
+                  {he.platformDemoBlocked}
                 </div>
               </div>
             </div>
@@ -85,7 +85,7 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-line py-6">
-        <p className="text-center text-sm text-muted">Kursim · נבנה לבתי ספר דיגיטליים</p>
+        <p className="text-center text-sm text-muted">Kursim · {he.platformFooterTagline}</p>
       </footer>
     </main>
   );

@@ -152,7 +152,7 @@ export default function HomepageEditor({ slug }: { slug: string }) {
         </Button>
         {saved && <span className="text-sm font-medium text-ok">{he.saved} ✓</span>}
         {dirty && !busy && (
-          <span className="text-sm font-medium text-warn">יש שינויים שלא נשמרו</span>
+          <span className="text-sm font-medium text-warn">{he.unsavedChanges}</span>
         )}
         <a
           href={`/t/${slug}?preview=1`}

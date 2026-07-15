@@ -165,8 +165,7 @@ export default function GalleryEditor({
       {pendingBefore && (
         <div className="flex flex-wrap items-center gap-3 bg-brand-50 border border-brand-200 rounded-xl px-4 py-3">
           <span className="text-sm font-medium text-brand-900">
-            ✓ תמונת ה&quot;{he.beforeLabel}&quot; הועלתה — עכשיו בחרו את תמונת ה&quot;
-            {he.afterLabel}&quot;
+            {he.galleryBeforeDone}
           </span>
           <Button
             type="button"
@@ -174,7 +173,7 @@ export default function GalleryEditor({
             disabled={progress !== null}
             onClick={() => afterInput.current?.click()}
           >
-            בחירת תמונת ה&quot;{he.afterLabel}&quot;
+            {he.galleryPickAfter}
           </Button>
           <button
             type="button"
