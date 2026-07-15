@@ -490,6 +490,11 @@ export const he = {
   saleNewAccount: 'חשבון חדש',
   noSalesYet: 'עוד אין רכישות — ברגע שמישהו ישלם, זה יופיע כאן',
   saleNotifyTitle: 'מכירה חדשה! 🎉',
+  salePhoneLabel: 'טלפון',
+  resendWa: 'שליחה מחדש בוואטסאפ',
+  resendSent: 'נשלח! ✓',
+  resendQueued: 'ממתין לחיבור וואטסאפ',
+  resendFailed: 'השליחה נכשלה — בדקו את הטלפון',
 
   // super-admin WhatsApp pairing
   whatsappTitle: 'וואטסאפ',

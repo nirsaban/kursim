@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
 import { Table, TableWrap, Td, Th } from '@/components/ui/Table';
+import { apiFetch } from '@/lib/client/api';
 import { relativeHe } from '@/lib/relative-time';
 import { he } from '@/lib/he';
 
@@ -18,10 +20,12 @@ export interface PurchaseRow {
   id: string;
   payerName: string;
   payerEmail: string;
+  payerPhone: string;
   courseTitle: string;
   amount: string;
   delivered: boolean;
   isNewUser: boolean;
+  canResend: boolean;
   createdAt: string;
 }
 
@@ -86,6 +90,7 @@ export default function PaymentsPanel({
                   <Th>{he.saleCourseCol}</Th>
                   <Th>{he.saleAmount}</Th>
                   <Th>{he.saleDelivered}</Th>
+                  <Th>{he.resendWa}</Th>
                   <Th>{he.announcementDate}</Th>
                 </tr>
               </thead>
@@ -106,6 +111,7 @@ export default function PaymentsPanel({
                         <Badge tone="neutral">—</Badge>
                       )}
                     </Td>
+                    <Td>{p.canResend ? <ResendCell id={p.id} phone={p.payerPhone} /> : <span className="text-muted">—</span>}</Td>
                     <Td className="text-xs text-muted">{relativeHe(new Date(p.createdAt).getTime())}</Td>
                   </tr>
                 ))}
@@ -114,6 +120,53 @@ export default function PaymentsPanel({
           </TableWrap>
         )}
       </div>
+    </div>
+  );
+}
+
+function ResendCell({ id, phone }: { id: string; phone: string }) {
+  const [value, setValue] = useState(phone);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<'sent' | 'queued' | 'failed' | null>(null);
+
+  async function resend() {
+    setBusy(true);
+    setResult(null);
+    const res = await apiFetch(`/api/purchases/${id}/resend`, {
+      method: 'POST',
+      body: JSON.stringify({ phone: value }),
+    });
+    setBusy(false);
+    if (res.ok) {
+      const d = await res.json();
+      if (d.ok) setResult('sent');
+      else if (typeof d.error === 'string' && d.error.startsWith('wa_')) setResult('queued');
+      else setResult('failed');
+    } else {
+      setResult('failed');
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5 min-w-40">
+      <div className="flex gap-1.5">
+        <input
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setResult(null);
+          }}
+          dir="ltr"
+          aria-label={he.salePhoneLabel}
+          className="w-28 bg-card border border-line rounded-lg px-2 py-1 text-xs font-mono"
+        />
+        <Button size="sm" variant="secondary" onClick={resend} disabled={busy || !value.trim()}>
+          {he.resendWa}
+        </Button>
+      </div>
+      {result === 'sent' && <span className="text-xs font-semibold text-ok">{he.resendSent}</span>}
+      {result === 'queued' && <span className="text-xs font-semibold text-warn">{he.resendQueued}</span>}
+      {result === 'failed' && <span className="text-xs font-semibold text-danger">{he.resendFailed}</span>}
     </div>
   );
 }

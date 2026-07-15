@@ -48,10 +48,12 @@ export default async function PaymentsPage({
     id: p.id,
     payerName: p.payerName,
     payerEmail: p.payerEmail,
+    payerPhone: p.payerPhone,
     courseTitle: titleById.get(p.courseId) ?? '',
     amount: p.amount,
     delivered: p.delivered,
     isNewUser: p.isNewUser,
+    canResend: Boolean(p.provisionedUserId),
     createdAt: p.createdAt.toISOString(),
   }));
 

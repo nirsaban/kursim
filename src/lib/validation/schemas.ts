@@ -178,3 +178,8 @@ export const lessonNoteSchema = z.object({
 export const wishlistSchema = z.object({
   courseId: z.string().uuid(),
 });
+
+/** Owner resends a purchase's WhatsApp login, optionally to a corrected phone. */
+export const resendSchema = z.object({
+  phone: z.string().max(30).optional(),
+});
