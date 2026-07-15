@@ -536,6 +536,12 @@ export const he = {
   waTestQueued: 'בתור — ממתין לחיבור',
   waTestFailed: 'השליחה נכשלה — בדקו את הטלפון',
 
+  // whatsapp how-it-works help card
+  waHelpTitle: 'איך זה עובד',
+  waHelpStep1: 'סורקים את קוד ה-QR פעם אחת כדי לחבר את מספר הוואטסאפ שלכם',
+  waHelpStep2: 'מכאן כל תלמיד שירכוש קורס יקבל מכם אוטומטית הודעה עם קישור וסיסמה לכניסה',
+  waHelpStep3: 'תמיד אפשר לשלוח לעצמכם הודעת בדיקה, ולשלוח כל הודעה מחדש מהיומן',
+
   // nav group labels
   navMarketing: 'שיווק ומכירות',
 

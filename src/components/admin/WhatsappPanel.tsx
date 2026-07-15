@@ -64,6 +64,27 @@ export default function WhatsappPanel({ messages }: { messages: WaMessageRow[] }
 
   return (
     <div className="space-y-6">
+      {/* How it works */}
+      <div className="rounded-xl2 border border-line bg-paper/60 p-5">
+        <p className="font-display font-bold mb-3 flex items-center gap-2">
+          <span aria-hidden>💬</span>
+          {he.waHelpTitle}
+        </p>
+        <ol className="space-y-2 text-sm text-muted">
+          {[he.waHelpStep1, he.waHelpStep2, he.waHelpStep3].map((step, i) => (
+            <li key={i} className="flex items-start gap-2.5">
+              <span
+                className="mt-0.5 w-5 h-5 rounded-full bg-ink text-paper text-xs font-bold grid place-items-center shrink-0"
+                dir="ltr"
+              >
+                {i + 1}
+              </span>
+              <span className="leading-relaxed">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
       <Card>
         <CardBody className="space-y-5">
           <div className="flex items-center gap-3">
