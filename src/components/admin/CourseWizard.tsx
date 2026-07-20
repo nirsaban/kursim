@@ -15,6 +15,7 @@ import {
   PairListEditor,
   StringListEditor,
 } from './MarketingFields';
+import LandingAiBuilder from './ai-builder/LandingAiBuilder';
 
 const STEPS: Array<{ key: string; label: string; required?: boolean }> = [
   { key: 'basics', label: he.stepBasics, required: true },
@@ -34,6 +35,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
   const [error, setError] = useState<string | null>(null);
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [published, setPublished] = useState(false);
+  const [showAiBuilder, setShowAiBuilder] = useState(false);
 
   const set = (patch: Partial<CourseMarketing>) => setM((prev) => ({ ...prev, ...patch }));
   const isLast = step === STEPS.length - 1;
@@ -184,6 +186,29 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </Field>
+
+              {title.trim() &&
+                (showAiBuilder ? (
+                  <LandingAiBuilder
+                    tenantSlug={tenantSlug}
+                    courseTitle={title.trim()}
+                    courseDescription={description.trim()}
+                    currentMarketing={m}
+                    onApply={set}
+                    onClose={() => setShowAiBuilder(false)}
+                  />
+                ) : (
+                  <div className="flex items-center justify-between gap-4 border border-line rounded-xl2 px-4 py-3 bg-paper/50">
+                    <div>
+                      <p className="font-semibold text-sm">{he.aiBuilderTitle}</p>
+                      <p className="text-xs text-muted mt-0.5">{he.aiBuilderSubtitle}</p>
+                    </div>
+                    <Button variant="secondary" size="sm" onClick={() => setShowAiBuilder(true)}>
+                      {he.aiBuilderOpen}
+                    </Button>
+                  </div>
+                ))}
+
               <Field label={he.headline} hint={he.headlineHint}>
                 <Input
                   value={m.headline}

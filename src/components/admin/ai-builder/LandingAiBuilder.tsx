@@ -11,7 +11,7 @@ import type { LandingProps } from '@/components/landing/landing-types';
 import ClassicLanding from '@/components/landing/ClassicLanding';
 import CoralHotaLanding from '@/components/landing/coralhota/CoralHotaLanding';
 import AiBuilderWizard from './AiBuilderWizard';
-import type { AiBuilderAnswers, LandingAiDraft } from '@/lib/validation/ai-builder';
+import type { AiBuilderAnswers, LandingAiDraft, LandingDraftRequest } from '@/lib/validation/ai-builder';
 
 /** Builds a full LandingProps preview from a (possibly draft-merged) marketing object.
  * Gallery/reviews/curriculum are intentionally empty — the AI Builder only touches copy. */
@@ -68,19 +68,26 @@ export default function LandingAiBuilder({
   courseId,
   tenantSlug,
   courseTitle,
+  courseDescription = '',
   currentMarketing,
   onApply,
   onConfirm,
   onClose,
 }: {
-  courseId: string;
+  /** Omit during course CREATION, before the course exists in the DB — the
+   * draft endpoint then takes courseTitle/courseDescription directly instead
+   * of loading them from a courseId. */
+  courseId?: string;
   tenantSlug: string;
   courseTitle: string;
+  courseDescription?: string;
   currentMarketing: CourseMarketing;
   onApply: (patch: Partial<CourseMarketing>) => void;
   /** Saves the exact object passed in — avoids relying on React state having
-   * flushed onApply's patch before the save request is built. */
-  onConfirm: (marketing: CourseMarketing) => Promise<void>;
+   * flushed onApply's patch before the save request is built. Omit when
+   * there's nothing to save yet (course creation) — the Confirm button is
+   * hidden and only "open in editor" (onApply) is offered. */
+  onConfirm?: (marketing: CourseMarketing) => Promise<void>;
   onClose: () => void;
 }) {
   const [phase, setPhase] = useState<Phase>('wizard');
@@ -90,10 +97,22 @@ export default function LandingAiBuilder({
 
   async function generate(answers: AiBuilderAnswers) {
     setPhase('generating');
-    const res = await apiFetch(`/api/courses/${courseId}/ai-draft`, {
-      method: 'POST',
-      body: JSON.stringify(answers),
-    });
+    const res = courseId
+      ? await apiFetch(`/api/courses/${courseId}/ai-draft`, {
+          method: 'POST',
+          body: JSON.stringify(answers),
+        })
+      : await apiFetch('/api/ai-draft/landing', {
+          method: 'POST',
+          body: JSON.stringify({
+            answers,
+            courseTitle,
+            courseDescription,
+            existingHeadline: currentMarketing.headline,
+            existingSubheadline: currentMarketing.subheadline,
+            instructorName: currentMarketing.instructorName,
+          } satisfies LandingDraftRequest),
+        });
     if (!res.ok) {
       const d = await res.json().catch(() => ({}));
       setErrorMsg(d.error === 'ai_disabled' ? he.aiBuilderDisabled : he.aiBuilderFailed);
@@ -180,19 +199,21 @@ export default function LandingAiBuilder({
           <Template {...previewProps} />
         </div>
         <div className="flex flex-wrap gap-3">
-          <Button
-            size="sm"
-            disabled={confirming}
-            onClick={async () => {
-              setConfirming(true);
-              applyDraft();
-              await onConfirm(merged);
-              setConfirming(false);
-              onClose();
-            }}
-          >
-            {he.aiBuilderConfirm}
-          </Button>
+          {onConfirm && (
+            <Button
+              size="sm"
+              disabled={confirming}
+              onClick={async () => {
+                setConfirming(true);
+                applyDraft();
+                await onConfirm(merged);
+                setConfirming(false);
+                onClose();
+              }}
+            >
+              {he.aiBuilderConfirm}
+            </Button>
+          )}
           <Button
             size="sm"
             variant="secondary"

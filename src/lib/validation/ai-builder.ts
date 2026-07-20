@@ -47,6 +47,21 @@ export const landingAiDraftSchema = z.object({
 export type LandingAiDraft = z.infer<typeof landingAiDraftSchema>;
 
 /**
+ * Body for the course-less landing draft endpoint (used during course
+ * creation, before the course exists in the DB — the caller supplies the
+ * facts directly instead of the server loading them from a courseId).
+ */
+export const landingDraftRequestSchema = z.object({
+  answers: aiBuilderAnswersSchema,
+  courseTitle: z.string().min(1).max(200),
+  courseDescription: z.string().max(2000).default(''),
+  existingHeadline: z.string().max(120).default(''),
+  existingSubheadline: z.string().max(300).default(''),
+  instructorName: z.string().max(100).default(''),
+});
+export type LandingDraftRequest = z.infer<typeof landingDraftRequestSchema>;
+
+/**
  * AI-generated home-page draft — content-only subset of homepageSchema.
  * Excludes announcements (time-bound, owner-authored facts, not something
  * an AI should invent) and featuredCourseId/section toggles (operational).
