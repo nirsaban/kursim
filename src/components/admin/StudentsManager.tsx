@@ -44,6 +44,10 @@ export default function StudentsManager() {
   );
   const [createOpen, setCreateOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resetTarget, setResetTarget] = useState<string | null>(null);
+  const [resetPw, setResetPw] = useState('');
+  const [resetError, setResetError] = useState<string | null>(null);
+  const [resetDone, setResetDone] = useState(false);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -101,14 +105,26 @@ export default function StudentsManager() {
     reload();
   }
 
-  async function resetPassword(id: string) {
-    const pw = prompt(he.newPassword);
-    if (!pw || pw.length < 8) return;
-    const res = await apiFetch(`/api/students/${id}/reset-password`, {
+  function openResetPassword(id: string) {
+    setResetTarget(id);
+    setResetPw('');
+    setResetError(null);
+    setResetDone(false);
+  }
+
+  async function submitResetPassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (!resetTarget) return;
+    setResetError(null);
+    const res = await apiFetch(`/api/students/${resetTarget}/reset-password`, {
       method: 'POST',
-      body: JSON.stringify({ password: pw }),
+      body: JSON.stringify({ password: resetPw }),
     });
-    if (res.ok) alert(he.saved);
+    if (res.ok) {
+      setResetDone(true);
+    } else {
+      setResetError(he.error);
+    }
   }
 
   async function showSessions(id: string) {
@@ -218,7 +234,7 @@ export default function StudentsManager() {
                       {s.status === 'ACTIVE' ? he.suspend : he.activate}
                     </button>
                     <button
-                      onClick={() => resetPassword(s.id)}
+                      onClick={() => openResetPassword(s.id)}
                       className="text-xs font-medium text-brand-700 hover:underline me-3"
                     >
                       {he.resetPassword}
@@ -299,6 +315,39 @@ export default function StudentsManager() {
             </Button>
           </div>
         </form>
+      </Modal>
+
+      {/* Reset password modal */}
+      <Modal open={resetTarget !== null} onClose={() => setResetTarget(null)} title={he.resetPassword}>
+        {resetDone ? (
+          <div className="space-y-4">
+            <p className="text-sm font-medium text-ok">{he.resetPasswordSuccess}</p>
+            <Button type="button" onClick={() => setResetTarget(null)}>
+              {he.close}
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={submitResetPassword} className="space-y-4">
+            <Field label={he.newPassword} hint={he.resetPasswordHint}>
+              <Input
+                type="text"
+                required
+                minLength={8}
+                autoFocus
+                dir="ltr"
+                value={resetPw}
+                onChange={(e) => setResetPw(e.target.value)}
+              />
+            </Field>
+            {resetError && <p className="text-sm text-danger font-medium">{resetError}</p>}
+            <div className="flex gap-2">
+              <Button type="submit">{he.save}</Button>
+              <Button type="button" variant="ghost" onClick={() => setResetTarget(null)}>
+                {he.cancel}
+              </Button>
+            </div>
+          </form>
+        )}
       </Modal>
 
       {/* Sessions modal */}

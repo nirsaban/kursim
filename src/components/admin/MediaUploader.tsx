@@ -87,6 +87,7 @@ export default function MediaUploader({
   }
 
   async function removeAttachment(id: string) {
+    if (!confirm(he.confirmDelete)) return;
     await apiFetch(`/api/attachments/${id}`, { method: 'DELETE' });
     onChanged();
   }
