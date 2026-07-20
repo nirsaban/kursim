@@ -31,27 +31,54 @@ function tempPassword(): string {
   return out;
 }
 
-/** Grow may POST JSON or form-encoded. Parse from the already-read raw text,
- *  trying JSON first then form, regardless of the declared content-type. */
+/**
+ * Some Grow payment pages nest every field under a `data` wrapper — form-encoded
+ * as `data[statusCode]=2`, or JSON as `{"data":{...}}` — while others post the
+ * same fields flat. Lift the wrapper so both shapes read identically downstream.
+ * Deeper nesting (e.g. `data[productData][0][name]`) is not a field we consume
+ * and is left untouched.
+ */
+function unwrapData(obj: Record<string, unknown>): Record<string, string> {
+  const out: Record<string, string> = {};
+  const put = (k: string, v: unknown) => {
+    if (v === null || typeof v === 'object') return;
+    out[k] = String(v);
+  };
+  for (const [k, v] of Object.entries(obj)) {
+    const nested = /^data\[([^[\]]+)\]$/.exec(k);
+    if (nested) {
+      put(nested[1], v);
+    } else if (k === 'data' && v && typeof v === 'object' && !Array.isArray(v)) {
+      for (const [ik, iv] of Object.entries(v as Record<string, unknown>)) put(ik, iv);
+    } else {
+      put(k, v);
+    }
+  }
+  return out;
+}
+
+/** Grow may POST JSON or form-encoded, flat or wrapped in `data`. Parse from the
+ *  already-read raw text, trying JSON first then form, regardless of the
+ *  declared content-type. */
 function parseGrowBody(raw: string, ct: string): Record<string, string> {
-  const asForm = (s: string): Record<string, string> => {
-    const obj: Record<string, string> = {};
+  const asForm = (s: string): Record<string, unknown> => {
+    const obj: Record<string, unknown> = {};
     for (const [k, v] of new URLSearchParams(s)) obj[k] = v;
     return obj;
   };
-  const tryJson = (s: string): Record<string, string> | null => {
+  const tryJson = (s: string): Record<string, unknown> | null => {
     try {
       const j = JSON.parse(s);
-      return j && typeof j === 'object' ? (j as Record<string, string>) : null;
+      return j && typeof j === 'object' ? (j as Record<string, unknown>) : null;
     } catch {
       return null;
     }
   };
   if (ct.includes('application/json')) {
     const j = tryJson(raw);
-    if (j) return j;
+    if (j) return unwrapData(j);
   }
-  return tryJson(raw) ?? asForm(raw);
+  return unwrapData(tryJson(raw) ?? asForm(raw));
 }
 
 /**
