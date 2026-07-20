@@ -8,6 +8,7 @@ import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import { Field, Input, Select, Textarea } from '@/components/ui/Field';
 import Button from '@/components/ui/Button';
 import { AccentPicker, EmojiPicker } from './MarketingFields';
+import HomepageAiBuilder from './ai-builder/HomepageAiBuilder';
 
 type Announcement = TenantHomepage['announcements'][number];
 
@@ -17,6 +18,7 @@ export default function HomepageEditor({ slug }: { slug: string }) {
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
   const [courses, setCourses] = useState<{ id: string; title: string }[]>([]);
+  const [showAiBuilder, setShowAiBuilder] = useState(false);
 
   useEffect(() => {
     apiFetch('/api/settings/homepage')
@@ -45,24 +47,52 @@ export default function HomepageEditor({ slug }: { slug: string }) {
     setDirty(true);
   };
 
-  async function save() {
-    if (!hp) return;
+  async function saveHomepage(toSave: TenantHomepage) {
     setBusy(true);
     // Drop rows the owner added but never titled — the schema requires a title.
-    const payload = { ...hp, announcements: hp.announcements.filter((a) => a.title.trim()) };
+    const payload = { ...toSave, announcements: toSave.announcements.filter((a) => a.title.trim()) };
     const res = await apiFetch('/api/settings/homepage', {
       method: 'PUT',
       body: JSON.stringify(payload),
     });
     setBusy(false);
     if (res.ok) {
+      setHp(toSave);
       setSaved(true);
       setDirty(false);
     }
   }
 
+  async function save() {
+    if (!hp) return;
+    await saveHomepage(hp);
+  }
+
   return (
     <div className="space-y-6">
+      {/* AI Builder */}
+      {showAiBuilder ? (
+        <HomepageAiBuilder
+          tenantName={slug}
+          currentHomepage={hp}
+          onApply={set}
+          onConfirm={saveHomepage}
+          onClose={() => setShowAiBuilder(false)}
+        />
+      ) : (
+        <Card>
+          <CardBody className="flex items-center justify-between gap-4">
+            <div>
+              <p className="font-semibold">{he.aiBuilderTitle}</p>
+              <p className="text-sm text-muted mt-0.5">{he.aiBuilderSubtitle}</p>
+            </div>
+            <Button variant="secondary" onClick={() => setShowAiBuilder(true)}>
+              {he.aiBuilderOpen}
+            </Button>
+          </CardBody>
+        </Card>
+      )}
+
       {/* Welcome + about */}
       <Card>
         <CardHeader title={he.homepageWelcome} subtitle={he.homepageAboutSchoolHint} />

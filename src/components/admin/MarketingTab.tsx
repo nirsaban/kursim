@@ -19,6 +19,7 @@ import GalleryEditor from './GalleryEditor';
 import AiMediaCard from './AiMediaCard';
 import ReviewsModeration from './ReviewsModeration';
 import AffiliatesPanel from './AffiliatesPanel';
+import LandingAiBuilder from './ai-builder/LandingAiBuilder';
 
 export default function MarketingTab({
   courseId,
@@ -36,6 +37,7 @@ export default function MarketingTab({
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
   const [otherCourses, setOtherCourses] = useState<{ id: string; title: string }[]>([]);
+  const [showAiBuilder, setShowAiBuilder] = useState(false);
 
   useEffect(() => {
     apiFetch(`/api/courses/${courseId}/marketing`)
@@ -69,17 +71,26 @@ export default function MarketingTab({
     setDirty(true);
   };
 
-  async function save() {
+  // Takes the object to save explicitly rather than closing over `m`, so a
+  // caller (the AI Builder) can save a just-generated draft without waiting
+  // for a setState from `set()` to flush first.
+  async function saveMarketing(toSave: CourseMarketing) {
     setBusy(true);
     const res = await apiFetch(`/api/courses/${courseId}/marketing`, {
       method: 'PUT',
-      body: JSON.stringify(m),
+      body: JSON.stringify(toSave),
     });
     setBusy(false);
     if (res.ok) {
+      setM(toSave);
       setSaved(true);
       setDirty(false);
     }
+  }
+
+  async function save() {
+    if (!m) return;
+    await saveMarketing(m);
   }
 
   async function togglePublish() {
@@ -137,6 +148,31 @@ export default function MarketingTab({
           <p className="px-5 pb-4 text-xs text-muted -mt-2">{he.landingShareNote}</p>
         )}
       </Card>
+
+      {/* AI Builder */}
+      {showAiBuilder ? (
+        <LandingAiBuilder
+          courseId={courseId}
+          tenantSlug={tenantSlug}
+          courseTitle={courseTitle}
+          currentMarketing={m}
+          onApply={set}
+          onConfirm={saveMarketing}
+          onClose={() => setShowAiBuilder(false)}
+        />
+      ) : (
+        <Card>
+          <CardBody className="flex items-center justify-between gap-4">
+            <div>
+              <p className="font-semibold">{he.aiBuilderTitle}</p>
+              <p className="text-sm text-muted mt-0.5">{he.aiBuilderSubtitle}</p>
+            </div>
+            <Button variant="secondary" onClick={() => setShowAiBuilder(true)}>
+              {he.aiBuilderOpen}
+            </Button>
+          </CardBody>
+        </Card>
+      )}
 
       {/* Hero copy */}
       <Card>
