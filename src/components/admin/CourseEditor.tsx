@@ -25,6 +25,7 @@ export default function CourseEditor({
   const router = useRouter();
   const [course, setCourse] = useState<CourseStructure | null>(null);
   const [tab, setTab] = useState<TabKey>('content');
+  const [savedField, setSavedField] = useState<'title' | 'description' | null>(null);
 
   const reload = useCallback(async () => {
     const res = await apiFetch(`/api/courses/${courseId}`);
@@ -44,12 +45,18 @@ export default function CourseEditor({
     );
   }
 
-  async function patchCourse(data: Record<string, unknown>) {
+  async function patchCourse(data: Record<string, unknown>, flashField?: 'title' | 'description') {
     const res = await apiFetch(`/api/courses/${courseId}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
-    if (res.ok) reload();
+    if (res.ok) {
+      if (flashField) {
+        setSavedField(flashField);
+        setTimeout(() => setSavedField((f) => (f === flashField ? null : f)), 1500);
+      }
+      reload();
+    }
   }
 
   async function deleteCourse() {
@@ -76,10 +83,19 @@ export default function CourseEditor({
               aria-label={he.courseTitle}
               onBlur={(e) => {
                 if (e.target.value.trim() && e.target.value !== course.title) {
-                  patchCourse({ title: e.target.value.trim() });
+                  patchCourse({ title: e.target.value.trim() }, 'title');
                 }
               }}
             />
+            <span
+              className={cn(
+                'text-xs font-medium text-ok transition-opacity duration-300 shrink-0',
+                savedField === 'title' ? 'opacity-100' : 'opacity-0',
+              )}
+              aria-hidden={savedField !== 'title'}
+            >
+              {he.saved}
+            </span>
             <Badge tone={course.status === 'PUBLISHED' ? 'ok' : 'neutral'}>
               {course.status === 'PUBLISHED' ? he.published : he.draft}
             </Badge>
@@ -108,10 +124,19 @@ export default function CourseEditor({
           rows={2}
           onBlur={(e) => {
             if (e.target.value !== (course.description ?? '')) {
-              patchCourse({ description: e.target.value || null });
+              patchCourse({ description: e.target.value || null }, 'description');
             }
           }}
         />
+        <span
+          className={cn(
+            'block text-xs font-medium text-ok transition-opacity duration-300 mt-1',
+            savedField === 'description' ? 'opacity-100' : 'opacity-0',
+          )}
+          aria-hidden={savedField !== 'description'}
+        >
+          {he.saved}
+        </span>
       </div>
 
       {/* Tabs */}
