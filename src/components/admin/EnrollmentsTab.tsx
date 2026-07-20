@@ -46,6 +46,7 @@ export default function EnrollmentsTab({ courseId }: { courseId: string }) {
   }
 
   async function unenroll(studentId: string) {
+    if (!confirm(he.confirmDelete)) return;
     await apiFetch(`/api/courses/${courseId}/enrollments`, {
       method: 'DELETE',
       body: JSON.stringify({ studentId }),

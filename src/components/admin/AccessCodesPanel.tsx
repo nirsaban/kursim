@@ -78,6 +78,12 @@ export default function AccessCodesPanel({
     setCopied(true);
   }
 
+  async function revokeCode(id: string) {
+    if (!confirm(he.confirmDelete)) return;
+    const res = await apiFetch(`/api/access-codes/${id}`, { method: 'DELETE' });
+    if (res.ok) setCodes((prev) => prev.filter((c) => c.id !== id));
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -148,6 +154,7 @@ export default function AccessCodesPanel({
                 <Th>{he.accessCodeCourse}</Th>
                 <Th>{he.accessCodeUses}</Th>
                 <Th>{he.accessCodeExpiry}</Th>
+                <Th> </Th>
               </tr>
             </thead>
             <tbody>
@@ -177,6 +184,14 @@ export default function AccessCodesPanel({
                       {c.expiresAt
                         ? new Date(c.expiresAt).toLocaleDateString('he-IL')
                         : '—'}
+                    </Td>
+                    <Td className="text-end">
+                      <button
+                        onClick={() => revokeCode(c.id)}
+                        className="text-xs font-medium text-muted hover:text-danger transition-colors"
+                      >
+                        {he.accessCodeRevoke}
+                      </button>
                     </Td>
                   </tr>
                 );

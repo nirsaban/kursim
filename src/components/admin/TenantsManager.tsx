@@ -30,6 +30,8 @@ export default function TenantsManager() {
     ownerEmail: '',
     ownerPassword: '',
   });
+  const [deleteTarget, setDeleteTarget] = useState<Tenant | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   const reload = useCallback(async () => {
     const res = await apiFetch('/api/tenants');
@@ -58,6 +60,9 @@ export default function TenantsManager() {
   }
 
   async function setStatus(tenant: Tenant, status: 'ACTIVE' | 'SUSPENDED') {
+    if (status === 'SUSPENDED' && !confirm(he.confirmSuspendTenant.replace('{name}', tenant.name))) {
+      return;
+    }
     await apiFetch(`/api/tenants/${tenant.id}`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),
@@ -65,9 +70,10 @@ export default function TenantsManager() {
     reload();
   }
 
-  async function removeTenant(tenant: Tenant) {
-    if (!confirm(he.confirmDelete)) return;
-    await apiFetch(`/api/tenants/${tenant.id}`, { method: 'DELETE' });
+  async function removeTenant() {
+    if (!deleteTarget) return;
+    await apiFetch(`/api/tenants/${deleteTarget.id}`, { method: 'DELETE' });
+    setDeleteTarget(null);
     reload();
   }
 
@@ -122,7 +128,10 @@ export default function TenantsManager() {
                       {t.status === 'ACTIVE' ? he.suspend : he.activate}
                     </button>
                     <button
-                      onClick={() => removeTenant(t)}
+                      onClick={() => {
+                        setDeleteTarget(t);
+                        setDeleteConfirmText('');
+                      }}
                       className="text-xs font-medium text-danger hover:underline"
                     >
                       {he.delete}
@@ -180,6 +189,38 @@ export default function TenantsManager() {
             </Button>
           </div>
         </form>
+      </Modal>
+
+      <Modal
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title={he.deleteTenantTitle}
+      >
+        {deleteTarget && (
+          <div className="space-y-4">
+            <p className="text-sm text-danger font-medium">{he.deleteTenantWarning}</p>
+            <Field label={`${he.deleteTenantConfirmLabel}: "${deleteTarget.name}"`}>
+              <Input
+                autoFocus
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+              />
+            </Field>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="danger"
+                disabled={deleteConfirmText.trim() !== deleteTarget.name}
+                onClick={removeTenant}
+              >
+                {he.deleteTenantButton}
+              </Button>
+              <Button type="button" variant="ghost" onClick={() => setDeleteTarget(null)}>
+                {he.cancel}
+              </Button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

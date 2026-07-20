@@ -48,7 +48,7 @@ export default function AffiliatesPanel({ courseId }: { courseId: string }) {
               <Th>{he.email}</Th>
               <Th>{he.affiliateVisits}</Th>
               <Th>{he.affiliateCoins}</Th>
-              <Th>ref</Th>
+              <Th>{he.affiliateRefCode}</Th>
             </tr>
           </thead>
           <tbody>

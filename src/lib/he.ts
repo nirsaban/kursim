@@ -344,6 +344,7 @@ export const he = {
   affiliateCoins: 'מטבעות שצברתם',
   affiliateToNext: 'עוד {n} מבקרים למטבע הבא',
   affiliateGetLink: 'קבלת קישור לשיתוף',
+  affiliateRefCode: 'קוד שיתוף',
   shareWhatsapp: 'שיתוף בוואטסאפ',
   shareInstagram: 'שיתוף בסטורי',
   shareGeneric: 'שיתוף...',
@@ -462,6 +463,12 @@ export const he = {
   slugTaken: 'המזהה הזה כבר תפוס',
   openTenant: 'כניסה לבית הספר',
   tenantsEmptyHint: 'יאללה, מקימים את בית הספר הראשון בפלטפורמה',
+  confirmSuspendTenant: 'להשעות את "{name}"? כל התלמידים והצוות לא יוכלו להיכנס עד שתבטלו את ההשעיה.',
+  deleteTenantTitle: 'מחיקת בית ספר',
+  deleteTenantWarning:
+    'הפעולה תמחק לצמיתות את כל הקורסים, התלמידים והרכישות של בית הספר הזה. אין דרך לשחזר.',
+  deleteTenantConfirmLabel: 'כדי לאשר, הקלידו את שם בית הספר',
+  deleteTenantButton: 'מחיקה לצמיתות',
   tenantsSubtitle: 'כל בתי הספר בפלטפורמה — הקמה, השעיה ומחיקה',
   superAdminLoginSubtitle: 'הכניסה כאן שמורה למנהלי הפלטפורמה בלבד',
   superAdminPanelTitle: 'שליטה מלאה, מקצה לקצה',
@@ -532,6 +539,7 @@ export const he = {
   waConnectHint: 'לוחצים "התחברות" כדי ליצור קוד QR לסריקה',
   waConnect: 'התחברות',
   waLogout: 'ניתוק המספר',
+  waLogoutConfirm: 'לנתק את הוואטסאפ? עד שתחברו מחדש, פרטי כניסה לא יישלחו אוטומטית אחרי רכישה.',
 
   // WhatsApp message templates (placeholders replaced server-side)
   waWelcomeNew:
@@ -603,6 +611,9 @@ export const he = {
   broadcastNoRecipients: 'אין תלמידים לשלוח אליהם עדיין',
   broadcastsEmpty: 'עוד לא שלחתם הודעות — הראשונה מחכה',
   broadcastSentTo: 'נשלח ל-{n}',
+  broadcastConfirmTitle: 'אישור שליחה',
+  broadcastConfirmBody: 'ההודעה תישלח ל: {audience}. אין דרך לבטל אחרי השליחה.',
+  broadcastConfirmSend: 'כן, שולחים עכשיו',
 
   // community
   community: 'קהילה',
@@ -647,6 +658,7 @@ export const he = {
   accessCodesEmpty: 'עוד לא יצרתם קודים',
   accessCodeUses: 'שימושים',
   accessCodeExpired: 'פג תוקף',
+  accessCodeRevoke: 'ביטול הקוד',
   redeem: 'מימוש קוד',
   redeemTitle: 'יש לכם קוד גישה?',
   redeemHint: 'הזינו את הקוד וקבלו גישה מיידית לקורס',

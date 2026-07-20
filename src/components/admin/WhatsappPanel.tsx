@@ -54,6 +54,7 @@ export default function WhatsappPanel({ messages }: { messages: WaMessageRow[] }
   }, [refresh]);
 
   async function cmd(action: 'connect' | 'logout') {
+    if (action === 'logout' && !confirm(he.waLogoutConfirm)) return;
     setBusy(true);
     await apiFetch('/api/whatsapp', { method: 'POST', body: JSON.stringify({ action }) });
     setBusy(false);
