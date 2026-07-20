@@ -109,7 +109,11 @@ export default function Navbar({
         </div>
 
         {/* Mobile nav row — groups flatten into their links */}
-        <nav className="md:hidden flex gap-1 overflow-x-auto pb-2 -mt-1" aria-label={he.navMain}>
+        {/* [&>a]:py-3 lifts the links to a ~44px touch target on phones. */}
+        <nav
+          className="md:hidden flex gap-1 overflow-x-auto pb-2 -mt-1 [&>a]:py-3"
+          aria-label={he.navMain}
+        >
           {links.flatMap((e) => (isGroup(e) ? e.items : [e])).map((l) => (
             <NavItem key={l.href} link={l} pathname={pathname} ink={ink} />
           ))}

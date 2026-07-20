@@ -63,8 +63,8 @@ export default function PaymentsPanel({
       <div className="space-y-3">
         {courses.map((c) => (
           <div key={c.id} className="bg-card border border-line rounded-xl2 shadow-card p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="font-display font-bold">{c.title}</span>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="font-display font-bold min-w-0">{c.title}</span>
               {!c.hasPaymentLink && (
                 <Badge tone="warn" className="ms-auto">
                   {he.noPaymentLinkYet}
@@ -191,7 +191,7 @@ function WebhookRow({ url }: { url: string }) {
           value={url}
           dir="ltr"
           onFocus={(e) => e.currentTarget.select()}
-          className="flex-1 bg-paper border border-line rounded-xl px-3 py-2 text-xs font-mono text-ink truncate"
+          className="flex-1 min-w-0 bg-paper border border-line rounded-xl px-3 py-2 text-xs font-mono text-ink truncate"
         />
         <button
           onClick={copy}

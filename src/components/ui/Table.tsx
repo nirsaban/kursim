@@ -16,7 +16,10 @@ export function TableWrap({
 }
 
 export function Table({ className, ...props }: React.TableHTMLAttributes<HTMLTableElement>) {
-  return <table {...props} className={cn('w-full text-sm', className)} />;
+  // min-w-max keeps columns at their natural width inside TableWrap's
+  // horizontal scroller — on phones the table scrolls instead of crushing
+  // every cell into a vertical stack of single words.
+  return <table {...props} className={cn('w-full min-w-max text-sm', className)} />;
 }
 
 export function Th({
