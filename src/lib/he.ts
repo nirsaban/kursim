@@ -517,6 +517,16 @@ export const he = {
   waWelcomeExisting:
     'היי {name}! 🎉\nנרשמת לקורס "{course}".\n\nאפשר להיכנס עם החשבון הקיים שלך:\n🔗 {url}\n📧 {email}\n\nנתראה בפנים! 🚀',
 
+  // Email templates (placeholders replaced server-side)
+  mailBuyerSubject: 'הגישה שלך לקורס "{course}" מוכנה',
+  mailBuyerNew:
+    'היי {name},\n\nתודה על ההרשמה לקורס "{course}"! הגישה שלך מוכנה.\n\nכניסה למערכת: {url}\nאימייל: {email}\nסיסמה זמנית: {pass}\n\nבכניסה הראשונה תתבקש/י לבחור סיסמה חדשה משלך.\nשמרו את המייל הזה עד שתחליפו סיסמה.\n\nבהצלחה ובתיאבון!',
+  mailBuyerExisting:
+    'היי {name},\n\nתודה על ההרשמה לקורס "{course}"! הקורס נוסף לחשבון הקיים שלך.\n\nכניסה למערכת: {url}\nאימייל: {email}\n\nהסיסמה שלך לא השתנתה.\n\nבהצלחה ובתיאבון!',
+  mailOwnerSubject: 'מכירה חדשה: {course}',
+  mailOwnerBody:
+    'מכירה חדשה נרשמה במערכת 🎉\n\nקורס: {course}\nלקוח/ה: {name}\nאימייל: {email}\nטלפון: {phone}\nסכום: {amount}\nמספר עסקה: {txn}\nלקוח/ה חדש/ה: {isNew}\nמשלוח וואטסאפ: {wa}\n\nיומן המכירות: {link}',
+
   // owner WhatsApp page + message log
   whatsappOwnerSubtitle: 'חברו את הוואטסאפ שלכם — פרטי הכניסה יישלחו לתלמידים מהמספר הזה',
   waMessageLog: 'יומן הודעות',

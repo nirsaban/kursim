@@ -4,6 +4,7 @@ import { getTenantBySlug } from '@/lib/tenant/resolve';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { hashPassword } from '@/lib/auth/password';
 import { sendWhatsappText } from '@/lib/whatsapp';
+import { sendMail, isRealEmail } from '@/lib/email';
 import { notify } from '@/lib/notify';
 import { getRedis } from '@/lib/redis';
 import { he } from '@/lib/he';
@@ -242,5 +243,59 @@ export async function POST(req: Request) {
     // best-effort
   }
 
-  return NextResponse.json({ ok: true, provisioned: true, delivered: delivery.ok }, { status: 200 });
+  // Email: a receipt to the buyer and a sale alert to the school's owners.
+  // Strictly best-effort — the payment has already settled, so a mail outage
+  // must never turn into a non-200 that makes Grow retry the whole callback.
+  const mailed = { buyer: false, owners: 0 };
+  try {
+    if (isRealEmail(payerEmail)) {
+      const buyerBody = (isNew ? he.mailBuyerNew : he.mailBuyerExisting)
+        .replace('{name}', name)
+        .replace('{course}', course.title)
+        .replace('{url}', loginUrl)
+        .replace('{email}', payerEmail)
+        .replace('{pass}', plainPassword ?? '');
+      const r = await sendMail({
+        to: payerEmail,
+        subject: he.mailBuyerSubject.replace('{course}', course.title),
+        text: buyerBody,
+      });
+      mailed.buyer = r.ok;
+    }
+
+    const ownerBody = he.mailOwnerBody
+      .replace('{course}', course.title)
+      .replace('{name}', name)
+      .replace('{email}', payerEmail)
+      .replace('{phone}', payerPhone || '—')
+      .replace('{amount}', amount || '—')
+      .replace('{txn}', transactionId)
+      .replace('{isNew}', isNew ? 'כן' : 'לא')
+      .replace('{wa}', delivery.ok ? 'נשלח' : `נכשל (${delivery.ok ? '' : delivery.error ?? 'unknown'})`)
+      .replace('{link}', `${process.env.APP_URL ?? ''}/t/${slug}/admin/payments`);
+    const ownerAccounts = await db.user.findMany({
+      where: { role: 'OWNER', status: 'ACTIVE' },
+      select: { email: true },
+    });
+    const results = await Promise.all(
+      ownerAccounts
+        .filter((o) => isRealEmail(o.email))
+        .map((o) =>
+          sendMail({
+            to: o.email,
+            subject: he.mailOwnerSubject.replace('{course}', course.title),
+            text: ownerBody,
+            replyTo: isRealEmail(payerEmail) ? payerEmail : undefined,
+          }),
+        ),
+    );
+    mailed.owners = results.filter((r) => r.ok).length;
+  } catch {
+    // best-effort
+  }
+
+  return NextResponse.json(
+    { ok: true, provisioned: true, delivered: delivery.ok, mailed },
+    { status: 200 },
+  );
 }
