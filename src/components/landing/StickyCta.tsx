@@ -53,8 +53,8 @@ export default function StickyCta({
           <a
             href={href}
             {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            className="relative overflow-hidden fx-sheen flex-1 sm:flex-none min-h-[48px] inline-flex items-center justify-center gap-2 font-bold rounded-[13px] px-7 text-card transition-transform hover:scale-[1.02] active:scale-[0.99]"
-            style={{ background: `linear-gradient(135deg, ${accent}, ${deep})` }}
+            className="flex-1 sm:flex-none min-h-[48px] inline-flex items-center justify-center gap-2 font-bold rounded-full px-7 text-card transition-transform hover:scale-[1.02] active:scale-[0.99]"
+            style={{ background: accent }}
             tabIndex={shown ? 0 : -1}
           >
             {locked && <span aria-hidden>🔒</span>}

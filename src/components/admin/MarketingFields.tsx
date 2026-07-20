@@ -4,7 +4,7 @@ import { cn } from '@/lib/cn';
 import { he } from '@/lib/he';
 import { Input, Textarea } from '@/components/ui/Field';
 import { LANDING_THEMES, LANDING_EMOJI } from '@/lib/landing-themes';
-import { LANDING_ACCENTS, LandingAccent } from '@/lib/validation/marketing';
+import { LANDING_ACCENTS, LandingAccent, LANDING_LAYOUTS, LandingLayout } from '@/lib/validation/marketing';
 
 export function StringListEditor({
   values,
@@ -133,6 +133,43 @@ export function AccentPicker({
               />
             </span>
             {theme.name}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+const LAYOUT_COPY: Record<LandingLayout, { title: string; hint: string }> = {
+  classic: { title: he.layoutClassic, hint: he.layoutClassicHint },
+  coralHota: { title: he.layoutCoralHota, hint: he.layoutCoralHotaHint },
+};
+
+export function LayoutPicker({
+  value,
+  onChange,
+}: {
+  value: LandingLayout;
+  onChange: (l: LandingLayout) => void;
+}) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {LANDING_LAYOUTS.map((key) => {
+        const copy = LAYOUT_COPY[key];
+        const active = value === key;
+        return (
+          <button
+            key={key}
+            type="button"
+            onClick={() => onChange(key)}
+            className={cn(
+              'text-start rounded-xl border px-4 py-3 transition-all',
+              active ? 'border-ink shadow-card scale-[1.01]' : 'border-line hover:border-ink/30',
+            )}
+            aria-pressed={active}
+          >
+            <div className="font-semibold text-sm">{copy.title}</div>
+            <div className="text-xs text-muted mt-0.5">{copy.hint}</div>
           </button>
         );
       })}

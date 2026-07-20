@@ -11,6 +11,7 @@ import Badge from '@/components/ui/Badge';
 import {
   AccentPicker,
   EmojiPicker,
+  LayoutPicker,
   PairListEditor,
   StringListEditor,
 } from './MarketingFields';
@@ -391,6 +392,13 @@ export default function MarketingTab({
       </Card>
 
       {/* Style */}
+      <Card>
+        <CardHeader title={he.layoutTitle} />
+        <CardBody>
+          <LayoutPicker value={m.layout} onChange={(layout) => set({ layout })} />
+        </CardBody>
+      </Card>
+
       <Card>
         <CardHeader title={`${he.accentTitle} · ${he.emojiTitle}`} />
         <CardBody className="space-y-5">

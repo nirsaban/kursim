@@ -62,6 +62,7 @@ const config: Config = {
       fontFamily: {
         display: ['var(--font-frank)', 'serif'],
         body: ['var(--font-heebo)', 'system-ui', 'sans-serif'],
+        script: ['var(--font-script)', 'cursive'],
       },
       boxShadow: {
         card: '0 1px 2px rgba(20,18,10,0.05), 0 4px 16px -8px rgba(20,18,10,0.08)',

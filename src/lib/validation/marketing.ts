@@ -15,6 +15,10 @@ export const LANDING_ACCENTS = [
 ] as const;
 export type LandingAccent = (typeof LANDING_ACCENTS)[number];
 
+/** Landing-page visual templates the owner can pick, independent of accent color. */
+export const LANDING_LAYOUTS = ['classic', 'coralHota'] as const;
+export type LandingLayout = (typeof LANDING_LAYOUTS)[number];
+
 export const marketingSchema = z.object({
   headline: z.string().max(120).default(''),
   subheadline: z.string().max(300).default(''),
@@ -86,6 +90,7 @@ export const marketingSchema = z.object({
   contactEmail: z.string().max(320).default(''),
   accent: z.enum(LANDING_ACCENTS).default('petrol'),
   emoji: z.string().max(8).default('🎓'),
+  layout: z.enum(LANDING_LAYOUTS).default('classic'),
 });
 
 export type CourseMarketing = z.infer<typeof marketingSchema>;
