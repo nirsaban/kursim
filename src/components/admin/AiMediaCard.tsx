@@ -63,6 +63,7 @@ export default function AiMediaCard({ courseId }: { courseId: string }) {
     }
     const d = await r.json().catch(() => ({}));
     if (d.error === 'ai_disabled') setNotice(he.aiMediaDisabled);
+    else if (d.error === 'ai_video_disabled') setNotice(he.aiMediaVideoDisabled);
     else if (d.error === 'cloudinary_missing') setNotice(he.aiMediaCloudinaryMissing);
     else if (d.error === 'already_generating') setState((s) => ({ ...s, status: 'generating' }));
     else setNotice(he.aiMediaFailed);

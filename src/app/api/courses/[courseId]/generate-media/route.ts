@@ -16,6 +16,9 @@ export async function POST(_req: Request, { params }: Params) {
   const { courseId } = await params;
 
   if (!aiConfig().enabled) return apiError(503, 'ai_disabled');
+  // Veo billing caused unexpected cost from pipeline retries — disabled
+  // independently of AI_MEDIA_ENABLED until deliberately re-enabled.
+  if (!aiConfig().videoEnabled) return apiError(503, 'ai_video_disabled');
   if (!isCloudinaryConfigured()) return apiError(400, 'cloudinary_missing');
 
   const db = forTenant(auth.tenantId!);

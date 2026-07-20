@@ -17,6 +17,11 @@ export function aiConfig() {
   const apiKey = process.env.GEMINI_API_KEY;
   return {
     enabled: process.env.AI_MEDIA_ENABLED === 'true' && !!apiKey,
+    // Veo billing is per-generation and expensive — kept off by default,
+    // independent of AI_MEDIA_ENABLED, after a chain of pipeline bugs (missing
+    // ffmpeg binary, then an invalid Imagen aspect ratio) silently re-ran paid
+    // Veo generations on every retry. Must be explicitly opted back in.
+    videoEnabled: process.env.AI_VIDEO_ENABLED === 'true' && !!apiKey,
     apiKey,
     textModel: process.env.GEMINI_TEXT_MODEL || 'gemini-3.1-pro-preview',
     videoModel: process.env.GEMINI_VIDEO_MODEL || 'veo-3.1-fast-generate-preview',
@@ -83,7 +88,9 @@ const RESPONSE_SCHEMA = {
           role: { type: 'STRING' },
           prompt: { type: 'STRING' },
           negativePrompt: { type: 'STRING' },
-          aspectRatio: { type: 'STRING' },
+          // Imagen 4 only accepts these five ratios — constrain the model's
+          // choice instead of validating after the (paid) Veo step already ran.
+          aspectRatio: { type: 'STRING', enum: ['1:1', '9:16', '16:9', '4:3', '3:4'] },
         },
         required: ['role', 'prompt', 'negativePrompt', 'aspectRatio'],
         propertyOrdering: ['role', 'prompt', 'negativePrompt', 'aspectRatio'],
@@ -125,6 +132,11 @@ export async function writeMediaPrompt(inputs: CourseMediaInputs): Promise<Media
 
 /** Submit a Veo generation; returns the long-running operation name to poll. */
 export async function generateVeoVideo(video: MediaPlan['video']): Promise<string> {
+  // Hard stop at the actual money-spending call, not just the route that
+  // enqueues it — this is the one choke point every caller goes through.
+  if (!aiConfig().videoEnabled) {
+    throw new Error('Veo video generation is disabled (set AI_VIDEO_ENABLED=true to re-enable)');
+  }
   const key = requireKey();
   const { videoModel } = aiConfig();
   const res = await fetch(`${API_BASE}/models/${videoModel}:predictLongRunning?key=${key}`, {
