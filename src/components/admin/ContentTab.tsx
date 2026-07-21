@@ -188,14 +188,14 @@ export default function ContentTab({
 
       {course.modules.map((mod, mi) => (
         <section key={mod.id} className="bg-card border border-line rounded-xl2 shadow-card">
-          <div className="flex items-center gap-3 px-5 py-3.5 border-b border-line bg-paper/50 rounded-t-xl2">
+          <div className="flex items-center flex-wrap gap-3 px-5 py-3.5 border-b border-line bg-paper/50 rounded-t-xl2">
             <div className="flex flex-col shrink-0" aria-hidden>
               <button
                 type="button"
                 onClick={() => moveModule(mi, -1)}
                 disabled={mi === 0}
                 aria-label={he.moveUp}
-                className="text-muted hover:text-ink disabled:opacity-25 disabled:hover:text-muted leading-none px-0.5"
+                className="w-8 h-8 flex items-center justify-center text-muted hover:text-ink disabled:opacity-25 disabled:hover:text-muted leading-none"
               >
                 ▲
               </button>
@@ -204,7 +204,7 @@ export default function ContentTab({
                 onClick={() => moveModule(mi, 1)}
                 disabled={mi === course.modules.length - 1}
                 aria-label={he.moveDown}
-                className="text-muted hover:text-ink disabled:opacity-25 disabled:hover:text-muted leading-none px-0.5"
+                className="w-8 h-8 flex items-center justify-center text-muted hover:text-ink disabled:opacity-25 disabled:hover:text-muted leading-none"
               >
                 ▼
               </button>
@@ -213,7 +213,7 @@ export default function ContentTab({
               {he.moduleOrdinal} {mi + 1}
             </span>
             <input
-              className="font-display font-bold bg-transparent outline-none flex-1 border-b border-transparent focus:border-brand-300"
+              className="font-display font-bold bg-transparent outline-none flex-1 min-w-0 border-b border-transparent focus:border-brand-300"
               defaultValue={mod.title}
               aria-label={he.moduleTitle}
               onBlur={(e) => {
@@ -238,7 +238,7 @@ export default function ContentTab({
             </button>
             <button
               onClick={() => deleteModule(mod.id)}
-              className="text-xs font-medium text-muted hover:text-danger transition-colors"
+              className="text-xs font-medium text-muted hover:text-danger transition-colors shrink-0"
             >
               {he.delete}
             </button>
@@ -268,14 +268,14 @@ export default function ContentTab({
           <ul className="divide-y divide-line/70">
             {mod.lessons.map((lesson, li) => (
               <li key={lesson.id} className="px-5 py-3.5">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center flex-wrap gap-3">
                   <div className="flex flex-col shrink-0" aria-hidden>
                     <button
                       type="button"
                       onClick={() => moveLesson(mod, li, -1)}
                       disabled={li === 0}
                       aria-label={he.moveUp}
-                      className="text-muted hover:text-ink disabled:opacity-25 disabled:hover:text-muted leading-none px-0.5 text-xs"
+                      className="w-8 h-8 flex items-center justify-center text-muted hover:text-ink disabled:opacity-25 disabled:hover:text-muted leading-none text-xs"
                     >
                       ▲
                     </button>
@@ -284,7 +284,7 @@ export default function ContentTab({
                       onClick={() => moveLesson(mod, li, 1)}
                       disabled={li === mod.lessons.length - 1}
                       aria-label={he.moveDown}
-                      className="text-muted hover:text-ink disabled:opacity-25 disabled:hover:text-muted leading-none px-0.5 text-xs"
+                      className="w-8 h-8 flex items-center justify-center text-muted hover:text-ink disabled:opacity-25 disabled:hover:text-muted leading-none text-xs"
                     >
                       ▼
                     </button>
@@ -296,18 +296,18 @@ export default function ContentTab({
                     {lesson.videoPublicId ? '🎬' : '📄'}
                   </span>
                   <button
-                    className="text-start flex-1 font-medium hover:text-brand-700 transition-colors"
+                    className="text-start flex-1 min-w-0 font-medium hover:text-brand-700 transition-colors"
                     onClick={() => setOpenLesson(openLesson === lesson.id ? null : lesson.id)}
                     aria-expanded={openLesson === lesson.id}
                   >
                     {lesson.title}
                   </button>
                   {lesson.attachments.length > 0 && (
-                    <span className="text-xs text-muted">📎 {lesson.attachments.length}</span>
+                    <span className="text-xs text-muted shrink-0">📎 {lesson.attachments.length}</span>
                   )}
                   <button
                     onClick={() => deleteLesson(lesson.id)}
-                    className="text-xs font-medium text-muted hover:text-danger transition-colors"
+                    className="text-xs font-medium text-muted hover:text-danger transition-colors shrink-0"
                   >
                     {he.delete}
                   </button>

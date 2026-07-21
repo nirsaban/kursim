@@ -90,12 +90,12 @@ export default function HomepageEditor({ slug }: { slug: string }) {
         />
       ) : (
         <Card>
-          <CardBody className="flex items-center justify-between gap-4">
-            <div>
+          <CardBody className="flex items-center flex-wrap justify-between gap-4">
+            <div className="min-w-0">
               <p className="font-semibold">{he.aiBuilderTitle}</p>
               <p className="text-sm text-muted mt-0.5">{he.aiBuilderSubtitle}</p>
             </div>
-            <Button variant="secondary" onClick={() => setShowAiBuilder(true)}>
+            <Button variant="secondary" className="shrink-0" onClick={() => setShowAiBuilder(true)}>
               {he.aiBuilderOpen}
             </Button>
           </CardBody>

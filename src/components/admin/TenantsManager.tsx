@@ -32,6 +32,8 @@ export default function TenantsManager() {
   });
   const [deleteTarget, setDeleteTarget] = useState<Tenant | null>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [suspendTarget, setSuspendTarget] = useState<Tenant | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
     const res = await apiFetch('/api/tenants');
@@ -60,21 +62,29 @@ export default function TenantsManager() {
   }
 
   async function setStatus(tenant: Tenant, status: 'ACTIVE' | 'SUSPENDED') {
-    if (status === 'SUSPENDED' && !confirm(he.confirmSuspendTenant.replace('{name}', tenant.name))) {
-      return;
-    }
-    await apiFetch(`/api/tenants/${tenant.id}`, {
+    setActionError(null);
+    const res = await apiFetch(`/api/tenants/${tenant.id}`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),
     });
-    reload();
+    if (res.ok) {
+      setSuspendTarget(null);
+      reload();
+    } else {
+      setActionError(he.error);
+    }
   }
 
   async function removeTenant() {
     if (!deleteTarget) return;
-    await apiFetch(`/api/tenants/${deleteTarget.id}`, { method: 'DELETE' });
-    setDeleteTarget(null);
-    reload();
+    setActionError(null);
+    const res = await apiFetch(`/api/tenants/${deleteTarget.id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setDeleteTarget(null);
+      reload();
+    } else {
+      setActionError(he.error);
+    }
   }
 
   if (!tenants) return <div className="h-64 rounded-xl2 bg-ink/[0.04] animate-pulse" />;
@@ -82,6 +92,7 @@ export default function TenantsManager() {
   return (
     <div className="space-y-6">
       <Button onClick={() => setShowForm(true)}>+ {he.newTenant}</Button>
+      {actionError && <p className="text-sm text-danger font-medium">{actionError}</p>}
 
       {tenants.length === 0 ? (
         <EmptyState icon="🏫" title={he.noTenantsYet} hint={he.tenantsEmptyHint} />
@@ -122,7 +133,14 @@ export default function TenantsManager() {
                   <Td className="tabular-nums">{t.sessionLimit}</Td>
                   <Td className="text-end whitespace-nowrap">
                     <button
-                      onClick={() => setStatus(t, t.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE')}
+                      onClick={() => {
+                        if (t.status === 'ACTIVE') {
+                          setActionError(null);
+                          setSuspendTarget(t);
+                        } else {
+                          setStatus(t, 'ACTIVE');
+                        }
+                      }}
                       className="text-xs font-medium text-warn hover:underline me-3"
                     >
                       {t.status === 'ACTIVE' ? he.suspend : he.activate}
@@ -216,6 +234,24 @@ export default function TenantsManager() {
                 {he.deleteTenantButton}
               </Button>
               <Button type="button" variant="ghost" onClick={() => setDeleteTarget(null)}>
+                {he.cancel}
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      <Modal open={suspendTarget !== null} onClose={() => setSuspendTarget(null)} title={he.suspend}>
+        {suspendTarget && (
+          <div className="space-y-4">
+            <p className="text-sm text-ink">
+              {he.confirmSuspendTenant.replace('{name}', suspendTarget.name)}
+            </p>
+            <div className="flex gap-2">
+              <Button type="button" variant="danger" onClick={() => setStatus(suspendTarget, 'SUSPENDED')}>
+                {he.suspend}
+              </Button>
+              <Button type="button" variant="ghost" onClick={() => setSuspendTarget(null)}>
                 {he.cancel}
               </Button>
             </div>
