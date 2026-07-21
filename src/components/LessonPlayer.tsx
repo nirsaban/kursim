@@ -112,7 +112,7 @@ export default function LessonPlayer({
       {data.attachments.length > 0 && (
         <div className="bg-card border border-line rounded-xl2 shadow-card p-5">
           <p className="kicker mb-3">{he.attachments}</p>
-          <ul className="grid gap-2 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {data.attachments.map((a) => (
               <li key={a.id}>
                 <a

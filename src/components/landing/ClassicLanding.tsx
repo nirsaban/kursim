@@ -371,7 +371,7 @@ export default function ClassicLanding({
                     {he.outcomesTitle}
                   </h2>
                 </Reveal>
-                <ul className="grid gap-3 sm:grid-cols-2">
+                <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {m.outcomes.map((o, i) => (
                     <Reveal key={i} delay={i * 60}>
                       <li className="border border-line rounded-[13px] px-5 py-4 h-full">
@@ -400,7 +400,7 @@ export default function ClassicLanding({
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">{he.benefitsTitle}</h2>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {m.benefits.map((b, i) => (
               <Reveal key={i} delay={i * 80} className="h-full">
                 <div
@@ -429,7 +429,7 @@ export default function ClassicLanding({
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">{he.galleryTitle}</h2>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {galleryRest.map((item, i) => (
               <Reveal key={i} delay={i * 80}>
                 <figure>
@@ -551,7 +551,7 @@ export default function ClassicLanding({
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">{he.testimonialsTitle}</h2>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {m.testimonials.map((t, i) => (
               <Reveal key={i} delay={i * 80}>
                 <figure
@@ -592,7 +592,7 @@ export default function ClassicLanding({
             <h2 className="font-display text-2xl sm:text-3xl font-black mb-2">{he.reviewsTitle}</h2>
             <p className="text-muted mb-8">{he.verifiedStudent} ✓</p>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
               <Reveal key={r.id} delay={i * 70}>
                 <figure className="border border-line rounded-2xl p-5 h-full bg-card">

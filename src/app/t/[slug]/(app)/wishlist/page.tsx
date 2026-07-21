@@ -41,7 +41,7 @@ export default async function WishlistPage({
       {courses.length === 0 ? (
         <EmptyState icon="🔖" title={he.wishlistEmpty} />
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => {
             const m = parseMarketing(course.marketing);
             const t = LANDING_THEMES[m.accent];

@@ -201,7 +201,7 @@ export default function CoralHotaLanding({
       {/* Intro — welcome paragraph beside a photo, per the reference's two-column opener */}
       {(m.aboutSchool || introImage) && (
         <section className="max-w-5xl mx-auto px-4 py-16">
-          <div className={`grid gap-10 items-center ${introImage ? 'lg:grid-cols-[1.1fr,1fr]' : ''}`}>
+          <div className={`grid grid-cols-1 gap-10 items-center ${introImage ? 'lg:grid-cols-[1.1fr,1fr]' : ''}`}>
             <Reveal>
               <div>
                 {m.aboutSchool && (
@@ -280,7 +280,7 @@ export default function CoralHotaLanding({
               {he.whatsIncludedTitle}
             </h2>
           </Reveal>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {m.benefits.map((b, i) => {
               const Icon = BENEFIT_ICONS[i % BENEFIT_ICONS.length];
               return (
@@ -335,7 +335,7 @@ export default function CoralHotaLanding({
                 <Reveal>
                   <h2 className="font-body font-extrabold text-2xl mb-5">{he.outcomesTitle}</h2>
                 </Reveal>
-                <ul className="grid gap-3 sm:grid-cols-2">
+                <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {m.outcomes.map((o, i) => (
                     <Reveal key={i} delay={i * 60}>
                       <li className="border border-black/12 rounded-2xl px-5 py-4 h-full bg-white/40">
@@ -366,7 +366,7 @@ export default function CoralHotaLanding({
               )}
             </p>
           </Reveal>
-          <div className={curriculumImage ? 'grid gap-10 lg:grid-cols-[1fr,1.3fr] items-start' : ''}>
+          <div className={curriculumImage ? 'grid grid-cols-1 gap-10 lg:grid-cols-[1fr,1.3fr] items-start' : ''}>
             {curriculumImage && (
               <Reveal className="lg:sticky lg:top-24">
                 <div className="rounded-[24px] overflow-hidden border border-black/10">
@@ -570,7 +570,7 @@ export default function CoralHotaLanding({
           <Reveal>
             <h2 className="font-body font-extrabold text-2xl sm:text-3xl mb-8">{he.testimonialsTitle}</h2>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {m.testimonials.map((t, i) => (
               <Reveal key={i} delay={i * 70}>
                 <figure className="rounded-[20px] p-6 h-full border" style={{ background: theme.soft, borderColor: `${theme.main}26` }}>
@@ -602,7 +602,7 @@ export default function CoralHotaLanding({
             <h2 className="font-body font-extrabold text-2xl sm:text-3xl mb-2">{he.reviewsTitle}</h2>
             <p className="text-[#160303]/60 mb-8">{he.verifiedStudent} ✓</p>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
               <Reveal key={r.id} delay={i * 60}>
                 <figure className="border border-black/12 rounded-2xl p-5 h-full bg-white/50">
@@ -662,7 +662,7 @@ export default function CoralHotaLanding({
 
       {/* Footer */}
       <footer className="border-t border-black/10 pt-12 pb-24">
-        <div className="max-w-5xl mx-auto px-4 grid gap-8 sm:grid-cols-3 text-sm">
+        <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 gap-8 sm:grid-cols-3 text-sm">
           <div>
             <div className="flex items-center gap-2.5">
               <span

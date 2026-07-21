@@ -340,7 +340,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
                   onChange={(e) => set({ ctaLink: e.target.value })}
                 />
               </Field>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label={he.contactPhone}>
                   <Input
                     dir="ltr"

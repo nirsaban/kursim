@@ -153,7 +153,7 @@ export function LayoutPicker({
   onChange: (l: LandingLayout) => void;
 }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {LANDING_LAYOUTS.map((key) => {
         const copy = LAYOUT_COPY[key];
         const active = value === key;
