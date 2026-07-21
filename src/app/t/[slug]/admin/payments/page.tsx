@@ -36,6 +36,7 @@ export default async function PaymentsPage({
       title: c.title,
       hasPaymentLink: Boolean(m.paymentLink),
       webhookUrl: `${base}/api/pay/grow?t=${slug}&c=${c.id}&k=${secret}`,
+      thankYouUrl: `${base}/t/${slug}/c/${c.id}/thank-you`,
     };
   });
 

@@ -15,6 +15,7 @@ export interface PaymentCourse {
   title: string;
   hasPaymentLink: boolean;
   webhookUrl: string;
+  thankYouUrl: string;
 }
 export interface PurchaseRow {
   id: string;
@@ -55,6 +56,7 @@ export default function PaymentsPanel({
             <li>{he.paymentsHowStep1}</li>
             <li>{he.paymentsHowStep2}</li>
             <li>{he.paymentsHowStep3}</li>
+            <li>{he.paymentsHowStep4}</li>
           </ol>
         </CardBody>
       </Card>
@@ -71,7 +73,10 @@ export default function PaymentsPanel({
                 </Badge>
               )}
             </div>
-            <WebhookRow url={c.webhookUrl} />
+            <div className="space-y-3">
+              <CopyRow label={he.webhookUrlLabel} url={c.webhookUrl} copyLabel={he.copyWebhookUrl} />
+              <CopyRow label={he.thankYouUrlLabel} url={c.thankYouUrl} copyLabel={he.copyThankYouUrl} />
+            </div>
           </div>
         ))}
       </div>
@@ -171,7 +176,7 @@ function ResendCell({ id, phone }: { id: string; phone: string }) {
   );
 }
 
-function WebhookRow({ url }: { url: string }) {
+function CopyRow({ label, url, copyLabel }: { label: string; url: string; copyLabel: string }) {
   const [copied, setCopied] = useState(false);
   async function copy() {
     try {
@@ -184,7 +189,7 @@ function WebhookRow({ url }: { url: string }) {
   }
   return (
     <div>
-      <p className="text-xs font-medium text-muted mb-1">{he.webhookUrlLabel}</p>
+      <p className="text-xs font-medium text-muted mb-1">{label}</p>
       <div className="flex gap-2">
         <input
           readOnly
@@ -197,7 +202,7 @@ function WebhookRow({ url }: { url: string }) {
           onClick={copy}
           className="shrink-0 text-sm font-semibold bg-ink text-card rounded-xl px-4 py-2 hover:bg-ink-surface transition-colors"
         >
-          {copied ? he.copied : he.copyWebhookUrl}
+          {copied ? he.copied : copyLabel}
         </button>
       </div>
     </div>
