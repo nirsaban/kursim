@@ -12,6 +12,7 @@ export const he = {
   currentPassword: 'הסיסמה הנוכחית',
   newPassword: 'סיסמה חדשה',
   changePassword: 'החלפת סיסמה',
+  changePasswordTitle: 'שינוי סיסמה',
   mustChangePassword: 'רגע לפני שנכנסים — בואו נבחר סיסמה חדשה משלכם',
   invalidCredentials: 'האימייל או הסיסמה לא מסתדרים. ננסה שוב?',
   accountSuspended: 'החשבון בהשעיה כרגע',
@@ -67,6 +68,7 @@ export const he = {
   confirmDelete: 'למחוק לגמרי? אין דרך חזרה מכאן.',
   error: 'משהו השתבש',
   saved: 'נשמר ✓',
+  loadFailed: 'הטעינה נכשלה. אפשר לרענן את הדף ולנסות שוב',
 
   // courses
   courseTitle: 'שם הקורס',
@@ -128,6 +130,10 @@ export const he = {
   suspended: 'מושעה',
   suspend: 'השעיה',
   activate: 'הפעלה',
+  name: 'שם',
+  nameInviteHint: 'שם (יוצג בלוח התוצאות ובתעודות)',
+  namePlaceholder: 'למשל: דנה כהן',
+  anonymousLearner: 'תלמיד/ה',
   resetPassword: 'איפוס סיסמה',
   resetPasswordHint: 'התלמיד/ה ישתמשו בסיסמה הזו בכניסה הבאה',
   resetPasswordSuccess: 'הסיסמה אופסה ✓',
@@ -135,6 +141,7 @@ export const he = {
   liveSessions: 'מחוברים חיים',
   viewSessions: 'צפייה במחוברים',
   killSession: 'ניתוק',
+  confirmKillSession: 'לנתק את המכשיר הזה? התלמיד/ה יתנתקו מיד ויצטרכו להתחבר מחדש.',
   emailTaken: 'האימייל הזה כבר רשום אצלנו',
   enrolledCourses: 'קורסים רשומים',
   studentsEmptyHint: 'מוסיפים תלמיד ראשון, או שולחים לו קישור הזמנה — והוא בפנים',
@@ -476,6 +483,7 @@ export const he = {
 
   // owner admin dashboard
   adminOverviewTitle: 'מה קורה אצלכם היום',
+  instructorOverviewTitle: 'מה קורה בקורסים שלכם',
   adminSessionsEmptyHint: 'ברגע שתלמיד ייכנס, החיבור החי יופיע כאן',
 
   // platform marketing homepage (/)

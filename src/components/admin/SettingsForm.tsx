@@ -18,13 +18,20 @@ export default function SettingsForm() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     apiFetch('/api/settings')
       .then((r) => (r.ok ? r.json() : null))
-      .then((d) => d && setSettings(d.settings));
+      .then((d) => {
+        if (d) setSettings(d.settings);
+        else setLoadFailed(true);
+      })
+      .catch(() => setLoadFailed(true));
   }, []);
 
+  if (loadFailed) return <p className="text-sm text-danger font-medium">{he.loadFailed}</p>;
   if (!settings) return <div className="h-64 rounded-xl2 bg-ink/[0.04] animate-pulse" />;
 
   async function submit(e: React.FormEvent) {
@@ -32,12 +39,14 @@ export default function SettingsForm() {
     if (!settings) return;
     setBusy(true);
     setSaved(false);
+    setError(null);
     const res = await apiFetch('/api/settings', {
       method: 'PATCH',
       body: JSON.stringify(settings),
     });
     setBusy(false);
     if (res.ok) setSaved(true);
+    else setError(he.error);
   }
 
   const policies = [
@@ -119,6 +128,7 @@ export default function SettingsForm() {
           {he.save}
         </Button>
         {saved && <span className="text-sm font-medium text-ok">{he.saved} ✓</span>}
+        {error && <p className="text-sm text-danger font-medium">{error}</p>}
       </div>
     </form>
   );

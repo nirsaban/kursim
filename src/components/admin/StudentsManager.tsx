@@ -14,6 +14,7 @@ import EmptyState from '@/components/ui/EmptyState';
 interface Student {
   id: string;
   email: string;
+  name: string | null;
   role: 'STUDENT' | 'INSTRUCTOR';
   status: 'ACTIVE' | 'SUSPENDED';
   lastLoginAt: string | null;
@@ -50,6 +51,7 @@ export default function StudentsManager() {
   const [resetDone, setResetDone] = useState(false);
 
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'STUDENT' | 'INSTRUCTOR'>('STUDENT');
 
@@ -68,10 +70,11 @@ export default function StudentsManager() {
     setError(null);
     const res = await apiFetch('/api/students', {
       method: 'POST',
-      body: JSON.stringify({ email, password, role }),
+      body: JSON.stringify({ email, password, role, name }),
     });
     if (res.ok) {
       setEmail('');
+      setName('');
       setPassword('');
       setCreateOpen(false);
       reload();
@@ -187,6 +190,7 @@ export default function StudentsManager() {
           <Table>
             <thead>
               <tr>
+                <Th>{he.name}</Th>
                 <Th>{he.email}</Th>
                 <Th>{he.role}</Th>
                 <Th>{he.status}</Th>
@@ -199,6 +203,7 @@ export default function StudentsManager() {
             <tbody>
               {students.map((s) => (
                 <tr key={s.id} className="hover:bg-paper/60 transition-colors">
+                  <Td>{s.name?.trim() || <span className="text-muted">—</span>}</Td>
                   <Td dir="ltr">{s.email}</Td>
                   <Td>
                     <Badge tone={s.role === 'INSTRUCTOR' ? 'brand' : 'neutral'}>
@@ -286,6 +291,14 @@ export default function StudentsManager() {
               dir="ltr"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+            />
+          </Field>
+          <Field label={he.name} hint={he.optional}>
+            <Input
+              type="text"
+              placeholder={he.namePlaceholder}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </Field>
           <Field label={he.password} hint={he.newStudentPasswordHint}>

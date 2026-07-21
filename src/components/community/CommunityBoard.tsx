@@ -41,6 +41,7 @@ export default function CommunityBoard({
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // isStaff is accepted for parity with the page/thread; the board itself
   // renders the same for everyone (moderation lives inside the thread).
@@ -50,6 +51,7 @@ export default function CommunityBoard({
     e.preventDefault();
     if (!title.trim() || !body.trim() || busy) return;
     setBusy(true);
+    setError(null);
     const res = await apiFetch('/api/community', {
       method: 'POST',
       body: JSON.stringify({ title, body }),
@@ -60,6 +62,8 @@ export default function CommunityBoard({
       setBody('');
       setOpen(false);
       router.refresh();
+    } else {
+      setError(he.error);
     }
   }
 
@@ -86,6 +90,7 @@ export default function CommunityBoard({
                     maxLength={5000}
                   />
                 </Field>
+                {error && <p className="text-sm text-danger font-medium">{error}</p>}
                 <div className="flex gap-2">
                   <Button type="submit" disabled={busy || !title.trim() || !body.trim()}>
                     {he.postPublish}

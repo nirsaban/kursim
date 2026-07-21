@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAuth } from '@/lib/auth/guards';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
@@ -60,9 +61,9 @@ export default async function NotificationsPage({
               return (
                 <li key={n.id}>
                   {n.link ? (
-                    <a href={n.link} className="block hover:bg-paper/60 transition-colors">
+                    <Link href={n.link} className="block hover:bg-paper/60 transition-colors">
                       {inner}
-                    </a>
+                    </Link>
                   ) : (
                     inner
                   )}

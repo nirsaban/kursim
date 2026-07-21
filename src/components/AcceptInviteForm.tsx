@@ -15,6 +15,7 @@ export default function AcceptInviteForm({
 }) {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -26,7 +27,7 @@ export default function AcceptInviteForm({
     const res = await fetch('/api/invites/accept', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, email, password }),
+      body: JSON.stringify({ token, email, password, name }),
     });
     setBusy(false);
     if (res.ok) {
@@ -49,6 +50,14 @@ export default function AcceptInviteForm({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
+        />
+      </Field>
+      <Field label={he.nameInviteHint} hint={he.optional}>
+        <Input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          autoComplete="name"
         />
       </Field>
       <Field label={he.password} hint={he.passwordHint}>

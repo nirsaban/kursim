@@ -15,6 +15,7 @@ export async function GET() {
     select: {
       id: true,
       email: true,
+      name: true,
       role: true,
       status: true,
       lastLoginAt: true,
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
   if (auth instanceof NextResponse) return auth;
   const parsed = await parseBody(req, createStudentSchema);
   if ('error' in parsed) return parsed.error;
-  const { email, password, role, courseIds } = parsed.data;
+  const { email, password, role, courseIds, name } = parsed.data;
 
   const db = forTenant(auth.tenantId!);
   const existing = await db.user.findFirst({ where: { email: email.toLowerCase() } });
@@ -44,6 +45,7 @@ export async function POST(req: Request) {
     data: {
       tenantId: auth.tenantId!,
       email: email.toLowerCase(),
+      name,
       passwordHash: await hashPassword(password),
       role,
       status: 'ACTIVE',
@@ -63,7 +65,15 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json(
-    { student: { id: user.id, email: user.email, role: user.role, status: user.status } },
+    {
+      student: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        status: user.status,
+      },
+    },
     { status: 201 },
   );
 }

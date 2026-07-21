@@ -91,7 +91,7 @@ export async function POST(req: Request) {
           });
           if (!existingCert) {
             const [student, course] = await Promise.all([
-              db.user.findFirst({ where: { id: auth.userId }, select: { email: true } }),
+              db.user.findFirst({ where: { id: auth.userId }, select: { email: true, name: true } }),
               db.course.findFirst({ where: { id: courseId }, select: { title: true } }),
             ]);
             const serial = `KURS-${courseId.slice(0, 4).toUpperCase()}-${Date.now()
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
                 tenantId: auth.tenantId!,
                 courseId,
                 studentId: auth.userId,
-                studentName: (student?.email ?? '').split('@')[0],
+                studentName: student?.name?.trim() || (student?.email ?? '').split('@')[0],
                 courseTitle: course?.title ?? '',
                 serial,
               },

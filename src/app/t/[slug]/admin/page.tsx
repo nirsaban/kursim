@@ -19,33 +19,41 @@ export default async function AdminDashboard({
   const { slug } = await params;
   const auth = await getAuth();
   if (!auth) redirect(`/t/${slug}/login`);
+  const isOwner = auth.role === 'OWNER';
 
   const db = forTenant(auth.tenantId!);
+
+  // Instructors don't manage students or sessions, so skip those queries
+  // entirely for them (matches the nav, which hides those links too).
   const [studentCount, courseCount, publishedCount, landingCount, users] = await Promise.all([
-    db.user.count({ where: { role: 'STUDENT' } }),
+    isOwner ? db.user.count({ where: { role: 'STUDENT' } }) : Promise.resolve(0),
     db.course.count(),
     db.course.count({ where: { status: 'PUBLISHED' } }),
     db.course.count({ where: { landingPublished: true } }),
-    db.user.findMany({
-      where: { role: { in: ['STUDENT', 'INSTRUCTOR'] } },
-      select: { id: true, email: true },
-    }),
+    isOwner
+      ? db.user.findMany({
+          where: { role: { in: ['STUDENT', 'INSTRUCTOR'] } },
+          select: { id: true, email: true },
+        })
+      : Promise.resolve([]),
   ]);
 
-  const liveSessions = (
-    await Promise.all(
-      users.map(async (u) =>
-        (await listLiveSessions(u.id)).map((s) => ({ ...s, email: u.email })),
-      ),
-    )
-  ).flat();
+  const liveSessions = isOwner
+    ? (
+        await Promise.all(
+          users.map(async (u) =>
+            (await listLiveSessions(u.id)).map((s) => ({ ...s, email: u.email })),
+          ),
+        )
+      ).flat()
+    : [];
   liveSessions.sort((a, b) => b.lastSeenAt - a.lastSeenAt);
 
   return (
     <div>
       <PageHeader
         kicker={he.dashboard}
-        title={he.adminOverviewTitle}
+        title={isOwner ? he.adminOverviewTitle : he.instructorOverviewTitle}
         actions={
           <Link
             href={`/t/${slug}/admin/courses/new`}
@@ -57,15 +65,17 @@ export default async function AdminDashboard({
       />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 mb-8">
-        <div className="animate-rise rise-1">
-          <TiltCard maxTilt={5} className="rounded-xl2 h-full">
-            <StatCard
-              label={he.students}
-              value={studentCount}
-              href={`/t/${slug}/admin/students`}
-            />
-          </TiltCard>
-        </div>
+        {isOwner && (
+          <div className="animate-rise rise-1">
+            <TiltCard maxTilt={5} className="rounded-xl2 h-full">
+              <StatCard
+                label={he.students}
+                value={studentCount}
+                href={`/t/${slug}/admin/students`}
+              />
+            </TiltCard>
+          </div>
+        )}
         <div className="animate-rise rise-2">
           <TiltCard maxTilt={5} className="rounded-xl2 h-full">
             <StatCard
@@ -76,16 +86,18 @@ export default async function AdminDashboard({
             />
           </TiltCard>
         </div>
-        <div className="animate-rise rise-3">
-          <TiltCard maxTilt={5} className="rounded-xl2 h-full">
-            <StatCard
-              label={he.sessions}
-              value={liveSessions.length}
-              accent
-              href={`/t/${slug}/admin/sessions`}
-            />
-          </TiltCard>
-        </div>
+        {isOwner && (
+          <div className="animate-rise rise-3">
+            <TiltCard maxTilt={5} className="rounded-xl2 h-full">
+              <StatCard
+                label={he.sessions}
+                value={liveSessions.length}
+                accent
+                href={`/t/${slug}/admin/sessions`}
+              />
+            </TiltCard>
+          </div>
+        )}
         <div className="animate-rise rise-4">
           <TiltCard maxTilt={5} className="rounded-xl2 h-full">
             <StatCard label={he.landingPage} value={landingCount} sub={he.landingPublished} />
@@ -93,41 +105,43 @@ export default async function AdminDashboard({
         </div>
       </div>
 
-      <Card className="animate-rise rise-5">
-        <CardHeader
-          title={he.whoIsWatching}
-          actions={
-            liveSessions.length > 0 ? (
-              <Badge tone="ok" dot>
-                {liveSessions.length} {he.sessions}
-              </Badge>
-            ) : undefined
-          }
-        />
-        {liveSessions.length === 0 ? (
-          <EmptyState icon="🌙" title={he.noLiveSessions} hint={he.adminSessionsEmptyHint} />
-        ) : (
-          <ul className="divide-y divide-line/70">
-            {liveSessions.slice(0, 8).map((s) => (
-              <li key={s.sid} className="px-5 py-3 flex items-center gap-4 text-sm">
-                <span className="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-display font-bold text-xs flex items-center justify-center shrink-0">
-                  <span dir="ltr">{s.email[0]?.toUpperCase()}</span>
-                </span>
-                <span className="flex-1 truncate" dir="ltr">
-                  {s.email}
-                </span>
-                <span className="text-muted text-xs hidden sm:block">{s.deviceLabel}</span>
-                <span className="text-muted text-xs tabular-nums" dir="ltr">
-                  {new Date(s.lastSeenAt).toLocaleTimeString('he-IL', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+      {isOwner && (
+        <Card className="animate-rise rise-5">
+          <CardHeader
+            title={he.whoIsWatching}
+            actions={
+              liveSessions.length > 0 ? (
+                <Badge tone="ok" dot>
+                  {liveSessions.length} {he.sessions}
+                </Badge>
+              ) : undefined
+            }
+          />
+          {liveSessions.length === 0 ? (
+            <EmptyState icon="🌙" title={he.noLiveSessions} hint={he.adminSessionsEmptyHint} />
+          ) : (
+            <ul className="divide-y divide-line/70">
+              {liveSessions.slice(0, 8).map((s) => (
+                <li key={s.sid} className="px-5 py-3 flex items-center gap-4 text-sm">
+                  <span className="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-display font-bold text-xs flex items-center justify-center shrink-0">
+                    <span dir="ltr">{s.email[0]?.toUpperCase()}</span>
+                  </span>
+                  <span className="flex-1 truncate" dir="ltr">
+                    {s.email}
+                  </span>
+                  <span className="text-muted text-xs hidden sm:block">{s.deviceLabel}</span>
+                  <span className="text-muted text-xs tabular-nums" dir="ltr">
+                    {new Date(s.lastSeenAt).toLocaleTimeString('he-IL', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      )}
     </div>
   );
 }

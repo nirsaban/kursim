@@ -8,6 +8,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
 import { Field, Input, Textarea } from '@/components/ui/Field';
+import Modal from '@/components/ui/Modal';
 
 interface Review {
   id: string;
@@ -24,6 +25,7 @@ export default function ReviewsModeration({ courseId }: { courseId: string }) {
   const [reviews, setReviews] = useState<Review[] | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState({ name: '', rating: 5, text: '' });
+  const [deleteTarget, setDeleteTarget] = useState<Review | null>(null);
 
   const reload = useCallback(async () => {
     const res = await apiFetch(`/api/courses/${courseId}/reviews`);
@@ -40,9 +42,14 @@ export default function ReviewsModeration({ courseId }: { courseId: string }) {
   }
 
   async function remove(id: string) {
-    if (!confirm(he.confirmDelete)) return;
     await apiFetch(`/api/reviews/${id}`, { method: 'DELETE' });
     reload();
+  }
+
+  async function confirmRemove() {
+    if (!deleteTarget) return;
+    await remove(deleteTarget.id);
+    setDeleteTarget(null);
   }
 
   function startEdit(r: Review) {
@@ -67,6 +74,7 @@ export default function ReviewsModeration({ courseId }: { courseId: string }) {
   }
 
   return (
+    <>
     <ul className="divide-y divide-line/70">
       {reviews.map((r) => (
         <li key={r.id} className="py-4 first:pt-0 last:pb-0">
@@ -98,7 +106,7 @@ export default function ReviewsModeration({ courseId }: { courseId: string }) {
                 </>
               )}
               <button
-                onClick={() => remove(r.id)}
+                onClick={() => setDeleteTarget(r)}
                 className="text-xs font-medium text-muted hover:text-danger transition-colors"
               >
                 {he.delete}
@@ -170,5 +178,20 @@ export default function ReviewsModeration({ courseId }: { courseId: string }) {
         </li>
       ))}
     </ul>
+
+    <Modal open={deleteTarget !== null} onClose={() => setDeleteTarget(null)} title={he.delete}>
+      <div className="space-y-4">
+        <p className="text-sm font-medium">{he.confirmDelete}</p>
+        <div className="flex gap-2">
+          <Button type="button" variant="danger" onClick={confirmRemove}>
+            {he.delete}
+          </Button>
+          <Button type="button" variant="ghost" onClick={() => setDeleteTarget(null)}>
+            {he.cancel}
+          </Button>
+        </div>
+      </div>
+    </Modal>
+    </>
   );
 }

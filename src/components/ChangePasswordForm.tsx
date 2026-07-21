@@ -8,7 +8,14 @@ import { Field, Input } from '@/components/ui/Field';
 import Button from '@/components/ui/Button';
 import { Card, CardBody } from '@/components/ui/Card';
 
-export default function ChangePasswordForm({ redirectTo }: { redirectTo: string }) {
+export default function ChangePasswordForm({
+  redirectTo,
+  forced = false,
+}: {
+  redirectTo: string;
+  /** True only for the mandatory first-login flow — shows the "before we let you in" framing. */
+  forced?: boolean;
+}) {
   const router = useRouter();
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
@@ -36,7 +43,9 @@ export default function ChangePasswordForm({ redirectTo }: { redirectTo: string 
     <Card>
       <CardBody>
         <form onSubmit={submit} className="space-y-4">
-          <p className="text-sm text-muted">{he.mustChangePassword}</p>
+          <p className="text-sm text-muted">
+            {forced ? he.mustChangePassword : he.changePasswordTitle}
+          </p>
           <Field label={he.currentPassword}>
             <Input
               type="password"

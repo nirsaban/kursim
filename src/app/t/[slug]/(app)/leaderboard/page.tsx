@@ -41,13 +41,13 @@ export default async function LeaderboardPage({
     ranked.length > 0
       ? await db.user.findMany({
           where: { id: { in: ranked.map((r) => r.studentId) }, role: 'STUDENT' },
-          select: { id: true, email: true },
+          select: { id: true, email: true, name: true },
         })
       : [];
-  const emailById = new Map(students.map((s) => [s.id, s.email]));
+  const studentById = new Map(students.map((s) => [s.id, s]));
 
   // Keep only actual students (grouping is progress-based; filter non-students out).
-  const rows = ranked.filter((r) => emailById.has(r.studentId));
+  const rows = ranked.filter((r) => studentById.has(r.studentId));
 
   return (
     <div>
@@ -72,7 +72,10 @@ export default async function LeaderboardPage({
             <tbody>
               {rows.map((r, i) => {
                 const isMe = r.studentId === auth.userId;
-                const name = (emailById.get(r.studentId) ?? '').split('@')[0];
+                const student = studentById.get(r.studentId);
+                const name =
+                  student?.name?.trim() ||
+                  (isMe ? (student?.email ?? '').split('@')[0] : he.anonymousLearner);
                 return (
                   <tr
                     key={r.studentId}

@@ -17,6 +17,8 @@ export default function HomepageEditor({ slug }: { slug: string }) {
   const [saved, setSaved] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [courses, setCourses] = useState<{ id: string; title: string }[]>([]);
   const [showAiBuilder, setShowAiBuilder] = useState(false);
 
@@ -25,7 +27,9 @@ export default function HomepageEditor({ slug }: { slug: string }) {
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (d) setHp(d.homepage);
-      });
+        else setLoadFailed(true);
+      })
+      .catch(() => setLoadFailed(true));
     apiFetch('/api/courses')
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
@@ -39,16 +43,19 @@ export default function HomepageEditor({ slug }: { slug: string }) {
       });
   }, []);
 
+  if (loadFailed) return <p className="text-sm text-danger font-medium">{he.loadFailed}</p>;
   if (!hp) return <div className="h-64 rounded-xl2 bg-ink/[0.04] animate-pulse" />;
 
   const set = (patch: Partial<TenantHomepage>) => {
     setHp({ ...hp, ...patch });
     setSaved(false);
+    setError(null);
     setDirty(true);
   };
 
   async function saveHomepage(toSave: TenantHomepage) {
     setBusy(true);
+    setError(null);
     // Drop rows the owner added but never titled — the schema requires a title.
     const payload = { ...toSave, announcements: toSave.announcements.filter((a) => a.title.trim()) };
     const res = await apiFetch('/api/settings/homepage', {
@@ -60,6 +67,8 @@ export default function HomepageEditor({ slug }: { slug: string }) {
       setHp(toSave);
       setSaved(true);
       setDirty(false);
+    } else {
+      setError(he.error);
     }
   }
 
@@ -181,6 +190,7 @@ export default function HomepageEditor({ slug }: { slug: string }) {
           {he.save}
         </Button>
         {saved && <span className="text-sm font-medium text-ok">{he.saved} ✓</span>}
+        {error && <p className="text-sm text-danger font-medium">{error}</p>}
         {dirty && !busy && (
           <span className="text-sm font-medium text-warn">{he.unsavedChanges}</span>
         )}

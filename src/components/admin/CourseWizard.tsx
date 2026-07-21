@@ -33,6 +33,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
   const [m, setM] = useState<CourseMarketing>(emptyMarketing);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingCourseId, setPendingCourseId] = useState<string | null>(null);
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [published, setPublished] = useState(false);
   const [showAiBuilder, setShowAiBuilder] = useState(false);
@@ -44,12 +45,19 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
     setBusy(true);
     setError(null);
     try {
-      const courseRes = await apiFetch('/api/courses', {
-        method: 'POST',
-        body: JSON.stringify({ title: title.trim(), description: description.trim() || null }),
-      });
-      if (!courseRes.ok) throw new Error('create failed');
-      const { course } = await courseRes.json();
+      // On retry after a marketing-save failure, the course already exists —
+      // reuse its id instead of creating a second draft course.
+      let courseId = pendingCourseId;
+      if (!courseId) {
+        const courseRes = await apiFetch('/api/courses', {
+          method: 'POST',
+          body: JSON.stringify({ title: title.trim(), description: description.trim() || null }),
+        });
+        if (!courseRes.ok) throw new Error('create failed');
+        const { course } = await courseRes.json();
+        courseId = course.id;
+        setPendingCourseId(courseId);
+      }
 
       const cleaned: CourseMarketing = {
         ...m,
@@ -59,12 +67,12 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
         testimonials: m.testimonials.filter((t) => t.name.trim() && t.quote.trim()),
         faq: m.faq.filter((f) => f.q.trim() && f.a.trim()),
       };
-      const mRes = await apiFetch(`/api/courses/${course.id}/marketing`, {
+      const mRes = await apiFetch(`/api/courses/${courseId}/marketing`, {
         method: 'PUT',
         body: JSON.stringify(cleaned),
       });
       if (!mRes.ok) throw new Error('marketing failed');
-      setCreatedId(course.id);
+      setCreatedId(courseId);
     } catch {
       setError(he.error);
     } finally {

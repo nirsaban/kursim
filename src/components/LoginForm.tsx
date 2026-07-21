@@ -38,7 +38,7 @@ export default function LoginForm({ tenantSlug }: { tenantSlug?: string }) {
       if (res.ok) {
         const next = search.get('next');
         if (data.mustChangePassword && tenantSlug) {
-          router.push(`/t/${tenantSlug}/change-password`);
+          router.push(`/t/${tenantSlug}/change-password?forced=1`);
         } else {
           router.push(next && next.startsWith('/') ? next : data.redirect);
         }

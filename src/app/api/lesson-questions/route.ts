@@ -4,6 +4,7 @@ import { apiError, parseBody } from '@/lib/api';
 import { lessonQuestionSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { notify } from '@/lib/notify';
+import { he } from '@/lib/he';
 
 /** List questions for one lesson (?lessonId=). Any authenticated tenant user. */
 export async function GET(req: Request) {
@@ -39,8 +40,10 @@ export async function POST(req: Request) {
   });
   if (!enrolled) return forbidden('not_enrolled');
 
-  const me = await db.user.findFirst({ where: { id: auth.userId }, select: { email: true } });
-  const studentName = (me?.email ?? '').split('@')[0];
+  const me = await db.user.findFirst({ where: { id: auth.userId }, select: { name: true } });
+  // studentName is persisted once and shown to instructors and other students in
+  // lesson Q&A — never derive it from email; anonymize when no display name is set.
+  const studentName = me?.name?.trim() || he.anonymousLearner;
 
   const question = await db.lessonQuestion.create({
     data: {

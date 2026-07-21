@@ -40,6 +40,8 @@ export default function PostThread({
   const router = useRouter();
   const [body, setBody] = useState('');
   const [busy, setBusy] = useState(false);
+  const [replyError, setReplyError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const canDelete = isStaff || post.authorId === currentUserId;
 
@@ -47,6 +49,7 @@ export default function PostThread({
     e.preventDefault();
     if (!body.trim() || busy) return;
     setBusy(true);
+    setReplyError(null);
     const res = await apiFetch(`/api/community/${post.id}/replies`, {
       method: 'POST',
       body: JSON.stringify({ body }),
@@ -55,29 +58,38 @@ export default function PostThread({
     if (res.ok) {
       setBody('');
       router.refresh();
+    } else {
+      setReplyError(he.error);
     }
   }
 
   async function togglePin() {
     if (busy) return;
     setBusy(true);
+    setActionError(null);
     const res = await apiFetch(`/api/community/${post.id}`, {
       method: 'PATCH',
       body: JSON.stringify({ pinned: !post.pinned }),
     });
     setBusy(false);
-    if (res.ok) router.refresh();
+    if (res.ok) {
+      router.refresh();
+    } else {
+      setActionError(he.error);
+    }
   }
 
   async function remove() {
     if (busy) return;
     if (!confirm(he.confirmDelete)) return;
     setBusy(true);
+    setActionError(null);
     const res = await apiFetch(`/api/community/${post.id}`, { method: 'DELETE' });
     if (res.ok) {
       router.push(`/t/${slug}/community`);
     } else {
       setBusy(false);
+      setActionError(he.error);
     }
   }
 
@@ -105,16 +117,21 @@ export default function PostThread({
           <p className="text-ink mt-4 leading-relaxed whitespace-pre-wrap">{post.body}</p>
 
           {(isStaff || canDelete) && (
-            <div className="flex items-center gap-2 mt-5 pt-4 border-t border-line">
-              {isStaff && (
-                <Button size="sm" variant="secondary" onClick={togglePin} disabled={busy}>
-                  {post.pinned ? he.unpinPost : he.pinPost}
-                </Button>
-              )}
-              {canDelete && (
-                <Button size="sm" variant="danger" onClick={remove} disabled={busy}>
-                  {he.deletePost}
-                </Button>
+            <div className="mt-5 pt-4 border-t border-line">
+              <div className="flex items-center gap-2">
+                {isStaff && (
+                  <Button size="sm" variant="secondary" onClick={togglePin} disabled={busy}>
+                    {post.pinned ? he.unpinPost : he.pinPost}
+                  </Button>
+                )}
+                {canDelete && (
+                  <Button size="sm" variant="danger" onClick={remove} disabled={busy}>
+                    {he.deletePost}
+                  </Button>
+                )}
+              </div>
+              {actionError && (
+                <p className="text-sm text-danger font-medium mt-2">{actionError}</p>
               )}
             </div>
           )}
@@ -152,6 +169,7 @@ export default function PostThread({
               placeholder={he.replyPlaceholder}
               maxLength={5000}
             />
+            {replyError && <p className="text-sm text-danger font-medium">{replyError}</p>}
             <Button type="submit" disabled={busy || !body.trim()}>
               {he.send}
             </Button>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { apiFetch } from '@/lib/client/api';
 import { cn } from '@/lib/cn';
 import { he } from '@/lib/he';
@@ -117,9 +118,9 @@ export default function NotificationBell({ slug }: { slug: string }) {
                 return (
                   <li key={n.id}>
                     {n.link ? (
-                      <a href={n.link} className="block hover:bg-paper/60 transition-colors">
+                      <Link href={n.link} className="block hover:bg-paper/60 transition-colors">
                         {inner}
-                      </a>
+                      </Link>
                     ) : (
                       inner
                     )}
@@ -129,12 +130,12 @@ export default function NotificationBell({ slug }: { slug: string }) {
             </ul>
           )}
 
-          <a
+          <Link
             href={`/t/${slug}/notifications`}
             className="block text-center text-sm font-medium text-ink hover:bg-paper/60 px-4 py-3 border-t border-line transition-colors"
           >
             {he.viewAllNotifications}
-          </a>
+          </Link>
         </div>
       )}
     </div>

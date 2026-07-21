@@ -35,11 +35,20 @@ export const lessonSchema = z.object({
   sortOrder: z.number().int().min(0).optional(),
 });
 
+/** Optional display name (leaderboard/certificate) — empty string treated as absent. */
+export const nameSchema = z
+  .string()
+  .trim()
+  .max(60)
+  .optional()
+  .transform((v) => (v ? v : undefined));
+
 export const createStudentSchema = z.object({
   email: z.string().email().max(320),
   password: passwordSchema,
   role: z.enum(['STUDENT', 'INSTRUCTOR']).default('STUDENT'),
   courseIds: z.array(z.string().uuid()).optional(),
+  name: nameSchema,
 });
 
 export const resetPasswordSchema = z.object({
@@ -56,6 +65,7 @@ export const acceptInviteSchema = z.object({
   token: z.string().min(16).max(128),
   email: z.string().email().max(320),
   password: passwordSchema,
+  name: nameSchema,
 });
 
 export const tenantSettingsSchema = z.object({

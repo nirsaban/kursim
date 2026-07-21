@@ -50,9 +50,9 @@ export default async function CertificatePage({
   if (!certificate) {
     const user = await db.user.findFirst({
       where: { id: auth.userId },
-      select: { email: true },
+      select: { email: true, name: true },
     });
-    const studentName = (user?.email ?? '').split('@')[0];
+    const studentName = user?.name?.trim() || (user?.email ?? '').split('@')[0];
     const serial = `KURS-${courseId.slice(0, 4).toUpperCase()}-${Date.now()
       .toString(36)
       .toUpperCase()}`;

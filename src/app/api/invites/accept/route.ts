@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
   const parsed = await parseBody(req, acceptInviteSchema);
   if ('error' in parsed) return parsed.error;
-  const { token, email, password } = parsed.data;
+  const { token, email, password, name } = parsed.data;
   const normalizedEmail = email.toLowerCase();
 
   // Token lookup is cross-tenant by nature (the visitor has no session yet).
@@ -38,6 +38,7 @@ export async function POST(req: Request) {
   await db.user.create({
     data: {
       email: normalizedEmail,
+      name,
       passwordHash: await hashPassword(password),
       role: invite.role,
       status: 'ACTIVE',

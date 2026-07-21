@@ -34,15 +34,23 @@ export default function LiveSessionsPanel() {
   const [policy, setPolicy] = useState<'BLOCK' | 'EVICT_OLDEST'>('BLOCK');
   const [refreshedAt, setRefreshedAt] = useState<number | null>(null);
   const [query, setQuery] = useState('');
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const reload = useCallback(async () => {
-    const res = await apiFetch('/api/sessions');
-    if (res.ok) {
-      const data = await res.json();
-      setSessions(data.sessions);
-      if (data.limit) setLimit(data.limit);
-      if (data.policy) setPolicy(data.policy);
-      setRefreshedAt(Date.now());
+    try {
+      const res = await apiFetch('/api/sessions');
+      if (res.ok) {
+        const data = await res.json();
+        setSessions(data.sessions);
+        if (data.limit) setLimit(data.limit);
+        if (data.policy) setPolicy(data.policy);
+        setRefreshedAt(Date.now());
+        setLoadFailed(false);
+      } else {
+        setLoadFailed(true);
+      }
+    } catch {
+      setLoadFailed(true);
     }
   }, []);
 
@@ -74,10 +82,18 @@ export default function LiveSessionsPanel() {
       });
   }, [sessions, query, limit]);
 
+  if (loadFailed && !sessions) {
+    return <p className="text-sm text-danger font-medium">{he.loadFailed}</p>;
+  }
   if (!sessions) return <div className="h-64 rounded-xl2 bg-ink/[0.04] animate-pulse" />;
 
   async function kill(s: LiveSession) {
-    await apiFetch(`/api/students/${s.userId}/sessions/${s.sid}`, { method: 'DELETE' });
+    if (!confirm(he.confirmKillSession)) return;
+    const res = await apiFetch(`/api/students/${s.userId}/sessions/${s.sid}`, { method: 'DELETE' });
+    if (res.ok) {
+      // Optimistic removal so the row disappears immediately, not just on the next poll.
+      setSessions((prev) => prev?.filter((x) => x.sid !== s.sid) ?? prev);
+    }
     reload();
   }
 

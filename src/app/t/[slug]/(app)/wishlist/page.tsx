@@ -49,8 +49,6 @@ export default async function WishlistPage({
               <a
                 key={course.id}
                 href={`/t/${slug}/c/${course.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift hover:-translate-y-1 transition-all duration-300 p-5 flex flex-col"
               >
                 <div className="flex items-start justify-between gap-3">
