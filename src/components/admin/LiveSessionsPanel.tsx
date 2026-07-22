@@ -127,7 +127,7 @@ export default function LiveSessionsPanel() {
       {sessions.length === 0 ? (
         <EmptyState title={he.noLiveSessions} hint={he.noLiveSessionsHint} />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+        <div className="grid md:grid-cols-2 gap-4 items-start">
           {groups.map((g) => (
             <StudentCard key={g.userId} group={g} limit={limit} onKill={kill} />
           ))}

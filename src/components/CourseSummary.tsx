@@ -33,7 +33,7 @@ export default function CourseSummary({ modules }: { modules: SummaryModule[] })
       </div>
       <div className="bg-white/10 backdrop-blur px-6 py-5">
         <p className="kicker !text-white/60 mb-4">{he.whatWeLearned}</p>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2">
           {withLessons.map((mod, mi) => (
             <div key={mod.id}>
               <h3 className="font-display font-bold flex items-center gap-2">

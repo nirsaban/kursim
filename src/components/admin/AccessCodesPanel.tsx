@@ -89,7 +89,7 @@ export default function AccessCodesPanel({
       <Card>
         <CardHeader title={he.newAccessCode} />
         <CardBody>
-          <form onSubmit={submit} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <form onSubmit={submit} className="grid gap-4 sm:grid-cols-3">
             <Field label={he.accessCodeCourse}>
               <Select value={courseId} onChange={(e) => setCourseId(e.target.value)}>
                 {courses.map((c) => (

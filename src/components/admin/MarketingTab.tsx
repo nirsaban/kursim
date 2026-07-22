@@ -192,7 +192,7 @@ export default function MarketingTab({
               onChange={(e) => set({ subheadline: e.target.value })}
             />
           </Field>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4">
             <Field label={he.instructorName}>
               <Input
                 value={m.instructorName}
@@ -216,7 +216,7 @@ export default function MarketingTab({
       {/* Audience & outcomes */}
       <Card>
         <CardHeader title={`${he.audienceTitle} · ${he.outcomesTitle}`} />
-        <CardBody className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <CardBody className="grid lg:grid-cols-2 gap-6">
           <div>
             <p className="text-sm font-medium mb-2">{he.audienceTitle}</p>
             <StringListEditor
@@ -255,7 +255,7 @@ export default function MarketingTab({
       {/* Testimonials + FAQ */}
       <Card>
         <CardHeader title={`${he.testimonialsTitle} · ${he.faqTitle}`} />
-        <CardBody className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <CardBody className="grid lg:grid-cols-2 gap-6">
           <div>
             <p className="text-sm font-medium mb-2">{he.testimonialsTitle}</p>
             <PairListEditor
@@ -346,7 +346,7 @@ export default function MarketingTab({
                   onChange={(e) => set({ sale: { ...m.sale, description: e.target.value } })}
                 />
               </Field>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-2 gap-4">
                 <Field label={he.salePartnerCourse}>
                   <Select
                     value={m.sale.partnerCourseId}
@@ -390,7 +390,7 @@ export default function MarketingTab({
       {/* CTA + contact */}
       <Card>
         <CardHeader title={he.enrollNow} subtitle={he.ctaLinkSubtitle} />
-        <CardBody className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <CardBody className="grid sm:grid-cols-2 gap-4">
           <Field label={he.paymentLink} hint={he.paymentLinkHint} className="sm:col-span-2">
             <Input
               dir="ltr"

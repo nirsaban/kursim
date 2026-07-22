@@ -201,7 +201,7 @@ export default function GalleryEditor({
       {error && <p className="text-sm text-danger font-medium">{error}</p>}
 
       {items.length > 0 && (
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <ul className="grid gap-3 sm:grid-cols-2">
           {items.map((item, i) => (
             <li key={i} className="border border-line rounded-xl p-3 bg-paper/50 space-y-2">
               <div className="flex items-center gap-2 text-sm">

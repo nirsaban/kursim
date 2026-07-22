@@ -98,7 +98,7 @@ export default function SettingsForm() {
 
           <fieldset>
             <legend className="text-sm font-medium mb-3">{he.evictionPolicy}</legend>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid sm:grid-cols-2 gap-3">
               {policies.map((p) => (
                 <button
                   key={p.value}

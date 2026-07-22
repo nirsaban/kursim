@@ -195,7 +195,7 @@ export default async function StudentHomePage({
       {!hasCourses ? (
         <EmptyState icon="📚" title={he.noCourses} hint={he.noCoursesHint} />
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {dash.courses.map((course, i) => (
             <JourneyCourseCard key={course.id} slug={slug} course={course} index={i} />
           ))}
@@ -209,7 +209,7 @@ export default async function StudentHomePage({
 
       {/* Announcements + about the school */}
       {(hp.announcements.length > 0 || hp.aboutSchool) && (
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 mt-10 items-start">
+        <div className="grid gap-5 lg:grid-cols-2 mt-10 items-start">
           {hp.announcements.length > 0 && (
             <AnnouncementsCard announcements={hp.announcements} />
           )}
@@ -243,7 +243,7 @@ export default async function StudentHomePage({
             <h2 className="font-display text-xl font-bold">{he.moreCourses}</h2>
             <span className="text-sm text-muted">{he.moreCoursesHint}</span>
           </div>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {catalog.map((course) => {
               const m = parseMarketing(course.marketing);
               const t = LANDING_THEMES[m.accent];

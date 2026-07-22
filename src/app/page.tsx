@@ -22,7 +22,7 @@ export default function Home() {
       </header>
 
       <section className="flex-1 flex items-center">
-        <div className="max-w-6xl mx-auto px-4 py-20 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+        <div className="max-w-6xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-14 items-center">
           <div>
             <p className="kicker mb-3">{he.platformTagline}</p>
             <h1 className="font-display text-4xl sm:text-5xl font-bold leading-[1.15]">

@@ -33,7 +33,7 @@ export default async function CertificatesPage({
       {certificates.length === 0 ? (
         <EmptyState icon="🎓" title={he.noCertificates} />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {certificates.map((c) => (
             <Card key={c.id} className="p-5 flex flex-col gap-3">
               <div className="flex items-start gap-3">

@@ -49,7 +49,7 @@ export default function AuthShell({
         </div>
       </header>
 
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[5fr,4fr]">
+      <main className="flex-1 grid lg:grid-cols-[5fr,4fr]">
         <section className="flex flex-col items-center justify-start lg:justify-center p-6 sm:p-10">
           {/* Mobile brand hero — the dark panel moment, condensed */}
           <div className="lg:hidden w-full max-w-sm relative overflow-hidden rounded-xl2 bg-ink text-paper px-6 py-6 mb-8 fx-grain animate-rise">

@@ -47,7 +47,7 @@ function OptionGrid<T extends string>({
   render: (opt: T) => { title: string; hint?: string };
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div className="grid sm:grid-cols-2 gap-3">
       {options.map((opt) => {
         const copy = render(opt);
         const active = value === opt;
