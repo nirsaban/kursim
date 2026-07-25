@@ -4,6 +4,7 @@ import { getAuth } from '@/lib/auth/guards';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import SessionWatcher from '@/components/SessionWatcher';
 import Navbar, { NavEntry } from '@/components/Navbar';
+import { ADMIN_SECTIONS } from '@/lib/admin-sections';
 import { he } from '@/lib/he';
 
 export default async function AdminLayout({
@@ -25,39 +26,15 @@ export default async function AdminLayout({
     select: { email: true },
   });
 
-  // Owners get a compact grouped bar; instructors a minimal one.
+  // Owners get the 4-part bar (mirrors the tile layout on /admin and each
+  // hub page); instructors keep the minimal one — they only touch courses.
   const links: NavEntry[] =
     auth.role === 'OWNER'
-      ? [
-          { href: `/t/${slug}/admin`, label: he.dashboard, exact: true },
-          { href: `/t/${slug}/admin/courses`, label: he.courses },
-          {
-            label: he.students,
-            liveDot: true,
-            items: [
-              { href: `/t/${slug}/admin/students`, label: he.students },
-              { href: `/t/${slug}/admin/sessions`, label: he.sessions, liveDot: true },
-              { href: `/t/${slug}/community`, label: he.community },
-            ],
-          },
-          {
-            label: he.navMarketing,
-            items: [
-              { href: `/t/${slug}/admin/payments`, label: he.payments },
-              { href: `/t/${slug}/admin/broadcasts`, label: he.broadcasts },
-              { href: `/t/${slug}/admin/access-codes`, label: he.accessCodes },
-              { href: `/t/${slug}/admin/analytics`, label: he.analytics },
-            ],
-          },
-          {
-            label: he.settings,
-            items: [
-              { href: `/t/${slug}/admin/homepage`, label: he.homepageBuilder },
-              { href: `/t/${slug}/admin/whatsapp`, label: he.whatsappTitle },
-              { href: `/t/${slug}/admin/settings`, label: he.settings },
-            ],
-          },
-        ]
+      ? ADMIN_SECTIONS.map((s) => ({
+          href: s.href(slug),
+          label: s.label,
+          liveDot: s.key === 'students',
+        }))
       : [
           { href: `/t/${slug}/admin`, label: he.dashboard, exact: true },
           { href: `/t/${slug}/admin/courses`, label: he.courses },

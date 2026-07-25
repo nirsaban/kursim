@@ -197,6 +197,28 @@ export const he = {
   completed: 'הושלם',
   continueWatching: 'ממשיכים לצפות',
 
+  // course editor — hub + sub-hub tiles
+  courseSectionContentDesc: 'ניהול פרקים, שיעורים וסדר ההופעה שלהם.',
+  courseSectionStudentsDesc: 'הרשמה וביטול הרשמה של תלמידים לקורס.',
+  courseSectionMarketingDesc: 'עמוד נחיתה, תמחור, ביקורות ושותפים.',
+  marketingCopyLabel: 'טקסטים ותוכן',
+  marketingCopyDesc: 'כותרת, קהל יעד, יתרונות, המלצות ושאלות נפוצות.',
+  marketingGalleryLabel: 'גלריה ומדיה',
+  marketingGalleryDesc: 'תמונות וסרטון תדמית שנוצר על ידי AI.',
+  marketingReviewsDesc: 'אישור והצגת ביקורות תלמידים על הקורס.',
+  marketingAffiliatesDesc: 'ניהול שותפים ועמלות הפצה.',
+  marketingPromotionDesc: 'מבצע זמני או חבילה משולבת עם קורס אחר.',
+  marketingPublishLabel: 'פרסום ושיתוף',
+  marketingPublishDesc: 'כתובת העמוד, פרסום או הסרה, ופרטי יצירת קשר.',
+  marketingStyleLabel: 'עיצוב הדף',
+  marketingStyleDesc: 'פריסה, צבע מבטא ואייקון לדף הנחיתה.',
+
+  // homepage builder — hub tiles
+  homepageSectionWelcomeDesc: 'כותרת פתיחה וטקסט אודות בית הספר.',
+  homepageSectionAnnouncementsDesc: 'ניהול רשימת הודעות ועדכונים לתלמידים.',
+  homepageSectionSectionsDesc: 'הצגת סטטיסטיקות, הישגים, קטלוג וקורס מומלץ.',
+  homepageSectionStyleDesc: 'צבע מבטא ואייקון לעמוד הבית.',
+
   // marketing & landing pages
   marketing: 'שיווק ודף נחיתה',
   landingPage: 'דף נחיתה',
@@ -488,8 +510,27 @@ export const he = {
 
   // owner admin dashboard
   adminOverviewTitle: 'מה קורה אצלכם היום',
+  adminOverviewSubtitle: 'כל מה שצריך לניהול בית הספר שלכם — במקום אחד.',
   instructorOverviewTitle: 'מה קורה בקורסים שלכם',
   adminSessionsEmptyHint: 'ברגע שתלמיד ייכנס, החיבור החי יופיע כאן',
+
+  // owner admin — 4 nav sections + their sub-items
+  adminSectionCoursesDesc: 'צרו קורסים חדשים ונהלו את הקיימים.',
+  adminSectionStudentsDesc: 'תלמידים, מכשירים מחוברים וקהילה.',
+  adminSectionMarketingDesc: 'תשלומים, הודעות, קודי גישה ונתונים.',
+  adminSectionSettingsDesc: 'עמוד הבית, וואטסאפ והגדרות בית הספר.',
+  adminItemCoursesListDesc: 'רשימת כל הקורסים שלכם, כולל סטטוס פרסום.',
+  adminItemCoursesNewDesc: 'התחילו אשף יצירת קורס חדש, שלב אחר שלב.',
+  adminItemStudentsDesc: 'רשימת התלמידים הרשומים, הרשמות וגישה.',
+  adminItemSessionsDesc: 'מי מחובר עכשיו, ומאיזה מכשיר.',
+  adminItemCommunityDesc: 'שאלות ותשובות של תלמידים בתוך הקורסים.',
+  adminItemPaymentsDesc: 'רכישות ותשלומים לפי קורס.',
+  adminItemBroadcastsDesc: 'שליחת הודעות לכל התלמידים או לקבוצה.',
+  adminItemAccessCodesDesc: 'קודי גישה וקופונים לקורסים.',
+  adminItemAnalyticsDesc: 'התקדמות תלמידים ונתוני הרשמה.',
+  adminItemHomepageDesc: 'עריכת עמוד הבית של בית הספר.',
+  adminItemWhatsappDesc: 'חיבור והודעות וואטסאפ.',
+  adminItemSettingsDesc: 'הגדרות כלליות של בית הספר.',
 
   // platform marketing homepage (/)
   platformHeroTitle1: 'בית ספר דיגיטלי משלכם —',

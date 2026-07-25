@@ -36,6 +36,8 @@
   .rise-3 { animation-delay: 220ms; }
   .rise-4 { animation-delay: 300ms; }
   .rise-5 { animation-delay: 380ms; }
+  .rise-6 { animation-delay: 460ms; }
+  .rise-7 { animation-delay: 540ms; }
 
   /* 3D stage for tilt/float children */
   .fx-stage {

@@ -2,13 +2,11 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getAuth } from '@/lib/auth/guards';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
-import { listLiveSessions } from '@/lib/session-registry/registry';
 import PageHeader from '@/components/ui/PageHeader';
 import StatCard from '@/components/ui/StatCard';
 import TiltCard from '@/components/fx/TiltCard';
-import { Card, CardHeader } from '@/components/ui/Card';
-import EmptyState from '@/components/ui/EmptyState';
-import Badge from '@/components/ui/Badge';
+import NavTile from '@/components/ui/NavTile';
+import { ADMIN_SECTIONS } from '@/lib/admin-sections';
 import { he } from '@/lib/he';
 
 export default async function AdminDashboard({
@@ -19,41 +17,40 @@ export default async function AdminDashboard({
   const { slug } = await params;
   const auth = await getAuth();
   if (!auth) redirect(`/t/${slug}/login`);
-  const isOwner = auth.role === 'OWNER';
 
+  if (auth.role === 'OWNER') {
+    return (
+      <div>
+        <PageHeader
+          kicker={he.dashboard}
+          title={he.adminOverviewTitle}
+          subtitle={he.adminOverviewSubtitle}
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+          {ADMIN_SECTIONS.map((s, i) => (
+            <div key={s.key} className={`animate-rise rise-${i + 1}`}>
+              <NavTile href={s.href(slug)} icon={s.icon} label={s.label} description={s.description} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Instructors don't manage students, sessions, or marketing/settings — a
+  // plain course-focused overview, no tiles needed.
   const db = forTenant(auth.tenantId!);
-
-  // Instructors don't manage students or sessions, so skip those queries
-  // entirely for them (matches the nav, which hides those links too).
-  const [studentCount, courseCount, publishedCount, landingCount, users] = await Promise.all([
-    isOwner ? db.user.count({ where: { role: 'STUDENT' } }) : Promise.resolve(0),
+  const [courseCount, publishedCount, landingCount] = await Promise.all([
     db.course.count(),
     db.course.count({ where: { status: 'PUBLISHED' } }),
     db.course.count({ where: { landingPublished: true } }),
-    isOwner
-      ? db.user.findMany({
-          where: { role: { in: ['STUDENT', 'INSTRUCTOR'] } },
-          select: { id: true, email: true },
-        })
-      : Promise.resolve([]),
   ]);
-
-  const liveSessions = isOwner
-    ? (
-        await Promise.all(
-          users.map(async (u) =>
-            (await listLiveSessions(u.id)).map((s) => ({ ...s, email: u.email })),
-          ),
-        )
-      ).flat()
-    : [];
-  liveSessions.sort((a, b) => b.lastSeenAt - a.lastSeenAt);
 
   return (
     <div>
       <PageHeader
         kicker={he.dashboard}
-        title={isOwner ? he.adminOverviewTitle : he.instructorOverviewTitle}
+        title={he.instructorOverviewTitle}
         actions={
           <Link
             href={`/t/${slug}/admin/courses/new`}
@@ -64,19 +61,8 @@ export default async function AdminDashboard({
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 mb-8">
-        {isOwner && (
-          <div className="animate-rise rise-1">
-            <TiltCard maxTilt={5} className="rounded-xl2 h-full">
-              <StatCard
-                label={he.students}
-                value={studentCount}
-                href={`/t/${slug}/admin/students`}
-              />
-            </TiltCard>
-          </div>
-        )}
-        <div className="animate-rise rise-2">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
+        <div className="animate-rise rise-1">
           <TiltCard maxTilt={5} className="rounded-xl2 h-full">
             <StatCard
               label={he.courses}
@@ -86,62 +72,12 @@ export default async function AdminDashboard({
             />
           </TiltCard>
         </div>
-        {isOwner && (
-          <div className="animate-rise rise-3">
-            <TiltCard maxTilt={5} className="rounded-xl2 h-full">
-              <StatCard
-                label={he.sessions}
-                value={liveSessions.length}
-                accent
-                href={`/t/${slug}/admin/sessions`}
-              />
-            </TiltCard>
-          </div>
-        )}
-        <div className="animate-rise rise-4">
+        <div className="animate-rise rise-2">
           <TiltCard maxTilt={5} className="rounded-xl2 h-full">
             <StatCard label={he.landingPage} value={landingCount} sub={he.landingPublished} />
           </TiltCard>
         </div>
       </div>
-
-      {isOwner && (
-        <Card className="animate-rise rise-5">
-          <CardHeader
-            title={he.whoIsWatching}
-            actions={
-              liveSessions.length > 0 ? (
-                <Badge tone="ok" dot>
-                  {liveSessions.length} {he.sessions}
-                </Badge>
-              ) : undefined
-            }
-          />
-          {liveSessions.length === 0 ? (
-            <EmptyState icon="🌙" title={he.noLiveSessions} hint={he.adminSessionsEmptyHint} />
-          ) : (
-            <ul className="divide-y divide-line/70">
-              {liveSessions.slice(0, 8).map((s) => (
-                <li key={s.sid} className="px-5 py-3 flex items-center gap-4 text-sm">
-                  <span className="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-display font-bold text-xs flex items-center justify-center shrink-0">
-                    <span dir="ltr">{s.email[0]?.toUpperCase()}</span>
-                  </span>
-                  <span className="flex-1 truncate" dir="ltr">
-                    {s.email}
-                  </span>
-                  <span className="text-muted text-xs hidden sm:block">{s.deviceLabel}</span>
-                  <span className="text-muted text-xs tabular-nums" dir="ltr">
-                    {new Date(s.lastSeenAt).toLocaleTimeString('he-IL', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-      )}
     </div>
   );
 }
