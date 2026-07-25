@@ -280,7 +280,7 @@ export default function CoralHotaLanding({
               {he.whatsIncludedTitle}
             </h2>
           </Reveal>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {m.benefits.map((b, i) => {
               const Icon = BENEFIT_ICONS[i % BENEFIT_ICONS.length];
               return (
@@ -308,7 +308,7 @@ export default function CoralHotaLanding({
         <section className="border-t border-black/10">
           <div
             className={`max-w-5xl mx-auto px-4 py-16 ${
-              m.audience.length > 0 && m.outcomes.length > 0 ? 'grid gap-12 lg:grid-cols-2' : ''
+              m.audience.length > 0 && m.outcomes.length > 0 ? 'grid grid-cols-1 gap-12 lg:grid-cols-2' : ''
             }`}
           >
             {m.audience.length > 0 && (
@@ -602,7 +602,7 @@ export default function CoralHotaLanding({
             <h2 className="font-body font-extrabold text-2xl sm:text-3xl mb-2">{he.reviewsTitle}</h2>
             <p className="text-[#160303]/60 mb-8">{he.verifiedStudent} ✓</p>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
               <Reveal key={r.id} delay={i * 60}>
                 <figure className="border border-black/12 rounded-2xl p-5 h-full bg-white/50">

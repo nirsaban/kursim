@@ -400,7 +400,7 @@ export default function ClassicLanding({
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">{he.benefitsTitle}</h2>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {m.benefits.map((b, i) => (
               <Reveal key={i} delay={i * 80} className="h-full">
                 <div
@@ -592,7 +592,7 @@ export default function ClassicLanding({
             <h2 className="font-display text-2xl sm:text-3xl font-black mb-2">{he.reviewsTitle}</h2>
             <p className="text-muted mb-8">{he.verifiedStudent} ✓</p>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
               <Reveal key={r.id} delay={i * 70}>
                 <figure className="border border-line rounded-2xl p-5 h-full bg-card">
@@ -724,7 +724,7 @@ export default function ClassicLanding({
 
       {/* FAQ + CTA band — side by side per design 1e */}
       <section id="faq" className="max-w-5xl mx-auto px-4 pb-16 pt-4">
-        <div className={m.faq.length > 0 ? 'grid gap-12 lg:grid-cols-2 items-start' : ''}>
+        <div className={m.faq.length > 0 ? 'grid grid-cols-1 gap-12 lg:grid-cols-2 items-start' : ''}>
           {m.faq.length > 0 && (
             <div>
               <Reveal>

@@ -172,7 +172,7 @@ function Features() {
     <section id="features" className="bg-card/60 border-y border-line">
       <div className="max-w-6xl mx-auto px-4 py-24">
         <SectionHead eyebrow={he.platformNavFeatures} title={he.platformFeaturesTitle} subtitle={he.platformFeaturesSubtitle} />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {FEATURES.map((f) => (
             <div key={f.titleKey} className="bg-card border border-line rounded-2xl p-6">
               <span className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center text-lg mb-4">{f.icon}</span>
