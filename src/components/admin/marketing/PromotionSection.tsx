@@ -69,7 +69,7 @@ export default function PromotionSection({ courseId }: { courseId: string }) {
                   onChange={(e) => set({ sale: { ...m.sale, description: e.target.value } })}
                 />
               </Field>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label={he.salePartnerCourse}>
                   <Select
                     value={m.sale.partnerCourseId}

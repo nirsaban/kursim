@@ -92,7 +92,7 @@ export default function CopySection({
               onChange={(e) => set({ subheadline: e.target.value })}
             />
           </Field>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label={he.instructorName}>
               <Input
                 value={m.instructorName}
@@ -115,7 +115,7 @@ export default function CopySection({
 
       <Card>
         <CardHeader title={`${he.audienceTitle} · ${he.outcomesTitle}`} />
-        <CardBody className="grid lg:grid-cols-2 gap-6">
+        <CardBody className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
             <p className="text-sm font-medium mb-2">{he.audienceTitle}</p>
             <StringListEditor
@@ -152,7 +152,7 @@ export default function CopySection({
 
       <Card>
         <CardHeader title={`${he.testimonialsTitle} · ${he.faqTitle}`} />
-        <CardBody className="grid lg:grid-cols-2 gap-6">
+        <CardBody className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
             <p className="text-sm font-medium mb-2">{he.testimonialsTitle}</p>
             <PairListEditor

@@ -145,7 +145,7 @@ export default function ClassicLanding({
       >
         <div
           className={`relative max-w-5xl mx-auto px-4 py-16 sm:py-20 ${
-            heroMedia ? 'grid gap-12 items-center lg:grid-cols-[1.1fr,1fr]' : ''
+            heroMedia ? 'grid grid-cols-1 gap-12 items-center lg:grid-cols-[1.1fr,1fr]' : ''
           }`}
         >
           <div>
@@ -339,7 +339,7 @@ export default function ClassicLanding({
           <div
             className={`max-w-5xl mx-auto px-4 py-16 ${
               m.audience.length > 0 && m.outcomes.length > 0
-                ? 'grid gap-12 lg:grid-cols-[1fr,1.3fr]'
+                ? 'grid grid-cols-1 gap-12 lg:grid-cols-[1fr,1.3fr]'
                 : ''
             }`}
           >
@@ -371,7 +371,7 @@ export default function ClassicLanding({
                     {he.outcomesTitle}
                   </h2>
                 </Reveal>
-                <ul className="grid gap-3 sm:grid-cols-2">
+                <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {m.outcomes.map((o, i) => (
                     <Reveal key={i} delay={i * 60}>
                       <li className="border border-line rounded-[13px] px-5 py-4 h-full">
@@ -429,7 +429,7 @@ export default function ClassicLanding({
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">{he.galleryTitle}</h2>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {galleryRest.map((item, i) => (
               <Reveal key={i} delay={i * 80}>
                 <figure>
@@ -551,7 +551,7 @@ export default function ClassicLanding({
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">{he.testimonialsTitle}</h2>
           </Reveal>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {m.testimonials.map((t, i) => (
               <Reveal key={i} delay={i * 80}>
                 <figure

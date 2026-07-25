@@ -98,7 +98,7 @@ export default function PublishSection({
 
       <Card>
         <CardHeader title={he.enrollNow} subtitle={he.ctaLinkSubtitle} />
-        <CardBody className="grid sm:grid-cols-2 gap-4">
+        <CardBody className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label={he.paymentLink} hint={he.paymentLinkHint} className="sm:col-span-2">
             <Input
               dir="ltr"

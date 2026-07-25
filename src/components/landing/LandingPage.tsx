@@ -42,7 +42,7 @@ function Nav() {
 function Hero() {
   return (
     <section className="flex-1 flex items-center">
-      <div className="max-w-6xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-14 items-center">
+      <div className="max-w-6xl mx-auto px-4 py-20 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
         <div>
           <p className="kicker mb-3">{he.platformTagline}</p>
           <h1 className="font-display text-4xl sm:text-5xl font-bold leading-[1.15]">
@@ -145,7 +145,7 @@ function How() {
   return (
     <section id="how" className="max-w-6xl mx-auto px-4 py-24">
       <SectionHead eyebrow={he.platformHowEyebrow} title={he.platformHowTitle} subtitle={he.platformHowSubtitle} />
-      <div className="grid sm:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
         {STEPS.map((s) => (
           <div key={s.n} className="relative">
             <div className="font-display text-5xl font-bold text-brand-100 mb-4">{s.n}</div>
