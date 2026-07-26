@@ -29,7 +29,6 @@ export default async function TenantAppLayout({
     links.push({ href: `/t/${slug}/journey`, label: he.journeyTitle });
   }
   links.push({ href: `/t/${slug}/community`, label: he.community });
-  links.push({ href: `/t/${slug}/leaderboard`, label: he.leaderboard });
   if (auth.role === 'OWNER' || auth.role === 'INSTRUCTOR') {
     links.push({ href: `/t/${slug}/admin`, label: he.admin });
   }

@@ -802,6 +802,17 @@ export const he = {
   noCertificates: 'עוד אין תעודות — סיימו קורס, והראשונה כבר מחכה',
   certificateIssuedBy: 'הונפקה על ידי',
 
+  // lesson navigation
+  lessonNavPrev: 'הקודם',
+  lessonNavNext: 'הבא',
+  jumpToLesson: 'קפיצה לשיעור',
+  allCourseLessons: 'כל השיעורים בקורס',
+  lessonPositionOf: 'שיעור {i} מתוך {n}',
+  lessonNavDone: 'הושלם',
+  lessonNavCurrent: 'כאן אתם עכשיו',
+  lessonNavLocked: 'עוד נעול',
+  closeMenu: 'סגירה',
+
   // lesson notes (private)
   myNotes: 'הפתקים שלי',
   lessonNotesLabel: 'פתקים אישיים',

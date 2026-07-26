@@ -163,9 +163,6 @@ export default async function StudentHomePage({
           <Link href={`/t/${slug}/wishlist`} className={quickLink}>
             🔖 {he.wishlistTitle}
           </Link>
-          <Link href={`/t/${slug}/leaderboard`} className={quickLink}>
-            🏆 {he.leaderboard}
-          </Link>
           <Link href={`/t/${slug}/redeem`} className={quickLink}>
             🎟️ {he.redeem}
           </Link>

@@ -5,6 +5,7 @@ import { forTenant } from '@/lib/tenant/scoped-prisma';
 import LessonPlayer from '@/components/LessonPlayer';
 import LessonQA, { QAItem } from '@/components/LessonQA';
 import LessonNotes from '@/components/LessonNotes';
+import LessonNav, { LessonNavItem } from '@/components/LessonNav';
 import { he } from '@/lib/he';
 
 export default async function LessonPage({
@@ -46,16 +47,6 @@ export default async function LessonPage({
     }
   }
 
-  // Prev/next within the course for player navigation
-  const allLessons = await db.lesson.findMany({
-    where: { module: { courseId: lesson.module.courseId } },
-    orderBy: [{ module: { sortOrder: 'asc' } }, { sortOrder: 'asc' }],
-    select: { id: true, title: true },
-  });
-  const idx = allLessons.findIndex((l) => l.id === lesson.id);
-  const prev = idx > 0 ? allLessons[idx - 1] : null;
-  const next = idx >= 0 && idx < allLessons.length - 1 ? allLessons[idx + 1] : null;
-
   const header = (
     <>
       <Link
@@ -91,6 +82,45 @@ export default async function LessonPage({
       })
     : null;
 
+  // Whole-course outline, so the player can jump straight to any lesson.
+  const allLessons = await db.lesson.findMany({
+    where: { module: { courseId: lesson.module.courseId } },
+    orderBy: [{ module: { sortOrder: 'asc' } }, { sortOrder: 'asc' }],
+    select: {
+      id: true,
+      title: true,
+      module: { select: { id: true, title: true, dripDays: true } },
+    },
+  });
+  const doneIds = new Set<string>(
+    isStudent
+      ? (
+          await db.progress.findMany({
+            where: {
+              studentId: auth.userId,
+              lessonId: { in: allLessons.map((l) => l.id) },
+              completedAt: { not: null },
+            },
+            select: { lessonId: true },
+          })
+        ).map((p) => p.lessonId)
+      : [],
+  );
+  const navLessons: LessonNavItem[] = allLessons.map((l) => {
+    const drip = l.module.dripDays ?? 0;
+    return {
+      id: l.id,
+      title: l.title,
+      moduleId: l.module.id,
+      moduleTitle: l.module.title,
+      completed: doneIds.has(l.id),
+      locked:
+        isStudent && enrolledAt !== null && drip > 0
+          ? Date.now() < enrolledAt.getTime() + drip * 86_400_000
+          : false,
+    };
+  });
+
   const questionsRaw = await db.lessonQuestion.findMany({
     where: { lessonId },
     orderBy: { createdAt: 'desc' },
@@ -121,6 +151,8 @@ export default async function LessonPage({
         isStudent={isStudent}
       />
 
+      <LessonNav slug={slug} lessons={navLessons} currentId={lesson.id} />
+
       {lesson.notes && (
         <div className="mt-6 bg-card border border-line rounded-xl2 shadow-card p-6">
           <p className="kicker mb-2">{he.lessonNotes}</p>
@@ -138,29 +170,6 @@ export default async function LessonPage({
         isStaff={isStaff}
         initialQuestions={questions}
       />
-
-      <div className="flex items-center justify-between mt-8">
-        {prev ? (
-          <Link
-            href={`/t/${slug}/lesson/${prev.id}`}
-            className="text-sm font-medium bg-card border border-line rounded-xl px-4 py-2.5 hover:border-brand-300 transition-colors max-w-[45%] truncate"
-          >
-            → {prev.title}
-          </Link>
-        ) : (
-          <span />
-        )}
-        {next ? (
-          <Link
-            href={`/t/${slug}/lesson/${next.id}`}
-            className="text-sm font-semibold bg-brand-700 text-white rounded-xl px-4 py-2.5 hover:bg-brand-800 transition-colors max-w-[45%] truncate"
-          >
-            {next.title} ←
-          </Link>
-        ) : (
-          <span />
-        )}
-      </div>
     </div>
   );
 }
