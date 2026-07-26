@@ -599,6 +599,15 @@ export const he = {
   platformFinalCtaNote: 'בלי התחייבות · תשובה תוך יום עסקים',
   platformFooterRights: 'כל הזכויות שמורות.',
 
+  platformLeadFormNameLabel: 'שם',
+  platformLeadFormContactLabel: 'טלפון או אימייל',
+  platformLeadFormMessageLabel: 'ספרו לנו קצת (לא חובה)',
+  platformLeadFormSubmit: 'שלחו לי פרטים',
+  platformLeadFormSubmitting: 'שולח...',
+  platformLeadFormSuccessTitle: 'תודה!',
+  platformLeadFormSuccessBody: 'קיבלנו את הפרטים, נחזור אליכם בקרוב.',
+  platformLeadFormErrorBody: 'משהו השתבש בשליחה — נסו שוב או כתבו לנו ישירות.',
+
   // page metadata
   metaTitle: 'Kursim — פלטפורמת הקורסים שלכם',
   metaDescription: 'פותחים בית ספר דיגיטלי משלכם, מוכרים קורסים, ושומרים על התוכן עם מכסת מכשירים חכמה',

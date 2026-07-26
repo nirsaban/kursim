@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { he } from "@/lib/he";
+import { LeadForm } from "./LeadForm";
 
 export function LandingPage() {
   return (
@@ -216,15 +217,12 @@ function Security() {
 function FinalCta() {
   return (
     <section className="bg-brand-950 text-white">
-      <div className="max-w-3xl mx-auto px-4 py-24 text-center">
+      <div className="max-w-lg mx-auto px-4 py-24 text-center">
         <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight">{he.platformFinalCtaTitle}</h2>
         <p className="text-brand-200 text-lg mt-4">{he.platformFinalCtaSubtitle}</p>
-        <a
-          href="mailto:hello@kursim.miltech.cloud"
-          className="inline-flex items-center bg-copper-500 hover:bg-copper-600 text-white font-semibold rounded-xl px-7 py-3.5 mt-8 transition-colors"
-        >
-          {he.platformFinalCtaButton}
-        </a>
+        <div className="mt-8">
+          <LeadForm />
+        </div>
         <p className="text-brand-300 text-sm mt-4">{he.platformFinalCtaNote}</p>
       </div>
     </section>
