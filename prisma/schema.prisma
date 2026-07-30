@@ -445,6 +445,11 @@ model Purchase {
   id                String   @id @default(uuid()) @db.Uuid
   tenantId          String   @db.Uuid
   courseId          String   @db.Uuid
+  /// Every course this one transaction granted. A Grow link may carry several
+  /// products — one per course — and then all of them land here. `courseId`
+  /// stays the first/primary so older rows and queries keep working, and the
+  /// row count stays one-per-transaction so revenue isn't double-counted.
+  courseIds         String[] @db.Uuid
   transactionId     String
   payerEmail        String
   payerPhone        String   @default("")

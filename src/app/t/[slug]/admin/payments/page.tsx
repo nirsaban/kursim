@@ -50,7 +50,11 @@ export default async function PaymentsPage({
     payerName: p.payerName,
     payerEmail: p.payerEmail,
     payerPhone: p.payerPhone,
-    courseTitle: titleById.get(p.courseId) ?? '',
+    courseTitle:
+      (p.courseIds.length ? p.courseIds : [p.courseId])
+        .map((id) => titleById.get(id))
+        .filter(Boolean)
+        .join(' + ') || '',
     amount: p.amount,
     delivered: p.delivered,
     isNewUser: p.isNewUser,
@@ -63,7 +67,12 @@ export default async function PaymentsPage({
   return (
     <div>
       <PageHeader title={he.payments} subtitle={he.paymentsSubtitle} />
-      <PaymentsPanel courses={courses} whatsappOn={wa.connected} purchases={purchases} />
+      <PaymentsPanel
+        courses={courses}
+        whatsappOn={wa.connected}
+        purchases={purchases}
+        bundleUrlBase={`${base}/api/pay/grow?t=${slug}&k=${secret}`}
+      />
     </div>
   );
 }

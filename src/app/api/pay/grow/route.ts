@@ -58,10 +58,49 @@ function unwrapData(obj: Record<string, unknown>): Record<string, string> {
   return out;
 }
 
+/**
+ * Line items. A payment link that sells two courses posts two of these, as
+ * `data[productData][0][...]` and `data[productData][1][...]` (or a JSON array).
+ * `unwrapData` deliberately skips them, so pull them out separately.
+ */
+function extractProducts(obj: Record<string, unknown>): Array<Record<string, string>> {
+  const byIndex = new Map<number, Record<string, string>>();
+  const put = (i: number, k: string, v: unknown) => {
+    if (v === null || typeof v === 'object') return;
+    const row = byIndex.get(i) ?? {};
+    row[k] = String(v);
+    byIndex.set(i, row);
+  };
+
+  // Form-encoded: data[productData][0][name] — or the same without the wrapper.
+  for (const [k, v] of Object.entries(obj)) {
+    const m = /^(?:data\[productData\]|productData)\[(\d+)\]\[([^[\]]+)\]$/.exec(k);
+    if (m) put(Number(m[1]), m[2], v);
+  }
+
+  // JSON: { productData: [...] } or { data: { productData: [...] } }.
+  const wrapped = obj.data;
+  const arrays = [
+    Array.isArray(obj.productData) ? obj.productData : null,
+    wrapped && typeof wrapped === 'object' && Array.isArray((wrapped as Record<string, unknown>).productData)
+      ? ((wrapped as Record<string, unknown>).productData as unknown[])
+      : null,
+  ].filter(Boolean) as unknown[][];
+  for (const arr of arrays) {
+    arr.forEach((row, i) => {
+      if (row && typeof row === 'object') {
+        for (const [k, v] of Object.entries(row as Record<string, unknown>)) put(1000 + i, k, v);
+      }
+    });
+  }
+
+  return [...byIndex.entries()].sort((a, b) => a[0] - b[0]).map(([, row]) => row);
+}
+
 /** Grow may POST JSON or form-encoded, flat or wrapped in `data`. Parse from the
  *  already-read raw text, trying JSON first then form, regardless of the
  *  declared content-type. */
-function parseGrowBody(raw: string, ct: string): Record<string, string> {
+function parseGrowBody(raw: string, ct: string): { fields: Record<string, string>; products: Array<Record<string, string>> } {
   const asForm = (s: string): Record<string, unknown> => {
     const obj: Record<string, unknown> = {};
     for (const [k, v] of new URLSearchParams(s)) obj[k] = v;
@@ -75,26 +114,29 @@ function parseGrowBody(raw: string, ct: string): Record<string, string> {
       return null;
     }
   };
-  if (ct.includes('application/json')) {
-    const j = tryJson(raw);
-    if (j) return unwrapData(j);
-  }
-  return unwrapData(tryJson(raw) ?? asForm(raw));
+  const obj = (ct.includes('application/json') ? tryJson(raw) : null) ?? tryJson(raw) ?? asForm(raw);
+  return { fields: unwrapData(obj), products: extractProducts(obj) };
 }
 
 /**
  * Grow payment webhook. Configure in Grow as the payment page's server callback:
  *   {APP_URL}/api/pay/grow?t={tenantSlug}&c={courseId}&k={tenant.webhookSecret}
+ * `c` accepts a comma-separated list, so one payment link that sells several
+ * products — one per course — grants all of them to the same buyer.
  * On a completed payment (statusCode "2") we provision the buyer as a student,
- * enroll them, and WhatsApp their login. Idempotent on transactionId.
+ * enroll them in every granted course, and WhatsApp their login. Idempotent on
+ * transactionId.
  * Always returns 200 on handled cases so Grow does not retry-storm.
  */
 export async function POST(req: Request) {
   const url = new URL(req.url);
   const slug = url.searchParams.get('t');
-  const courseId = url.searchParams.get('c');
+  const courseParam = url.searchParams.get('c');
   const key = url.searchParams.get('k');
-  if (!slug || !courseId || !key) return NextResponse.json({ error: 'missing_params' }, { status: 400 });
+  if (!slug || !courseParam || !key) return NextResponse.json({ error: 'missing_params' }, { status: 400 });
+  // A bundle link lists every course it sells: ...&c=id1,id2
+  const requestedIds = [...new Set(courseParam.split(',').map((s) => s.trim()).filter(Boolean))];
+  if (requestedIds.length === 0) return NextResponse.json({ error: 'missing_params' }, { status: 400 });
 
   // Read the raw body once and capture it durably, so we can see exactly what
   // Grow sends even when the parser doesn't recognise it as a completed payment.
@@ -104,7 +146,7 @@ export async function POST(req: Request) {
     at: Date.now(),
     ip: req.headers.get('x-forwarded-for') ?? '',
     t: slug,
-    c: courseId,
+    c: courseParam,
     ct: contentType,
     raw: rawBody.slice(0, 4000),
   });
@@ -115,7 +157,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
-  const body = parseGrowBody(rawBody, contentType);
+  const { fields: body, products } = parseGrowBody(rawBody, contentType);
   const statusCode = String(body.statusCode ?? '');
   const status = String(body.status ?? '');
   // Grow's Payment-Links webhook fires ONLY on a successful charge and signals it
@@ -141,8 +183,36 @@ export async function POST(req: Request) {
 
   const db = forTenant(tenant.id);
 
-  const course = await db.course.findFirst({ where: { id: courseId }, select: { id: true, title: true } });
-  if (!course) return NextResponse.json({ error: 'course' }, { status: 200 });
+  const found = await db.course.findMany({
+    where: { id: { in: requestedIds } },
+    select: { id: true, title: true },
+  });
+  // Keep the order the link declared, so the first course stays the primary one.
+  const listed = requestedIds
+    .map((id) => found.find((c) => c.id === id))
+    .filter((c): c is { id: string; title: string } => Boolean(c));
+
+  // By default a bundle link grants everything it lists. If the owner tagged each
+  // Grow product with its course id in "catalog_number", honour what the buyer
+  // actually bought instead — that's the only way to tell a partial purchase from
+  // a full one, since the callback fires once either way.
+  const tagged = products.filter((pr) => requestedIds.includes(String(pr.catalog_number ?? '').trim()));
+  const granted = tagged.length
+    ? listed.filter((c) =>
+        tagged.some(
+          (pr) => String(pr.catalog_number).trim() === c.id && Number(pr.quantity ?? '1') > 0,
+        ),
+      )
+    : listed;
+
+  if (granted.length === 0) return NextResponse.json({ error: 'course' }, { status: 200 });
+  const courseId = granted[0].id;
+  const grantedIds = granted.map((c) => c.id);
+  const titles = granted.map((c) => c.title);
+  const multi = titles.length > 1;
+  // Inline reference for subjects; bulleted list for message bodies.
+  const courseLine = titles.join(' + ');
+  const courseBullets = titles.map((t) => `• ${t}`).join('\n');
 
   // Idempotency: never process the same transaction twice.
   const seen = await db.purchase.findFirst({ where: { transactionId } });
@@ -154,6 +224,7 @@ export async function POST(req: Request) {
       data: {
         tenantId: tenant.id,
         courseId,
+        courseIds: grantedIds,
         transactionId,
         payerEmail: '',
         payerPhone,
@@ -190,18 +261,28 @@ export async function POST(req: Request) {
     isNew = true;
   }
 
-  // Enroll (idempotent).
-  const enrolled = await db.enrollment.findFirst({ where: { studentId: userId, courseId } });
-  if (!enrolled) {
-    await db.enrollment.create({ data: { tenantId: tenant.id, studentId: userId, courseId } });
+  // Enroll in every granted course (idempotent per course).
+  for (const id of grantedIds) {
+    const enrolled = await db.enrollment.findFirst({ where: { studentId: userId, courseId: id } });
+    if (!enrolled) {
+      await db.enrollment.create({ data: { tenantId: tenant.id, studentId: userId, courseId: id } });
+    }
   }
 
   // Deliver credentials over WhatsApp.
   const loginUrl = `${process.env.APP_URL ?? ''}/t/${slug}/login`;
   const name = payerName || payerEmail.split('@')[0];
-  const message = (isNew ? he.waWelcomeNew : he.waWelcomeExisting)
+  const waTemplate = multi
+    ? isNew
+      ? he.waWelcomeNewMulti
+      : he.waWelcomeExistingMulti
+    : isNew
+      ? he.waWelcomeNew
+      : he.waWelcomeExisting;
+  const message = waTemplate
     .replace('{name}', name)
-    .replace('{course}', course.title)
+    .replace('{course}', titles[0])
+    .replace('{courses}', courseBullets)
     .replace('{url}', loginUrl)
     .replace('{email}', payerEmail)
     .replace('{pass}', plainPassword ?? '');
@@ -213,6 +294,7 @@ export async function POST(req: Request) {
     data: {
       tenantId: tenant.id,
       courseId,
+      courseIds: grantedIds,
       transactionId,
       payerEmail,
       payerPhone,
@@ -234,7 +316,7 @@ export async function POST(req: Request) {
           userId: o.id,
           type: 'enroll',
           title: he.saleNotifyTitle,
-          body: `${name} · ${course.title}`,
+          body: `${name} · ${courseLine}`,
           link: `/t/${slug}/admin/payments`,
         }),
       ),
@@ -249,22 +331,30 @@ export async function POST(req: Request) {
   const mailed = { buyer: false, owners: 0 };
   try {
     if (isRealEmail(payerEmail)) {
-      const buyerBody = (isNew ? he.mailBuyerNew : he.mailBuyerExisting)
+      const mailTemplate = multi
+        ? isNew
+          ? he.mailBuyerNewMulti
+          : he.mailBuyerExistingMulti
+        : isNew
+          ? he.mailBuyerNew
+          : he.mailBuyerExisting;
+      const buyerBody = mailTemplate
         .replace('{name}', name)
-        .replace('{course}', course.title)
+        .replace('{course}', titles[0])
+        .replace('{courses}', courseBullets)
         .replace('{url}', loginUrl)
         .replace('{email}', payerEmail)
         .replace('{pass}', plainPassword ?? '');
       const r = await sendMail({
         to: payerEmail,
-        subject: he.mailBuyerSubject.replace('{course}', course.title),
+        subject: he.mailBuyerSubject.replace('{course}', courseLine),
         text: buyerBody,
       });
       mailed.buyer = r.ok;
     }
 
     const ownerBody = he.mailOwnerBody
-      .replace('{course}', course.title)
+      .replace('{course}', courseLine)
       .replace('{name}', name)
       .replace('{email}', payerEmail)
       .replace('{phone}', payerPhone || '—')
@@ -283,7 +373,7 @@ export async function POST(req: Request) {
         .map((o) =>
           sendMail({
             to: o.email,
-            subject: he.mailOwnerSubject.replace('{course}', course.title),
+            subject: he.mailOwnerSubject.replace('{course}', courseLine),
             text: ownerBody,
             replyTo: isRealEmail(payerEmail) ? payerEmail : undefined,
           }),

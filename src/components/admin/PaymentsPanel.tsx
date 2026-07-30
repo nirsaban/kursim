@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -30,14 +30,64 @@ export interface PurchaseRow {
   createdAt: string;
 }
 
+/** Builds the bundle callback URL live as the owner ticks courses. */
+function BundleBuilder({ courses, urlBase }: { courses: PaymentCourse[]; urlBase: string }) {
+  const [picked, setPicked] = useState<string[]>([]);
+  const url = useMemo(
+    () => (picked.length >= 2 ? `${urlBase}&c=${picked.join(',')}` : ''),
+    [picked, urlBase],
+  );
+  const toggle = (id: string) =>
+    setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+
+  return (
+    <div className="bg-card border border-line rounded-xl2 shadow-card p-4">
+      <p className="font-display font-bold">{he.bundleTitle}</p>
+      <p className="text-sm text-muted mt-1 leading-relaxed">{he.bundleHint}</p>
+
+      <p className="text-sm font-medium mt-4 mb-2">{he.bundlePick}</p>
+      <div className="space-y-2">
+        {courses.map((c) => (
+          <label key={c.id} className="flex items-start gap-2.5 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={picked.includes(c.id)}
+              onChange={() => toggle(c.id)}
+              className="mt-1 w-4 h-4 accent-brand-600 shrink-0"
+            />
+            <span className="min-w-0">
+              <span className="font-medium">{c.title}</span>
+              <span className="block text-[11px] text-muted truncate" dir="ltr">
+                {he.bundleCourseId}: {c.id}
+              </span>
+            </span>
+          </label>
+        ))}
+      </div>
+
+      <div className="mt-4">
+        {url ? (
+          <CopyRow label={he.webhookUrlLabel} url={url} copyLabel={he.copyWebhookUrl} />
+        ) : (
+          <p className="text-sm text-muted">{he.bundleNeedTwo}</p>
+        )}
+      </div>
+      <p className="text-xs text-muted mt-3 leading-relaxed">{he.bundleCatalogHint}</p>
+    </div>
+  );
+}
+
 export default function PaymentsPanel({
   courses,
   whatsappOn,
   purchases,
+  bundleUrlBase,
 }: {
   courses: PaymentCourse[];
   whatsappOn: boolean;
   purchases: PurchaseRow[];
+  /** `{APP_URL}/api/pay/grow?t=…&k=…` — the builder appends the chosen `&c=`. */
+  bundleUrlBase: string;
 }) {
   return (
     <div className="space-y-6">
@@ -80,6 +130,8 @@ export default function PaymentsPanel({
           </div>
         ))}
       </div>
+
+      {courses.length > 1 && <BundleBuilder courses={courses} urlBase={bundleUrlBase} />}
 
       {/* Recent sales */}
       <div>
