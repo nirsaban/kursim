@@ -21,6 +21,11 @@ export interface LandingGalleryItem {
   caption: string;
 }
 
+export interface LandingResultItem {
+  url: string;
+  caption: string;
+}
+
 export interface LandingSalePartner {
   id: string;
   title: string;
@@ -49,6 +54,7 @@ export interface LandingProps {
   enrollCount: number;
   gallery: LandingGalleryItem[];
   galleryRest: LandingGalleryItem[];
+  results: LandingResultItem[];
   heroMedia: LandingGalleryItem | null;
   totalHours: number | null;
   avgRating: number | null;

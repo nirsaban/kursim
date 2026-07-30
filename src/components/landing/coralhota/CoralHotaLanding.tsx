@@ -8,6 +8,7 @@ import ScrollProgress from '@/components/landing/ScrollProgress';
 import { he } from '@/lib/he';
 import type { LandingProps } from '@/components/landing/landing-types';
 import { BENEFIT_ICONS, IconClock, IconLayers, IconPlay, IconStar } from './icons';
+import ResultsGallery from '@/components/landing/ResultsGallery';
 import CoralHeader from './CoralHeader';
 import GalleryCarousel from './GalleryCarousel';
 
@@ -36,6 +37,7 @@ export default function CoralHotaLanding({
   reviews,
   gallery,
   galleryRest,
+  results,
   heroMedia,
   totalHours,
   avgRating,
@@ -106,6 +108,7 @@ export default function CoralHotaLanding({
         navLinks={(
           [
             lessonCount > 0 && { href: '#curriculum', label: he.curriculum },
+            results.length > 0 && { href: '#results', label: he.resultsNav },
             m.testimonials.length > 0 && { href: '#testimonials', label: he.testimonialsTitle },
             m.faq.length > 0 && { href: '#faq', label: he.faqTitle },
           ] as Array<{ href: string; label: string } | false>
@@ -457,6 +460,23 @@ export default function CoralHotaLanding({
                 </div>
               </Reveal>
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Results — proof shots from students, as a masonry wall with a lightbox */}
+      {results.length > 0 && (
+        <section id="results" className="py-16 border-t border-black/10">
+          <div className="max-w-5xl mx-auto px-4">
+            <Reveal>
+              <h2 className="font-body font-extrabold text-2xl sm:text-3xl text-center">
+                {he.resultsTitle}
+              </h2>
+              <p className="text-center text-[#160303]/60 mt-2 mb-10">{he.resultsSubtitle}</p>
+            </Reveal>
+            <Reveal delay={100}>
+              <ResultsGallery items={results} accent={theme.main} />
+            </Reveal>
           </div>
         </section>
       )}

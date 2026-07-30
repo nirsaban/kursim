@@ -77,6 +77,20 @@ export const marketingSchema = z.object({
     .max(8)
     .default([]),
   /**
+   * Proof shots — photos of what students actually produced, shown as their own
+   * masonry section. Kept separate from `gallery`, whose first item doubles as
+   * the intro/curriculum image in some layouts.
+   */
+  results: z
+    .array(
+      z.object({
+        publicId: z.string().min(1).max(512),
+        caption: z.string().max(200).default(''),
+      }),
+    )
+    .max(12)
+    .default([]),
+  /**
    * Optional sale/bundle offer (e.g. 1+1 or a discount on a second course).
    * Free-text wording keeps it flexible; partnerCourseId features another
    * course of the same tenant inside the deal section.

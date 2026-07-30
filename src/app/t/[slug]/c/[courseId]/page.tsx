@@ -92,6 +92,13 @@ export default async function CourseLandingPage({ params, searchParams }: Params
             : null,
       }))
     : [];
+  // Results wall: same signed-delivery treatment as the gallery.
+  const results = isCloudinaryConfigured()
+    ? m.results.map((item) => ({
+        url: signedDeliveryUrl(item.publicId, 'image', VIDEO_URL_TTL_SEC, 'jpg'),
+        caption: item.caption,
+      }))
+    : [];
   const totalSec = course.modules
     .flatMap((mod) => mod.lessons)
     .reduce((n, l) => n + (l.durationSec ?? 0), 0);
@@ -193,6 +200,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
     enrollCount,
     gallery,
     galleryRest,
+    results,
     heroMedia,
     totalHours,
     avgRating,

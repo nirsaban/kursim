@@ -7,6 +7,7 @@ import Marquee from '@/components/landing/Marquee';
 import StickyCta from '@/components/landing/StickyCta';
 import ScrollProgress from '@/components/landing/ScrollProgress';
 import TiltCard from '@/components/fx/TiltCard';
+import ResultsGallery from '@/components/landing/ResultsGallery';
 import { he } from '@/lib/he';
 import type { LandingProps } from '@/components/landing/landing-types';
 
@@ -31,6 +32,7 @@ export default function ClassicLanding({
   enrollCount,
   gallery,
   galleryRest,
+  results,
   heroMedia,
   totalHours,
   avgRating,
@@ -422,6 +424,21 @@ export default function ClassicLanding({
               </Reveal>
             ))}
           </div>
+        </section>
+      )}
+
+      {/* Results — proof shots from students, as a masonry wall with a lightbox */}
+      {results.length > 0 && (
+        <section id="results" className="max-w-5xl mx-auto px-4 py-16">
+          <Reveal>
+            <h2 className="font-display text-2xl sm:text-3xl font-black text-center">
+              {he.resultsTitle}
+            </h2>
+            <p className="text-muted text-center mt-2 mb-10">{he.resultsSubtitle}</p>
+          </Reveal>
+          <Reveal delay={100}>
+            <ResultsGallery items={results} accent={theme.main} />
+          </Reveal>
         </section>
       )}
 

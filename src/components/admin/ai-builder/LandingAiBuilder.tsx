@@ -50,6 +50,7 @@ function buildPreviewProps(m: CourseMarketing, tenantSlug: string, courseTitle: 
     enrollCount: 0,
     gallery: [],
     galleryRest: [],
+    results: [],
     heroMedia: null,
     totalHours: null,
     avgRating: null,

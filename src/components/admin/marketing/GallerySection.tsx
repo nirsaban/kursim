@@ -7,6 +7,7 @@ import { useEditableResource } from '@/lib/client/useEditableResource';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import AiMediaCard from '@/components/admin/AiMediaCard';
 import GalleryEditor from '@/components/admin/GalleryEditor';
+import ResultsEditor from '@/components/admin/ResultsEditor';
 import SaveBar from '@/components/admin/SaveBar';
 
 export default function GallerySection({ courseId }: { courseId: string }) {
@@ -29,6 +30,17 @@ export default function GallerySection({ courseId }: { courseId: string }) {
   return (
     <div className="space-y-6">
       <AiMediaCard courseId={courseId} />
+
+      <Card>
+        <CardHeader title={he.resultsSection} subtitle={he.resultsSubtitle} />
+        <CardBody>
+          <ResultsEditor
+            courseId={courseId}
+            items={m.results}
+            onChange={(results) => set({ results })}
+          />
+        </CardBody>
+      </Card>
 
       <Card>
         <CardHeader title={he.gallerySection} subtitle={he.galleryTitle} />
