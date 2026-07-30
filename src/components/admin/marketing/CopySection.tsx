@@ -114,6 +114,21 @@ export default function CopySection({
       </Card>
 
       <Card>
+        <CardHeader title={he.storyTitle} subtitle={he.storySubtitle} />
+        <CardBody>
+          <PairListEditor
+            values={m.story}
+            onChange={(story) => set({ story: story as CourseMarketing['story'] })}
+            aKey="title"
+            bKey="body"
+            aPlaceholder={he.storySectionTitle}
+            bPlaceholder={he.storySectionBody}
+            bMultiline
+          />
+        </CardBody>
+      </Card>
+
+      <Card>
         <CardHeader title={`${he.audienceTitle} · ${he.outcomesTitle}`} />
         <CardBody className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>

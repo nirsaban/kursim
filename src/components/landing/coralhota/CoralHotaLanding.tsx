@@ -49,6 +49,7 @@ export default function CoralHotaLanding({
   const introImage = heroMedia ?? gallery[0] ?? null;
   const curriculumImage = gallery[0] ?? heroMedia ?? null;
   const headlineWords = headline.split(' ');
+  const storySections = m.story.filter((s) => s.body.trim() || s.title.trim());
   const stats = (
     [
       modules.length > 0 && { num: modules.length, decimals: 0, label: he.modules, Icon: IconLayers },
@@ -240,6 +241,26 @@ export default function CoralHotaLanding({
                 </div>
               </Reveal>
             )}
+          </div>
+        </section>
+      )}
+
+      {/* Story — the owner's long-form copy, each part as its own titled section */}
+      {storySections.length > 0 && (
+        <section className="max-w-3xl mx-auto px-4 pb-16">
+          <div className="space-y-10">
+            {storySections.map((s, i) => (
+              <Reveal key={i} delay={i * 60}>
+                <div className="border-t border-black/10 pt-10">
+                  {s.title && (
+                    <h2 className="font-body font-extrabold text-2xl sm:text-3xl mb-3">{s.title}</h2>
+                  )}
+                  <p className="text-lg leading-relaxed whitespace-pre-wrap text-[#160303]/80">
+                    {s.body}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </section>
       )}

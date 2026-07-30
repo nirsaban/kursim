@@ -41,6 +41,8 @@ export default function ClassicLanding({
   saleHref,
   saleExternalProps,
 }: LandingProps) {
+  const storySections = m.story.filter((s) => s.body.trim() || s.title.trim());
+
   return (
     <main
       className="bg-card text-ink"
@@ -634,6 +636,22 @@ export default function ClassicLanding({
               </div>
             </div>
           </Reveal>
+        </section>
+      )}
+
+      {/* Story — the owner's long-form copy, each part as its own titled section */}
+      {storySections.length > 0 && (
+        <section className="max-w-3xl mx-auto px-4 pb-16">
+          <div className="space-y-10">
+            {storySections.map((s, i) => (
+              <Reveal key={i} delay={i * 60}>
+                <div className="border-t border-line pt-10">
+                  {s.title && <h2 className="font-display text-2xl font-bold mb-3">{s.title}</h2>}
+                  <p className="text-muted leading-relaxed whitespace-pre-wrap">{s.body}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </section>
       )}
 

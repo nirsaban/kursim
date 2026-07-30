@@ -23,6 +23,20 @@ export const marketingSchema = z.object({
   headline: z.string().max(120).default(''),
   subheadline: z.string().max(300).default(''),
   aboutSchool: z.string().max(2000).default(''),
+  /**
+   * Long-form copy split into its own titled sections on the landing page, for
+   * owners whose story doesn't fit one prose block. Rendered after the intro;
+   * entries with an empty body are skipped.
+   */
+  story: z
+    .array(
+      z.object({
+        title: z.string().max(120).default(''),
+        body: z.string().max(2000).default(''),
+      }),
+    )
+    .max(6)
+    .default([]),
   instructorName: z.string().max(100).default(''),
   audience: z.array(z.string().min(1).max(200)).max(6).default([]),
   outcomes: z.array(z.string().min(1).max(200)).max(8).default([]),
