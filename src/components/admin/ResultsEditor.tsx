@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { apiFetch } from '@/lib/client/api';
 import { he } from '@/lib/he';
 import { signCourseUpload, uploadToCloudinary } from '@/lib/client/upload';
 import { Input } from '@/components/ui/Field';
@@ -26,11 +27,35 @@ export default function ResultsEditor({
   onChange: (items: ResultItem[]) => void;
 }) {
   const fileInput = useRef<HTMLInputElement>(null);
+  // publicId -> short-lived signed URL, so the owner sees what they uploaded.
+  const [thumbs, setThumbs] = useState<Record<string, string>>({});
   const [progress, setProgress] = useState<number | null>(null);
   const [batch, setBatch] = useState<{ i: number; n: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const room = MAX - items.length;
+
+  // Ask once per publicId — the ref keeps the effect off `thumbs`, which it sets.
+  const requested = useRef(new Set<string>());
+  const ids = items.map((i) => i.publicId).join(',');
+  useEffect(() => {
+    const missing = items
+      .map((i) => i.publicId)
+      .filter((id) => !requested.current.has(id))
+      .slice(0, 24);
+    if (!missing.length) return;
+    missing.forEach((id) => requested.current.add(id));
+    apiFetch(`/api/courses/${courseId}/media-urls`, {
+      method: 'POST',
+      body: JSON.stringify({ publicIds: missing }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.urls) setThumbs((prev) => ({ ...prev, ...d.urls }));
+      })
+      .catch(() => missing.forEach((id) => requested.current.delete(id)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ids, courseId]);
 
   async function addFiles(files: File[]) {
     setError(null);
@@ -121,6 +146,16 @@ export default function ResultsEditor({
             <li key={item.publicId} className="border border-line rounded-xl p-3 bg-paper/50 space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-muted text-xs tabular-nums">{i + 1}</span>
+                {thumbs[item.publicId] ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={thumbs[item.publicId]}
+                    alt=""
+                    className="w-12 h-12 rounded-lg object-cover border border-line shrink-0"
+                  />
+                ) : (
+                  <span className="w-12 h-12 rounded-lg bg-ink/[0.06] animate-pulse shrink-0" />
+                )}
                 <span className="text-muted text-xs truncate flex-1" dir="ltr">
                   {item.publicId.split('/').pop()}
                 </span>

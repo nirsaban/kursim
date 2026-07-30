@@ -51,6 +51,13 @@ export async function PUT(req: Request, { params }: Params) {
     }
   }
 
+  // Same guard for the results wall.
+  for (const item of parsed.data.results) {
+    if (!publicIdBelongsToCourse(item.publicId, auth.tenantId!, courseId)) {
+      return apiError(400, 'public_id_outside_tenant_folder');
+    }
+  }
+
   // The sale's partner course must be another course of this tenant.
   const { partnerCourseId } = parsed.data.sale;
   if (partnerCourseId) {

@@ -115,7 +115,7 @@ export default function ResultsGallery({
                 src={item.url}
                 alt={item.caption || he.resultsTitle}
                 loading="lazy"
-                className="w-full aspect-[4/5] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+                className="w-full aspect-[3/4] object-contain bg-black/[0.04] transition-transform duration-500 ease-out group-hover:scale-[1.03]"
               />
               <span
                 className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
