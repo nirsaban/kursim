@@ -5,6 +5,7 @@ import CountUp from '@/components/landing/CountUp';
 import SaleCountdown from '@/components/landing/SaleCountdown';
 import StickyCta from '@/components/landing/StickyCta';
 import ScrollProgress from '@/components/landing/ScrollProgress';
+import SectionHeading from '@/components/landing/SectionHeading';
 import { he } from '@/lib/he';
 import type { LandingProps } from '@/components/landing/landing-types';
 import { BENEFIT_ICONS, IconClock, IconLayers, IconPlay, IconStar } from './icons';
@@ -38,6 +39,7 @@ export default function CoralHotaLanding({
   gallery,
   galleryRest,
   results,
+  deviceType,
   heroMedia,
   totalHours,
   avgRating,
@@ -51,6 +53,11 @@ export default function CoralHotaLanding({
   const introImage = heroMedia ?? gallery[0] ?? null;
   const curriculumImage = gallery[0] ?? heroMedia ?? null;
   const headlineWords = headline.split(' ');
+  // The tail of the headline is set in the script face. Two words when the
+  // headline is long enough to spare them, one otherwise.
+  const scriptCount = headlineWords.length > 2 ? 2 : 1;
+  const headlineLead = headlineWords.slice(0, -scriptCount).join(' ');
+  const headlineScript = headlineWords.slice(-scriptCount).join(' ');
   const storySections = m.story.filter((s) => s.body.trim() || s.title.trim());
   const stats = (
     [
@@ -146,15 +153,17 @@ export default function CoralHotaLanding({
                   {m.emoji} {he.digitalCourseBadge}
                 </span>
                 <h1 className="font-body font-extrabold text-4xl sm:text-6xl leading-[1.1] text-white">
-                  {headlineWords.length > 1 ? headlineWords.slice(0, -1).join(' ') : headline}
+                  {headlineWords.length > 1 ? headlineLead : headline}
                 </h1>
                 {headlineWords.length > 1 && (
                   <span className="relative inline-block mt-1">
                     <span
-                      className="font-script font-bold text-5xl sm:text-7xl leading-none block"
+                      className={`font-script font-bold leading-none block ${
+                        scriptCount > 1 ? 'text-4xl sm:text-6xl' : 'text-5xl sm:text-7xl'
+                      }`}
                       style={{ color: theme.accent }}
                     >
-                      {headlineWords.at(-1)}
+                      {headlineScript}
                     </span>
                     <svg
                       viewBox="0 0 200 14"
@@ -300,9 +309,12 @@ export default function CoralHotaLanding({
       {m.benefits.length > 0 && (
         <section className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-body font-extrabold text-2xl sm:text-3xl text-center mb-10">
-              {he.whatsIncludedTitle}
-            </h2>
+            <SectionHeading
+              title={he.whatsIncludedTitle}
+              accent={theme.main}
+              titleClassName="font-body font-extrabold"
+              subtitleClassName="text-[#160303]/60"
+            />
           </Reveal>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {m.benefits.map((b, i) => {
@@ -338,7 +350,13 @@ export default function CoralHotaLanding({
             {m.audience.length > 0 && (
               <div>
                 <Reveal>
-                  <h2 className="font-body font-extrabold text-2xl mb-5">{he.audienceTitle}</h2>
+                  <SectionHeading
+                    title={he.audienceTitle}
+                    accent={theme.main}
+                    titleClassName="font-body font-extrabold"
+                    align="start"
+                    className="mb-5"
+                  />
                 </Reveal>
                 <div className="flex flex-col gap-2.5">
                   {m.audience.map((a, i) => (
@@ -357,7 +375,13 @@ export default function CoralHotaLanding({
             {m.outcomes.length > 0 && (
               <div>
                 <Reveal>
-                  <h2 className="font-body font-extrabold text-2xl mb-5">{he.outcomesTitle}</h2>
+                  <SectionHeading
+                    title={he.outcomesTitle}
+                    accent={theme.main}
+                    titleClassName="font-body font-extrabold"
+                    align="start"
+                    className="mb-5"
+                  />
                 </Reveal>
                 <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {m.outcomes.map((o, i) => (
@@ -469,13 +493,16 @@ export default function CoralHotaLanding({
         <section id="results" className="py-16 border-t border-black/10">
           <div className="max-w-5xl mx-auto px-4">
             <Reveal>
-              <h2 className="font-body font-extrabold text-2xl sm:text-3xl text-center">
-                {he.resultsTitle}
-              </h2>
-              <p className="text-center text-[#160303]/60 mt-2 mb-10">{he.resultsSubtitle}</p>
+              <SectionHeading
+              title={he.resultsTitle}
+              accent={theme.main}
+              titleClassName="font-body font-extrabold"
+              subtitleClassName="text-[#160303]/60"
+              subtitle={he.resultsSubtitle}
+            />
             </Reveal>
             <Reveal delay={100}>
-              <ResultsGallery items={results} accent={theme.main} />
+              <ResultsGallery items={results} accent={theme.main} deviceType={deviceType} />
             </Reveal>
           </div>
         </section>
@@ -486,7 +513,13 @@ export default function CoralHotaLanding({
         <section id="gallery" className="py-16 border-t border-black/10">
           <div className="max-w-5xl mx-auto px-4">
             <Reveal>
-              <h2 className="font-body font-extrabold text-2xl sm:text-3xl mb-8">{he.galleryTitle}</h2>
+              <SectionHeading
+                title={he.galleryTitle}
+                accent={theme.main}
+                titleClassName="font-body font-extrabold"
+                align="start"
+                className="mb-8"
+              />
             </Reveal>
           </div>
           <GalleryCarousel>
@@ -609,7 +642,13 @@ export default function CoralHotaLanding({
       {m.testimonials.length > 0 && (
         <section id="testimonials" className="max-w-5xl mx-auto px-4 py-16 border-t border-black/10">
           <Reveal>
-            <h2 className="font-body font-extrabold text-2xl sm:text-3xl mb-8">{he.testimonialsTitle}</h2>
+            <SectionHeading
+              title={he.testimonialsTitle}
+              accent={theme.main}
+              titleClassName="font-body font-extrabold"
+              align="start"
+              className="mb-8"
+            />
           </Reveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {m.testimonials.map((t, i) => (
@@ -640,8 +679,15 @@ export default function CoralHotaLanding({
       {reviews.length > 0 && (
         <section id="reviews" className="max-w-5xl mx-auto px-4 py-16 border-t border-black/10">
           <Reveal>
-            <h2 className="font-body font-extrabold text-2xl sm:text-3xl mb-2">{he.reviewsTitle}</h2>
-            <p className="text-[#160303]/60 mb-8">{he.verifiedStudent} ✓</p>
+            <SectionHeading
+              title={he.reviewsTitle}
+              subtitle={`${he.verifiedStudent} ✓`}
+              accent={theme.main}
+              titleClassName="font-body font-extrabold"
+              subtitleClassName="text-[#160303]/60"
+              align="start"
+              className="mb-8"
+            />
           </Reveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
@@ -667,7 +713,12 @@ export default function CoralHotaLanding({
       {m.faq.length > 0 && (
         <section id="faq" className="max-w-3xl mx-auto px-4 py-16 border-t border-black/10">
           <Reveal>
-            <h2 className="font-body font-extrabold text-2xl sm:text-3xl mb-6 text-center">{he.faqTitle}</h2>
+            <SectionHeading
+              title={he.faqTitle}
+              accent={theme.main}
+              titleClassName="font-body font-extrabold"
+              className="mb-8"
+            />
           </Reveal>
           <div className="space-y-2.5">
             {m.faq.map((f, i) => (

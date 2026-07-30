@@ -1,20 +1,56 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 import { he } from '@/lib/he';
 import type { LandingResultItem } from '@/components/landing/landing-types';
 
 /**
- * Student-results gallery: a masonry wall of proof shots that opens into a
- * lightbox. Column count is CSS-driven so portrait and landscape photos mix
- * without letterboxing — the wall keeps its rhythm whatever the owner uploads.
+ * Student-results gallery: a swipeable carousel of proof shots that opens
+ * into a lightbox. RTL-aware — react-multi-carousel's own `rtl` flag drives
+ * the track direction, so "next" moves leftwards like the rest of the page.
  */
+
+const RESPONSIVE = {
+  desktop: { breakpoint: { max: 4000, min: 1024 }, items: 3, partialVisibilityGutter: 20 },
+  tablet: { breakpoint: { max: 1024, min: 640 }, items: 2, partialVisibilityGutter: 16 },
+  mobile: { breakpoint: { max: 640, min: 0 }, items: 1, partialVisibilityGutter: 30 },
+};
+
+function Arrow({
+  onClick,
+  label,
+  glyph,
+  side,
+}: {
+  onClick?: () => void;
+  label: string;
+  glyph: string;
+  side: 'start' | 'end';
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className={`absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 text-black shadow-md grid place-items-center hover:bg-white hover:scale-105 transition-all ${
+        side === 'start' ? 'start-1' : 'end-1'
+      }`}
+    >
+      {glyph}
+    </button>
+  );
+}
+
 export default function ResultsGallery({
   items,
   accent,
+  deviceType,
 }: {
   items: LandingResultItem[];
   accent: string;
+  deviceType: 'mobile' | 'tablet' | 'desktop';
 }) {
   const [open, setOpen] = useState<number | null>(null);
   const count = items.length;
@@ -25,7 +61,7 @@ export default function ResultsGallery({
     [count],
   );
 
-  // Arrow keys follow reading order: in RTL, "right" moves back through the wall.
+  // Arrow keys follow reading order: in RTL, "right" moves back through the set.
   useEffect(() => {
     if (open === null) return;
     const onKey = (e: KeyboardEvent) => {
@@ -46,34 +82,65 @@ export default function ResultsGallery({
 
   return (
     <>
-      <div className="columns-2 sm:columns-3 gap-3 sm:gap-4 [column-fill:_balance]">
-        {items.map((item, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => setOpen(i)}
-            aria-label={item.caption || he.resultsOpen}
-            className="group relative mb-3 sm:mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl ring-1 ring-black/10 focus:outline-none focus-visible:ring-2"
-            style={{ ['--tw-ring-color' as string]: `${accent}66` }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={item.url}
-              alt={item.caption || he.resultsTitle}
-              loading="lazy"
-              className="w-full h-auto object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-            />
-            <span
-              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-              aria-hidden
-            />
-            {item.caption && (
-              <span className="pointer-events-none absolute inset-x-0 bottom-0 p-3 text-start text-sm font-medium text-white translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                {item.caption}
-              </span>
-            )}
-          </button>
-        ))}
+      <div className="relative results-carousel">
+        <Carousel
+          responsive={RESPONSIVE}
+          ssr
+          deviceType={deviceType}
+          rtl
+          infinite={count > 3}
+          draggable
+          swipeable
+          keyBoardControl
+          showDots={count > 1}
+          renderDotsOutside
+          partialVisible
+          itemClass="px-2"
+          containerClass="pb-2"
+          dotListClass="results-dots"
+          customLeftArrow={<Arrow label={he.resultsNext} glyph="‹" side="end" />}
+          customRightArrow={<Arrow label={he.resultsPrev} glyph="›" side="start" />}
+        >
+          {items.map((item, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setOpen(i)}
+              aria-label={item.caption || he.resultsOpen}
+              className="group relative block w-full overflow-hidden rounded-2xl ring-1 ring-black/10 focus:outline-none focus-visible:ring-2"
+              style={{ ['--tw-ring-color' as string]: `${accent}66` }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.url}
+                alt={item.caption || he.resultsTitle}
+                loading="lazy"
+                className="w-full aspect-[4/5] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+              />
+              <span
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                aria-hidden
+              />
+              {item.caption && (
+                <span className="pointer-events-none absolute inset-x-0 bottom-0 p-3 text-start text-sm font-medium text-white translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  {item.caption}
+                </span>
+              )}
+            </button>
+          ))}
+        </Carousel>
+
+        {/* Dot styling has to reach into the library's own markup. */}
+        <style>{`
+          .results-carousel .results-dots { position: static; margin-top: 1.25rem; }
+          .results-carousel .results-dots li button {
+            width: 7px; height: 7px; border: 0; border-radius: 9999px;
+            background: currentColor; opacity: .25; transition: all .25s ease;
+          }
+          .results-carousel .results-dots li.react-multi-carousel-dot--active button {
+            width: 22px; opacity: 1; background: ${accent};
+          }
+        `}</style>
       </div>
 
       {active && (
@@ -106,10 +173,7 @@ export default function ResultsGallery({
           )}
 
           {count > 1 && (
-            <div
-              className="mt-5 flex items-center gap-3"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="mt-5 flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
               <button
                 type="button"
                 onClick={() => step(-1)}

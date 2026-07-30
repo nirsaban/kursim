@@ -55,6 +55,8 @@ export interface LandingProps {
   gallery: LandingGalleryItem[];
   galleryRest: LandingGalleryItem[];
   results: LandingResultItem[];
+  /** Coarse device class from the request UA — lets the carousel size slides during SSR. */
+  deviceType: 'mobile' | 'tablet' | 'desktop';
   heroMedia: LandingGalleryItem | null;
   totalHours: number | null;
   avgRating: number | null;

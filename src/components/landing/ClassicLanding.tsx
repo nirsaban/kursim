@@ -8,6 +8,7 @@ import StickyCta from '@/components/landing/StickyCta';
 import ScrollProgress from '@/components/landing/ScrollProgress';
 import TiltCard from '@/components/fx/TiltCard';
 import ResultsGallery from '@/components/landing/ResultsGallery';
+import SectionHeading from '@/components/landing/SectionHeading';
 import { he } from '@/lib/he';
 import type { LandingProps } from '@/components/landing/landing-types';
 
@@ -33,6 +34,7 @@ export default function ClassicLanding({
   gallery,
   galleryRest,
   results,
+  deviceType,
   heroMedia,
   totalHours,
   avgRating,
@@ -44,6 +46,12 @@ export default function ClassicLanding({
   saleExternalProps,
 }: LandingProps) {
   const storySections = m.story.filter((s) => s.body.trim() || s.title.trim());
+  // The tail of the headline gets the accent treatment. Two words when the
+  // headline is long enough to spare them, one otherwise.
+  const headlineWords = headline.split(' ');
+  const scriptCount = headlineWords.length > 2 ? 2 : 1;
+  const headlineLead = headlineWords.slice(0, -scriptCount).join(' ');
+  const headlineScript = headlineWords.slice(-scriptCount).join(' ');
 
   return (
     <main
@@ -171,14 +179,14 @@ export default function ClassicLanding({
                     </span>
                   </span>
                   <h1 className="font-display text-4xl sm:text-[52px] font-black leading-[1.15] max-w-3xl text-paper">
-                    {headline.split(' ').length > 1 ? (
+                    {headlineWords.length > 1 ? (
                       <>
-                        {headline.split(' ').slice(0, -1).join(' ')}{' '}
+                        {headlineLead}{headlineLead && ' '}
                         <span
                           className="font-display italic underline decoration-2 underline-offset-8"
                           style={{ color: theme.accent, textDecorationColor: `${theme.accent}80` }}
                         >
-                          {headline.split(' ').at(-1)}
+                          {headlineScript}
                         </span>
                       </>
                     ) : (
@@ -350,9 +358,13 @@ export default function ClassicLanding({
             {m.audience.length > 0 && (
               <div>
                 <Reveal>
-                  <h2 className="font-display text-2xl sm:text-3xl font-black mb-5">
-                    {he.audienceTitle}
-                  </h2>
+                  <SectionHeading
+                    title={he.audienceTitle}
+                    accent={theme.accent}
+                    titleClassName="font-display font-black"
+                    align="start"
+                    className="mb-5"
+                  />
                 </Reveal>
                 <div className="flex flex-col gap-2.5">
                   {m.audience.map((a, i) => (
@@ -371,9 +383,13 @@ export default function ClassicLanding({
             {m.outcomes.length > 0 && (
               <div>
                 <Reveal>
-                  <h2 className="font-display text-2xl sm:text-3xl font-black mb-5">
-                    {he.outcomesTitle}
-                  </h2>
+                  <SectionHeading
+                    title={he.outcomesTitle}
+                    accent={theme.accent}
+                    titleClassName="font-display font-black"
+                    align="start"
+                    className="mb-5"
+                  />
                 </Reveal>
                 <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {m.outcomes.map((o, i) => (
@@ -402,7 +418,13 @@ export default function ClassicLanding({
       {m.benefits.length > 0 && (
         <section className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">{he.benefitsTitle}</h2>
+            <SectionHeading
+              title={he.benefitsTitle}
+              accent={theme.accent}
+              titleClassName="font-display font-black"
+              align="start"
+              className="mb-8"
+            />
           </Reveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {m.benefits.map((b, i) => (
@@ -431,13 +453,16 @@ export default function ClassicLanding({
       {results.length > 0 && (
         <section id="results" className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-black text-center">
-              {he.resultsTitle}
-            </h2>
-            <p className="text-muted text-center mt-2 mb-10">{he.resultsSubtitle}</p>
+            <SectionHeading
+              title={he.resultsTitle}
+              accent={theme.accent}
+              titleClassName="font-display font-black"
+              subtitleClassName="text-muted"
+              subtitle={he.resultsSubtitle}
+            />
           </Reveal>
           <Reveal delay={100}>
-            <ResultsGallery items={results} accent={theme.main} />
+            <ResultsGallery items={results} accent={theme.main} deviceType={deviceType} />
           </Reveal>
         </section>
       )}
@@ -446,7 +471,13 @@ export default function ClassicLanding({
       {galleryRest.length > 0 && (
         <section id="gallery" className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">{he.galleryTitle}</h2>
+            <SectionHeading
+              title={he.galleryTitle}
+              accent={theme.accent}
+              titleClassName="font-display font-black"
+              align="start"
+              className="mb-8"
+            />
           </Reveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {galleryRest.map((item, i) => (
@@ -568,7 +599,13 @@ export default function ClassicLanding({
       {m.testimonials.length > 0 && (
         <section id="testimonials" className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-black mb-8">{he.testimonialsTitle}</h2>
+            <SectionHeading
+              title={he.testimonialsTitle}
+              accent={theme.accent}
+              titleClassName="font-display font-black"
+              align="start"
+              className="mb-8"
+            />
           </Reveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {m.testimonials.map((t, i) => (
@@ -608,8 +645,15 @@ export default function ClassicLanding({
       {reviews.length > 0 && (
         <section id="reviews" className="max-w-5xl mx-auto px-4 py-16">
           <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-black mb-2">{he.reviewsTitle}</h2>
-            <p className="text-muted mb-8">{he.verifiedStudent} ✓</p>
+            <SectionHeading
+              title={he.reviewsTitle}
+              subtitle={`${he.verifiedStudent} ✓`}
+              accent={theme.accent}
+              titleClassName="font-display font-black"
+              subtitleClassName="text-muted"
+              align="start"
+              className="mb-8"
+            />
           </Reveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
@@ -763,7 +807,13 @@ export default function ClassicLanding({
           {m.faq.length > 0 && (
             <div>
               <Reveal>
-                <h2 className="font-display text-2xl sm:text-3xl font-black mb-5">{he.faqTitle}</h2>
+                <SectionHeading
+                  title={he.faqTitle}
+                  accent={theme.accent}
+                  titleClassName="font-display font-black"
+                  align="start"
+                  className="mb-6"
+                />
               </Reveal>
               <div className="space-y-2.5">
                 {m.faq.map((f, i) => (

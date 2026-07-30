@@ -37,12 +37,21 @@ export default async function CourseLandingPage({ params, searchParams }: Params
   const { tenant, course } = data;
   const m = parseMarketing(course.marketing);
 
+  const h = await headers();
+  const ua = h.get('user-agent') ?? '';
+
+  // The results carousel sizes its slides from this on the server — without it
+  // the track renders empty until hydration.
+  const deviceType: 'mobile' | 'tablet' | 'desktop' = /iPad|Tablet/i.test(ua)
+    ? 'tablet'
+    : /Mobi|Android|iPhone|iPod/i.test(ua)
+      ? 'mobile'
+      : 'desktop';
+
   // Affiliate visit: ?ref={code} — count unique visitors per share link.
   const { ref } = await searchParams;
   if (ref && course.landingPublished) {
-    const h = await headers();
     const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-    const ua = h.get('user-agent') ?? '';
     await trackAffiliateVisit(tenant.id, courseId, ref, ip, ua).catch(() => {});
   }
 
@@ -201,6 +210,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
     gallery,
     galleryRest,
     results,
+    deviceType,
     heroMedia,
     totalHours,
     avgRating,

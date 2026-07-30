@@ -51,6 +51,7 @@ function buildPreviewProps(m: CourseMarketing, tenantSlug: string, courseTitle: 
     gallery: [],
     galleryRest: [],
     results: [],
+    deviceType: 'desktop' as const,
     heroMedia: null,
     totalHours: null,
     avgRating: null,
