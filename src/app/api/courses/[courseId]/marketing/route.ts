@@ -77,6 +77,27 @@ export async function PUT(req: Request, { params }: Params) {
     if (owned.length !== bundleIds.length) return apiError(400, 'bundle_course_not_found');
   }
   parsed.data.bundleCourseIds = bundleIds;
+  // A bundle price with nothing bundled would silently re-price the course
+  // behind the price field's back.
+  if (bundleIds.length === 0) parsed.data.bundlePriceAgorot = null;
+
+  // Paid add-ons grant access too, so the same ownership rule applies. A course
+  // already in the bundle is dropped rather than rejected: the owner ticking it
+  // into the bundle simply supersedes the add-on.
+  const addons = parsed.data.checkoutAddons.filter(
+    (a, i, all) =>
+      a.courseId !== courseId &&
+      !bundleIds.includes(a.courseId) &&
+      all.findIndex((x) => x.courseId === a.courseId) === i,
+  );
+  if (addons.length > 0) {
+    const ownedAddons = await db.course.findMany({
+      where: { id: { in: addons.map((a) => a.courseId) } },
+      select: { id: true },
+    });
+    if (ownedAddons.length !== addons.length) return apiError(400, 'addon_course_not_found');
+  }
+  parsed.data.checkoutAddons = addons;
 
   await db.course.update({
     where: { id: courseId },

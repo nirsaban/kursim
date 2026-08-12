@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { getAuth } from '@/lib/auth/guards';
 import { parseMarketing, saleActive } from '@/lib/validation/marketing';
+import { resolveOffer } from '@/lib/pay/offer';
 import { LANDING_THEMES } from '@/lib/landing-themes';
 import { formatAgorot } from '@/lib/money';
 import { isCloudinaryConfigured } from '@/lib/cloudinary/client';
@@ -79,8 +80,12 @@ export default async function CourseLandingPage({ params, searchParams }: Params
   const ctaText = m.ctaText || (forSale || m.paymentLink ? he.payNow : he.enrollNow);
   const ctaExternal = /^https?:\/\//.test(ctaHref);
   const paid = forSale || Boolean(m.paymentLink);
+  // What the buy button will actually charge — the bundle price when the seller
+  // set one, so the landing page can't advertise a number the checkout won't
+  // honour. Optional add-ons aren't counted: nobody has ticked one yet.
+  const offer = forSale ? await resolveOffer(forTenant(tenant.id), course) : null;
   // Owner-written price wording still wins — it may say "2 payments of ₪175".
-  const priceLabel = m.priceText || (forSale ? formatAgorot(course.priceAgorot!) : '');
+  const priceLabel = m.priceText || (offer ? formatAgorot(offer.baseAgorot) : '');
   const lessonCount = course.modules.reduce((n, mod) => n + mod.lessons.length, 0);
 
   // Approved student reviews (collected at course completion)

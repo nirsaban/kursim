@@ -75,6 +75,31 @@ export const marketingSchema = z.object({
    */
   bundleCourseIds: z.array(z.string().uuid()).max(5).default([]),
   /**
+   * One price for the whole bundle, in agorot, instead of this course's own
+   * `priceAgorot` — "both courses for ₪349" as a number the seller sets rather
+   * than arithmetic nobody can audit. Only used when `bundleCourseIds` isn't
+   * empty; null keeps the older behaviour where the extras ride along free at
+   * the primary course's price.
+   */
+  bundlePriceAgorot: z.number().int().positive().max(10_000_000).nullable().default(null),
+  /**
+   * Extras the BUYER may tick at checkout, each for its own added charge —
+   * the opt-in half of the bundle story ("add course B for +₪199").
+   *
+   * The browser sends only which extras were ticked; what each one costs is
+   * read from here, server-side, so a crafted request can raise the order's
+   * contents but never lower its price.
+   */
+  checkoutAddons: z
+    .array(
+      z.object({
+        courseId: z.string().uuid(),
+        priceAgorot: z.number().int().positive().max(10_000_000),
+      }),
+    )
+    .max(3)
+    .default([]),
+  /**
    * Photos, short clips, and before/after pairs shown in the landing gallery.
    * BEFORE_AFTER uses publicId as the "before" image and afterPublicId as the "after".
    */

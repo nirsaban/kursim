@@ -328,6 +328,8 @@ export const he = {
   checkoutTitle: 'סיום רכישה',
   checkoutSubtitle: 'עוד רגע קטן והקורס שלכם. נשלח את פרטי הכניסה לוואטסאפ ולמייל מיד אחרי התשלום.',
   checkoutIncludes: 'הרכישה כוללת',
+  checkoutAddonsTitle: 'רוצים להוסיף?',
+  checkoutAddonPlus: '+{price}',
   checkoutTotal: 'סה"כ לתשלום',
   checkoutName: 'שם מלא',
   checkoutEmail: 'דוא"ל',
@@ -340,6 +342,7 @@ export const he = {
   checkoutBackToCourse: 'חזרה לדף הקורס',
   checkoutError: 'משהו השתבש בדרך לתשלום. נסו שוב עוד רגע, ואם זה חוזר — דברו איתנו.',
   checkoutErrorNoPrice: 'הקורס הזה עדיין לא פתוח לרכישה. דברו איתנו ונסדר.',
+  checkoutErrorStale: 'ההצעה התעדכנה בינתיים. רעננו את הדף ונסו שוב.',
 
   // Payment failure landing (Hyp redirects here when the charge did not go through)
   payFailedTitle: 'התשלום לא הושלם',
@@ -730,6 +733,17 @@ export const he = {
   courseBundleHint: 'סמנו קורסים נוספים שכל מי שקונה את הקורס הזה יקבל אליהם גישה — במחיר אחד, בתשלום אחד.',
   courseBundleNone: 'אין עדיין קורסים אחרים לצרף',
   courseBundleSummary: 'הקונה יקבל גישה ל-{n} קורסים',
+  courseBundlePriceTitle: 'מחיר מיוחד לחבילה',
+  courseBundlePriceHint:
+    'המחיר שייגבה על כל הקורסים שסימנתם יחד, במקום מחיר הקורס הזה. השאירו ריק כדי לגבות את מחיר הקורס הזה בלבד — והקורסים הנוספים פשוט מצטרפים בחינם.',
+  courseBundlePriceSeparately: 'בנפרד: {price}',
+  courseAddonsTitle: 'תוספות לבחירת הקונה בקופה',
+  courseAddonsHint:
+    'קורסים שהקונה יוכל לסמן בעצמו בדף הרכישה ולהוסיף לעסקה — כל אחד בתוספת המחיר שתקבעו כאן. סמנו קורס, וקבעו כמה עולה להוסיף אותו.',
+  courseAddonsNone: 'אין עדיין קורסים אחרים להציע כתוספת',
+  courseAddonPriceLabel: 'תוספת בשקלים',
+  courseAddonNeedsPrice: 'קבעו מחיר לתוספת, אחרת היא לא תוצג בקופה',
+  courseAddonInBundle: 'כבר נכלל בחבילה',
   checkoutUrlLabel: 'כתובת דף הרכישה',
   paymentsHypTitle: 'סליקה בכרטיס אשראי (Hyp)',
   paymentsHypConnected: 'מחוברת ✓',
