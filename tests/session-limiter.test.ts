@@ -18,13 +18,22 @@ import {
   evictSession,
   listLiveSessions,
   countLiveSessions,
+  listActiveSessions,
+  countActiveSessions,
   killAllSessions,
   rotateRefreshToken,
 } from '@/lib/session-registry/registry';
 import { enforceSessionPolicy } from '@/lib/session-registry/policy';
+import { SCREEN_ACTIVE_WINDOW_MS } from '@/lib/session-registry/window';
 
 const USER = 'user-1';
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** Backdate a session's last ping: the screen behind it was closed. */
+async function closeScreen(sid: string, agoMs = SCREEN_ACTIVE_WINDOW_MS + 60_000) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (getRedis() as any).hset(`sess:${sid}`, 'lastSeenAt', String(Date.now() - agoMs));
+}
 
 beforeEach(async () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -104,6 +113,68 @@ describe('session limiter policy', () => {
     expect(await sessionExists(a.sid)).toBe(true);
     expect(await sessionExists(c.sid)).toBe(true);
     expect(await countLiveSessions(USER)).toBe(2); // room for the new login
+  });
+
+  it('a session with no screen open holds no seat', async () => {
+    const a = await createSession({ userId: USER, tenantId: 't1' });
+    await createSession({ userId: USER, tenantId: 't1' });
+    await closeScreen(a.sid);
+
+    expect(await countLiveSessions(USER)).toBe(2); // still logged in on both
+    expect(await countActiveSessions(USER)).toBe(1); // one screen actually open
+    expect((await listActiveSessions(USER)).map((s) => s.sid)).not.toContain(a.sid);
+  });
+
+  it('lets a student in when every earlier login has been left behind', async () => {
+    // The reported bug: a phone that gets a new IP on every login piled up a
+    // session per login until BLOCK locked the student out of their own account.
+    for (let i = 0; i < 10; i++) {
+      const { sid } = await createSession({ userId: USER, tenantId: 't1' });
+      await closeScreen(sid);
+    }
+    const verdict = await enforceSessionPolicy(USER, 10, 'BLOCK');
+    expect(verdict.allowed).toBe(true);
+    // ...and nobody was signed out to make room.
+    expect(await countLiveSessions(USER)).toBe(10);
+  });
+
+  it('BLOCK still refuses when the seats are held by screens open right now', async () => {
+    const open = [];
+    for (let i = 0; i < 3; i++) open.push(await createSession({ userId: USER, tenantId: 't1' }));
+    const { sid: closed } = await createSession({ userId: USER, tenantId: 't1' });
+    await closeScreen(closed);
+
+    const verdict = await enforceSessionPolicy(USER, 3, 'BLOCK');
+    expect(verdict.allowed).toBe(false);
+    if (!verdict.allowed) {
+      // Only the open screens are reported back for the student to close.
+      expect(verdict.sessions.map((s) => s.sid).sort()).toEqual(open.map((s) => s.sid).sort());
+    }
+  });
+
+  it('a screen that keeps pinging keeps its seat', async () => {
+    const a = await createSession({ userId: USER, tenantId: 't1' });
+    await createSession({ userId: USER, tenantId: 't1' });
+    await closeScreen(a.sid);
+    expect((await enforceSessionPolicy(USER, 2, 'BLOCK')).allowed).toBe(true);
+
+    // The SSE stream / heartbeat pings: that screen is open after all.
+    await touchSession(a.sid, USER);
+    expect((await enforceSessionPolicy(USER, 2, 'BLOCK')).allowed).toBe(false);
+  });
+
+  it('EVICT_OLDEST frees the oldest open screen and leaves closed ones signed in', async () => {
+    const { sid: closed } = await createSession({ userId: USER, tenantId: 't1' });
+    await closeScreen(closed);
+    const a = await createSession({ userId: USER, tenantId: 't1' });
+    await sleep(5);
+    const b = await createSession({ userId: USER, tenantId: 't1' });
+
+    const verdict = await enforceSessionPolicy(USER, 2, 'EVICT_OLDEST');
+    expect(verdict.allowed).toBe(true);
+    expect(await sessionExists(a.sid)).toBe(false); // oldest open screen yielded
+    expect(await sessionExists(b.sid)).toBe(true);
+    expect(await sessionExists(closed)).toBe(true); // untouched — no seat, no eviction
   });
 
   it('a dead session does not count toward the limit', async () => {

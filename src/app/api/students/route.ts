@@ -4,7 +4,7 @@ import { apiError, parseBody } from '@/lib/api';
 import { createStudentSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { hashPassword } from '@/lib/auth/password';
-import { countLiveSessions } from '@/lib/session-registry/registry';
+import { countActiveSessions } from '@/lib/session-registry/registry';
 
 export async function GET() {
   const auth = await requireAuth({ roles: ['OWNER', 'INSTRUCTOR'] });
@@ -25,7 +25,8 @@ export async function GET() {
     orderBy: { createdAt: 'desc' },
   });
   const withSessions = await Promise.all(
-    users.map(async (u) => ({ ...u, liveSessions: await countLiveSessions(u.id) })),
+    // Screens open right now — the same thing the device limit counts.
+    users.map(async (u) => ({ ...u, liveSessions: await countActiveSessions(u.id) })),
   );
   return NextResponse.json({ students: withSessions });
 }

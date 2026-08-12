@@ -10,7 +10,6 @@ import { signAccessToken } from '@/lib/auth/jwt';
 import {
   createSession,
   evictSession,
-  listLiveSessions,
   sessionExists,
 } from '@/lib/session-registry/registry';
 import { enforceSessionPolicy } from '@/lib/session-registry/policy';
@@ -65,7 +64,7 @@ export async function POST(req: Request) {
 
   // A browser re-logging-in still carries its previous session cookie.
   // Replace that session instead of stacking a new one, so the limiter counts
-  // devices, not logins. Possession of the httpOnly sid grants the same power
+  // screens, not logins. Possession of the httpOnly sid grants the same power
   // as logout over that session, and the cookie is overwritten below either
   // way — even if it belonged to a different account on a shared browser.
   const prior = parseRefreshCookie((await cookies()).get(REFRESH_COOKIE)?.value);
@@ -84,22 +83,12 @@ export async function POST(req: Request) {
     : (tenant?.sessionLimit ?? SUPER_ADMIN_SESSION_LIMIT);
   // Staff never hit a wall: the oldest seat yields instead of refusing entry.
   const policy = isStaff ? 'EVICT_OLDEST' : (tenant?.evictionPolicy ?? 'EVICT_OLDEST');
-  // One seat per network address, not per login. Signing in again from an
-  // address that already holds a seat reclaims that seat instead of consuming
-  // another — otherwise clearing cookies or using private browsing silently
-  // burns a seat that lingers for the session TTL, and a student locks
-  // themselves out of an account nobody else ever touched.
-  //
-  // Tradeoff, accepted deliberately: everyone behind one NAT (a household, a
-  // school's wifi) collapses into a single seat, so the limit counts networks
-  // rather than screens. Sharing an account across households — the case this
-  // feature exists to stop — still costs a seat per household.
-  if (ip && ip !== 'unknown') {
-    for (const s of await listLiveSessions(user.id)) {
-      if (s.ip === ip) await evictSession(s.sid, { notify: false });
-    }
-  }
-
+  // Seats are held by screens that are open right now — a session with no
+  // screen behind it stops counting on its own (see session-registry/window.ts)
+  // — so nothing has to be swept here. The previous rule evicted every session
+  // sharing this IP to stop old logins piling up; with screens counted instead
+  // of logins that sweep only ever cost someone else in the house their live
+  // session.
   const verdict = await enforceSessionPolicy(user.id, limit, policy);
   if (!verdict.allowed) {
     return apiError(401, 'device_limit', {

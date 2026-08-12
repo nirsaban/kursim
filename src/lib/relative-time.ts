@@ -1,3 +1,5 @@
+import { isScreenActive } from '@/lib/session-registry/window';
+
 const rtf = new Intl.RelativeTimeFormat('he', { numeric: 'auto' });
 
 /** "לפני 2 דקות" / "אתמול" / date for anything older than a week. */
@@ -11,7 +13,7 @@ export function relativeHe(ts: number, now = Date.now()): string {
   return new Date(ts).toLocaleDateString('he-IL');
 }
 
-/** True when the session pinged within the last two minutes. */
+/** True when a screen is still open behind the session — the same window the limiter counts. */
 export function isLiveNow(lastSeenAt: number, now = Date.now()): boolean {
-  return now - lastSeenAt < 2 * 60 * 1000;
+  return isScreenActive(lastSeenAt, now);
 }

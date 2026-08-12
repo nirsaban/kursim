@@ -1,6 +1,7 @@
 import { randomBytes, randomUUID } from 'crypto';
 import { getRedis } from '@/lib/redis';
 import { hashPassword, verifyPassword } from '@/lib/auth/password';
+import { isScreenActive } from './window';
 
 export const sessKey = (sid: string) => `sess:${sid}`;
 export const userSessionsKey = (userId: string) => `user_sessions:${userId}`;
@@ -120,6 +121,29 @@ export async function listLiveSessions(userId: string): Promise<SessionRecord[]>
 
 export async function countLiveSessions(userId: string): Promise<number> {
   return (await listLiveSessions(userId)).length;
+}
+
+/**
+ * Sessions with a screen actually open right now, oldest activity first.
+ *
+ * This — not `listLiveSessions` — is what the device limit counts. A session
+ * survives for the refresh-token TTL so students stay logged in for weeks, but
+ * it only occupies a seat while a screen is open behind it. Counting live
+ * sessions instead meant every login from a new IP (a phone hopping between
+ * cell towers and wifi is a new IP nearly every time) parked a seat for a
+ * month, until a student who had only ever used one phone was locked out of
+ * their own account.
+ *
+ * Idle sessions are deliberately left alive: they cost nothing now that they
+ * cost no seat, and killing them would sign people out for no reason.
+ */
+export async function listActiveSessions(userId: string): Promise<SessionRecord[]> {
+  const now = Date.now();
+  return (await listLiveSessions(userId)).filter((s) => isScreenActive(s.lastSeenAt, now));
+}
+
+export async function countActiveSessions(userId: string): Promise<number> {
+  return (await listActiveSessions(userId)).length;
 }
 
 export async function killAllSessions(userId: string): Promise<number> {

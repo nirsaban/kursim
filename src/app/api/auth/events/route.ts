@@ -1,14 +1,20 @@
 import { NextRequest } from 'next/server';
 import { getAuth, unauthorized } from '@/lib/auth/guards';
 import { createSubscriber } from '@/lib/redis';
-import { evictChannel, sessionExists } from '@/lib/session-registry/registry';
+import { evictChannel, sessionExists, touchSession } from '@/lib/session-registry/registry';
 
 export const dynamic = 'force-dynamic';
 
 /**
- * SSE stream held by the player. Publishes `evicted` the moment this session
- * is killed (device-limit eviction, admin kill, suspension). A polling
- * fallback also detects sessions that died without a pub/sub message.
+ * SSE stream held by every authenticated screen. Publishes `evicted` the
+ * moment this session is killed (device-limit eviction, admin kill,
+ * suspension). A polling fallback also detects sessions that died without a
+ * pub/sub message.
+ *
+ * The stream doubles as the proof that a screen is open: it touches the
+ * session on connect and on every ping, which is what keeps the seat. Close
+ * the tab and the pings stop, so the seat is released — that is how the limit
+ * counts screens rather than logins.
  */
 export async function GET(req: NextRequest) {
   const auth = await getAuth();
@@ -44,6 +50,7 @@ export async function GET(req: NextRequest) {
       };
 
       send('connected', auth.sid);
+      touchSession(auth.sid, auth.userId).catch(() => {});
 
       subscriber.on('message', (_channel, message) => {
         send('evicted', message || 'evicted');
@@ -56,6 +63,8 @@ export async function GET(req: NextRequest) {
           cleanup();
           return;
         }
+        // The screen is still open — hold its seat.
+        await touchSession(auth.sid, auth.userId).catch(() => {});
         send('ping', String(Date.now()));
       }, 25_000);
 
