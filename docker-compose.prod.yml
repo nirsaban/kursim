@@ -39,6 +39,10 @@ services:
       DATABASE_URL: postgresql://kursim_app:${KURSIM_APP_PASSWORD}@postgres:5432/kursim
       MIGRATE_DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/kursim
       REDIS_URL: redis://redis:6379
+    # Large lesson videos live on disk, not in the image — this volume is what
+    # keeps them across rebuilds.
+    volumes:
+      - mediadata:/app/media
     # No published ports: reachable only by the reverse proxy on the shared network.
     networks: [internal, proxy]
     depends_on:
@@ -76,3 +80,4 @@ networks:
 volumes:
   pgdata:
   redisdata:
+  mediadata:

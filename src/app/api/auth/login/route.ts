@@ -7,7 +7,12 @@ import { getTenantBySlug } from '@/lib/tenant/resolve';
 import { forTenant, asSuperAdmin } from '@/lib/tenant/scoped-prisma';
 import { hashPassword, verifyPassword } from '@/lib/auth/password';
 import { signAccessToken } from '@/lib/auth/jwt';
-import { createSession, evictSession, sessionExists } from '@/lib/session-registry/registry';
+import {
+  createSession,
+  evictSession,
+  listLiveSessions,
+  sessionExists,
+} from '@/lib/session-registry/registry';
 import { enforceSessionPolicy } from '@/lib/session-registry/policy';
 import { deviceLabelFromUa } from '@/lib/auth/device';
 import { parseRefreshCookie, setAuthCookies } from '@/lib/auth/issue';
@@ -21,6 +26,9 @@ const invalidCredentials = () => apiError(401, 'invalid_credentials');
 
 // Session policy for super-admins (tenants configure their own).
 const SUPER_ADMIN_SESSION_LIMIT = 5;
+// Owners and instructors are exempt from the tenant's student device limit —
+// see the comment at the call site.
+const STAFF_SESSION_LIMIT = 20;
 
 export async function POST(req: Request) {
   const parsed = await parseBody(req, loginSchema);
@@ -65,8 +73,33 @@ export async function POST(req: Request) {
     await evictSession(prior.sid, { notify: false });
   }
 
-  const limit = tenant?.sessionLimit ?? SUPER_ADMIN_SESSION_LIMIT;
-  const policy = tenant?.evictionPolicy ?? 'EVICT_OLDEST';
+  // The device limit exists to stop students from sharing a paid account. Staff
+  // aren't that risk — they legitimately work from phone, laptop and desk — and
+  // locking an owner out of their own school is far worse than the sharing it
+  // would prevent. They still get a generous cap so a leaked staff password
+  // can't spawn sessions without bound.
+  const isStaff = user.role === 'OWNER' || user.role === 'INSTRUCTOR';
+  const limit = isStaff
+    ? STAFF_SESSION_LIMIT
+    : (tenant?.sessionLimit ?? SUPER_ADMIN_SESSION_LIMIT);
+  // Staff never hit a wall: the oldest seat yields instead of refusing entry.
+  const policy = isStaff ? 'EVICT_OLDEST' : (tenant?.evictionPolicy ?? 'EVICT_OLDEST');
+  // One seat per network address, not per login. Signing in again from an
+  // address that already holds a seat reclaims that seat instead of consuming
+  // another — otherwise clearing cookies or using private browsing silently
+  // burns a seat that lingers for the session TTL, and a student locks
+  // themselves out of an account nobody else ever touched.
+  //
+  // Tradeoff, accepted deliberately: everyone behind one NAT (a household, a
+  // school's wifi) collapses into a single seat, so the limit counts networks
+  // rather than screens. Sharing an account across households — the case this
+  // feature exists to stop — still costs a seat per household.
+  if (ip && ip !== 'unknown') {
+    for (const s of await listLiveSessions(user.id)) {
+      if (s.ip === ip) await evictSession(s.sid, { notify: false });
+    }
+  }
+
   const verdict = await enforceSessionPolicy(user.id, limit, policy);
   if (!verdict.allowed) {
     return apiError(401, 'device_limit', {

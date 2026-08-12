@@ -46,6 +46,10 @@ export interface LandingProps {
   ctaHref: string;
   ctaText: string;
   ctaExternal: boolean;
+  /** The CTA leads to a real payment — drives the padlock and the trust line. */
+  paid: boolean;
+  /** What to show next to the CTA: the owner's wording, else the real price. */
+  priceLabel: string;
   externalProps: { target?: '_blank'; rel?: 'noopener noreferrer' };
   cta: (extra?: string) => React.ReactNode;
   trustBullets: string[];

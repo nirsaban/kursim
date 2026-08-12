@@ -25,6 +25,8 @@ export default function ClassicLanding({
   ctaHref,
   ctaText,
   ctaExternal,
+  paid,
+  priceLabel,
   externalProps,
   cta,
   trustBullets,
@@ -870,11 +872,11 @@ export default function ClassicLanding({
         href={ctaHref}
         external={ctaExternal}
         text={ctaText}
-        priceText={m.priceText || undefined}
+        priceText={priceLabel || undefined}
         note={he.ctaAccessNote.replace('{n}', String(sessionLimit))}
         accent={theme.main}
         deep={theme.deep}
-        locked={Boolean(m.paymentLink)}
+        locked={paid}
       />
     </main>
   );

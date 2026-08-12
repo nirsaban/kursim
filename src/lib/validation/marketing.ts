@@ -55,12 +55,25 @@ export const marketingSchema = z.object({
   priceText: z.string().max(100).default(''),
   ctaText: z.string().max(60).default(''),
   ctaLink: z.string().max(500).default(''),
-  /** Checkout/payment URL — when set, the landing CTA opens it. */
+  /**
+   * Legacy Grow checkout URL. Superseded by `Course.priceAgorot` + Hyp
+   * checkout, and no longer editable in the admin — kept so landing pages
+   * configured before the switch keep their working buy button.
+   */
   paymentLink: z
     .string()
     .max(500)
     .refine((v) => v === '' || /^https?:\/\//.test(v), 'must be an http(s) URL')
     .default(''),
+  /**
+   * Other courses of the same tenant that buying THIS one also unlocks — the
+   * "1+1" bundle, replacing Grow's `c=id1,id2` callback trick. The price stays
+   * this course's `priceAgorot`; the extras ride along for free.
+   *
+   * Read server-side only when starting a checkout, never from the browser, so
+   * a crafted request can't add courses to an order.
+   */
+  bundleCourseIds: z.array(z.string().uuid()).max(5).default([]),
   /**
    * Photos, short clips, and before/after pairs shown in the landing gallery.
    * BEFORE_AFTER uses publicId as the "before" image and afterPublicId as the "after".

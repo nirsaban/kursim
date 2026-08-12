@@ -30,3 +30,6 @@ export async function rateLimit(
 export const LOGIN_LIMIT = { limit: 10, windowSec: 60 };
 export const REFRESH_LIMIT = { limit: 30, windowSec: 60 };
 export const INVITE_LIMIT = { limit: 20, windowSec: 3600 };
+// Password recovery: tight, because each request sends an email.
+export const FORGOT_LIMIT = { limit: 5, windowSec: 900 };
+export const RESET_LIMIT = { limit: 10, windowSec: 900 };

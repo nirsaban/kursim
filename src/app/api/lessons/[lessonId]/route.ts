@@ -4,6 +4,7 @@ import { apiError, parseBody } from '@/lib/api';
 import { lessonSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { destroyPublicIds } from '@/lib/cloudinary/cleanup';
+import { deleteMediaKeys } from '@/lib/media-store/store';
 
 type Params = { params: Promise<{ lessonId: string }> };
 
@@ -35,10 +36,14 @@ export async function DELETE(req: Request, { params }: Params) {
   if (!existing) return apiError(404, 'not_found');
 
   await db.lesson.delete({ where: { id: lessonId } });
+  const onDisk = existing.videoProvider === 'LOCAL' && existing.videoPublicId;
   const publicIds = [
-    ...(existing.videoPublicId ? [{ publicId: existing.videoPublicId, video: true }] : []),
+    ...(existing.videoPublicId && !onDisk
+      ? [{ publicId: existing.videoPublicId, video: true }]
+      : []),
     ...existing.attachments.map((a) => ({ publicId: a.publicId, video: false })),
   ];
   destroyPublicIds(publicIds).catch(() => {});
+  if (onDisk) deleteMediaKeys([existing.videoPublicId!]).catch(() => {});
   return NextResponse.json({ ok: true });
 }

@@ -66,6 +66,18 @@ export async function PUT(req: Request, { params }: Params) {
     if (!partner) return apiError(400, 'sale_partner_not_found');
   }
 
+  // Bundled courses grant real access on payment, so they must be this
+  // tenant's own and never this course itself (which would double-enroll).
+  const bundleIds = [...new Set(parsed.data.bundleCourseIds)].filter((id) => id !== courseId);
+  if (bundleIds.length > 0) {
+    const owned = await db.course.findMany({
+      where: { id: { in: bundleIds } },
+      select: { id: true },
+    });
+    if (owned.length !== bundleIds.length) return apiError(400, 'bundle_course_not_found');
+  }
+  parsed.data.bundleCourseIds = bundleIds;
+
   await db.course.update({
     where: { id: courseId },
     data: { marketing: parsed.data },

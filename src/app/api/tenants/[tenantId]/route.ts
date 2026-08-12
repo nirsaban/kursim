@@ -5,6 +5,7 @@ import { updateTenantSchema } from '@/lib/validation/schemas';
 import { asSuperAdmin } from '@/lib/tenant/scoped-prisma';
 import { killAllSessions } from '@/lib/session-registry/registry';
 import { destroyTenantPrefix } from '@/lib/cloudinary/cleanup';
+import { destroyLocalTenantPrefix } from '@/lib/media-store/store';
 
 type Params = { params: Promise<{ tenantId: string }> };
 
@@ -50,5 +51,6 @@ export async function DELETE(req: Request, { params }: Params) {
   await killTenantSessions(tenantId);
   await db.tenant.delete({ where: { id: tenantId } });
   destroyTenantPrefix(tenantId).catch(() => {});
+  destroyLocalTenantPrefix(tenantId).catch(() => {});
   return NextResponse.json({ ok: true });
 }

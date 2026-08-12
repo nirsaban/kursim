@@ -17,10 +17,25 @@ export const changePasswordSchema = z.object({
   newPassword: passwordSchema,
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z.string().email().max(320),
+  tenantSlug: z.string().min(1).max(64),
+});
+
+export const resetWithTokenSchema = z.object({
+  token: z.string().min(16).max(128),
+  password: passwordSchema,
+});
+
 export const courseSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().max(5000).nullish(),
   status: z.enum(['DRAFT', 'PUBLISHED']).optional(),
+  /// Omitted on create → auto-assigned as the tenant's next free number.
+  catalogNumber: z.number().int().min(1).max(999999).optional(),
+  /// Sale price in agorot. null = not sold through Hyp checkout. Capped at
+  /// ₪100,000 so a stray keystroke can't create a five-figure payment page.
+  priceAgorot: z.number().int().min(0).max(10_000_000).nullish(),
 });
 
 export const moduleSchema = z.object({
@@ -129,6 +144,20 @@ export const attachMediaSchema = z.object({
   publicId: z.string().min(1).max(512),
   durationSec: z.number().int().min(0).nullish(),
   bytes: z.number().int().min(0).nullish(),
+  /** Cloudinary unless the file was too big for it and went to local disk. */
+  provider: z.enum(['CLOUDINARY', 'LOCAL']).default('CLOUDINARY'),
+});
+
+// ── Local chunked upload (videos over the Cloudinary cap) ────────────────────
+
+export const localCreateSchema = z.object({
+  courseId: z.string().uuid(),
+  filename: z.string().min(1).max(255),
+  bytes: z.number().int().positive(),
+});
+
+export const localUploadIdSchema = z.object({
+  uploadId: z.string().regex(/^[0-9a-f]{32}$/),
 });
 
 // ── Extended platform features ───────────────────────────────────────────────

@@ -2,7 +2,12 @@
 
 import { useRef, useState } from 'react';
 import { apiFetch } from '@/lib/client/api';
-import { signCourseUpload, uploadToCloudinary } from '@/lib/client/upload';
+import {
+  signCourseUpload,
+  uploadToCloudinary,
+  uploadCourseVideo,
+  uploadErrorMessage,
+} from '@/lib/client/upload';
 import { he } from '@/lib/he';
 import Button from '@/components/ui/Button';
 
@@ -41,22 +46,33 @@ export default function MediaUploader({
     setProgress(0);
     try {
       return await uploadToCloudinary(file, signed.sign, setProgress);
-    } catch {
-      setError(he.uploadFailed);
+    } catch (err) {
+      setError(uploadErrorMessage(err));
       return null;
     } finally {
       setProgress(null);
     }
   }
 
+  /** Routes itself to Cloudinary or this server's disk depending on file size. */
   async function uploadVideo(file: File) {
-    const result = await upload(file, 'video');
-    if (!result) return;
+    setError(null);
+    setProgress(0);
+    let result;
+    try {
+      result = await uploadCourseVideo(courseId, file, setProgress);
+    } catch (err) {
+      setError(uploadErrorMessage(err));
+      return;
+    } finally {
+      setProgress(null);
+    }
     const attach = await apiFetch(`/api/lessons/${lessonId}/video`, {
       method: 'POST',
       body: JSON.stringify({
-        publicId: result.public_id,
-        durationSec: result.duration ? Math.round(result.duration) : null,
+        publicId: result.publicId,
+        provider: result.provider,
+        durationSec: result.durationSec,
         bytes: result.bytes,
       }),
     });

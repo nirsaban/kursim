@@ -28,6 +28,12 @@ RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
 # reliably, unlike the glibc ffmpeg-static binary. Workers set FFMPEG_PATH.
 RUN apk add --no-cache ffmpeg
 
+# Lesson videos too large for Cloudinary are stored here. It MUST be mounted as
+# a volume — the container filesystem is replaced on every rebuild, and the
+# uploads would go with it. Created before USER so the named volume inherits
+# nextjs ownership on first mount.
+RUN mkdir -p /app/media && chown nextjs:nodejs /app/media
+
 # Copy built app
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static

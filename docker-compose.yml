@@ -29,6 +29,8 @@ services:
     ports:
       - "3000:3000"
     env_file: .env
+    volumes:
+      - mediadata:/app/media
     environment:
       DATABASE_URL: postgresql://kursim_app:kursim_app_pw@postgres:5432/kursim
       MIGRATE_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/kursim
@@ -41,3 +43,4 @@ services:
 
 volumes:
   pgdata:
+  mediadata:

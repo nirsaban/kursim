@@ -1,4 +1,5 @@
 import { getCloudinary, courseFolder } from './client';
+import { mediaLimit, type MediaKind } from './media-limits';
 
 export interface UploadSignature {
   cloudName: string;
@@ -7,19 +8,24 @@ export interface UploadSignature {
   signature: string;
   folder: string;
   type: 'authenticated';
-  resourceType: 'video' | 'image' | 'raw';
+  resourceType: MediaKind;
+  /** Account cap for this asset kind — the browser refuses bigger files itself. */
+  maxBytes: number;
 }
 
 /**
  * Server-side signature for a direct browser→Cloudinary upload. The folder and
  * `type: authenticated` are pinned into the signature, so the client cannot
  * upload outside its tenant/course prefix or make an asset public.
+ *
+ * The same signed params are replayed on every chunk of a chunked upload, so
+ * one signature covers the whole file (Cloudinary accepts it for an hour).
  */
-export function signUpload(
+export async function signUpload(
   tenantId: string,
   courseId: string,
-  kind: 'video' | 'image' | 'raw',
-): UploadSignature {
+  kind: MediaKind,
+): Promise<UploadSignature> {
   const cld = getCloudinary();
   const timestamp = Math.floor(Date.now() / 1000);
   const folder = courseFolder(tenantId, courseId);
@@ -35,6 +41,7 @@ export function signUpload(
     folder,
     type: 'authenticated',
     resourceType: kind,
+    maxBytes: await mediaLimit(kind),
   };
 }
 

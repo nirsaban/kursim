@@ -185,25 +185,41 @@ export async function POST(req: Request) {
 
   const found = await db.course.findMany({
     where: { id: { in: requestedIds } },
-    select: { id: true, title: true },
+    select: { id: true, title: true, catalogNumber: true },
   });
   // Keep the order the link declared, so the first course stays the primary one.
   const listed = requestedIds
     .map((id) => found.find((c) => c.id === id))
-    .filter((c): c is { id: string; title: string } => Boolean(c));
+    .filter((c): c is { id: string; title: string; catalogNumber: number } => Boolean(c));
 
-  // By default a bundle link grants everything it lists. If the owner tagged each
-  // Grow product with its course id in "catalog_number", honour what the buyer
-  // actually bought instead — that's the only way to tell a partial purchase from
-  // a full one, since the callback fires once either way.
-  const tagged = products.filter((pr) => requestedIds.includes(String(pr.catalog_number ?? '').trim()));
-  const granted = tagged.length
-    ? listed.filter((c) =>
-        tagged.some(
-          (pr) => String(pr.catalog_number).trim() === c.id && Number(pr.quantity ?? '1') > 0,
-        ),
-      )
-    : listed;
+  /**
+   * Does this Grow line item identify this course? The owner puts the course's
+   * catalog number in the product's "catalog_number" field; links written
+   * before catalog numbers existed carry the raw course UUID there instead, so
+   * accept either. Anything else — blank, or a number from another tenant's
+   * catalog — matches nothing.
+   */
+  const identifies = (product: Record<string, string>, course: (typeof listed)[number]) => {
+    const tag = String(product.catalog_number ?? '').trim();
+    if (!tag) return false;
+    return tag === course.id || tag === String(course.catalogNumber);
+  };
+
+  // Honour what the buyer actually bought. The callback fires once whether they
+  // took one product or the whole bundle, so these tags are the only signal that
+  // tells a partial purchase from a full one.
+  const tagged = products.filter((pr) => listed.some((c) => identifies(pr, c)));
+  const untagged = tagged.length === 0;
+  const granted = untagged
+    ? // Nothing identifiable: fall back to granting the whole link, because a
+      // paid buyer must never be left with nothing. Flagged to the owner below.
+      listed
+    : listed.filter((c) =>
+        tagged.some((pr) => identifies(pr, c) && Number(pr.quantity ?? '1') > 0),
+      );
+  // Only ambiguous when the link sells more than one course — a single-course
+  // link grants the same thing tagged or not.
+  const ambiguousGrant = untagged && listed.length > 1;
 
   if (granted.length === 0) return NextResponse.json({ error: 'course' }, { status: 200 });
   const courseId = granted[0].id;
@@ -279,18 +295,19 @@ export async function POST(req: Request) {
     : isNew
       ? he.waWelcomeNew
       : he.waWelcomeExisting;
-  const message = waTemplate
+  const supportLine = he.supportLine.replace('{phone}', he.supportPhone);
+  const message = `${waTemplate
     .replace('{name}', name)
     .replace('{course}', titles[0])
     .replace('{courses}', courseBullets)
     .replace('{url}', loginUrl)
     .replace('{email}', payerEmail)
-    .replace('{pass}', plainPassword ?? '');
+    .replace('{pass}', plainPassword ?? '')}\n\n${supportLine}`;
   const delivery = payerPhone
     ? await sendWhatsappText(tenant.id, payerPhone, message)
     : { ok: false, error: 'no_phone' };
 
-  await db.purchase.create({
+  const purchase = await db.purchase.create({
     data: {
       tenantId: tenant.id,
       courseId,
@@ -305,6 +322,7 @@ export async function POST(req: Request) {
       delivered: delivery.ok,
       deliveryError: delivery.ok ? null : delivery.error ?? 'unknown',
     },
+    select: { id: true },
   });
 
   // Alert the tenant's owners in-app.
@@ -321,6 +339,22 @@ export async function POST(req: Request) {
         }),
       ),
     );
+    // A multi-course link whose products carry no recognisable catalog number
+    // just gave away everything it lists. That's a silent revenue leak, so say
+    // so loudly rather than letting it look like a normal sale.
+    if (ambiguousGrant) {
+      await Promise.all(
+        owners.map((o) =>
+          notify(db, tenant.id, {
+            userId: o.id,
+            type: 'enroll',
+            title: he.saleUntaggedTitle,
+            body: he.saleUntaggedBody.replace('{courses}', courseLine),
+            link: `/t/${slug}/admin/courses`,
+          }),
+        ),
+      );
+    }
   } catch {
     // best-effort
   }
@@ -329,6 +363,7 @@ export async function POST(req: Request) {
   // Strictly best-effort — the payment has already settled, so a mail outage
   // must never turn into a non-200 that makes Grow retry the whole callback.
   const mailed = { buyer: false, owners: 0 };
+  let buyerMailError: string | null = 'not_attempted';
   try {
     if (isRealEmail(payerEmail)) {
       const mailTemplate = multi
@@ -338,19 +373,23 @@ export async function POST(req: Request) {
         : isNew
           ? he.mailBuyerNew
           : he.mailBuyerExisting;
-      const buyerBody = mailTemplate
+      const buyerBody = `${mailTemplate
         .replace('{name}', name)
         .replace('{course}', titles[0])
         .replace('{courses}', courseBullets)
         .replace('{url}', loginUrl)
         .replace('{email}', payerEmail)
-        .replace('{pass}', plainPassword ?? '');
+        .replace('{pass}', plainPassword ?? '')}\n\n${supportLine}`;
       const r = await sendMail({
         to: payerEmail,
         subject: he.mailBuyerSubject.replace('{course}', courseLine),
         text: buyerBody,
       });
       mailed.buyer = r.ok;
+      buyerMailError = r.ok ? null : r.error;
+    } else {
+      // Synthesised @kursim.local login — there was never an address to mail.
+      buyerMailError = 'no_real_email';
     }
 
     const ownerBody = he.mailOwnerBody
@@ -380,8 +419,20 @@ export async function POST(req: Request) {
         ),
     );
     mailed.owners = results.filter((r) => r.ok).length;
+  } catch (err) {
+    buyerMailError = err instanceof Error ? err.message : 'mail_failed';
+  }
+
+  // Record how the receipt actually went out. Without this the outcome lives
+  // only in the response body below, which Grow discards — leaving no way to
+  // answer "did the buyer ever get their email?" once the request is over.
+  try {
+    await db.purchase.update({
+      where: { id: purchase.id },
+      data: { mailedBuyer: mailed.buyer, mailError: buyerMailError },
+    });
   } catch {
-    // best-effort
+    // best-effort — never fail a settled payment over bookkeeping
   }
 
   return NextResponse.json(

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -13,8 +13,11 @@ import { he } from '@/lib/he';
 export interface PaymentCourse {
   id: string;
   title: string;
-  hasPaymentLink: boolean;
-  webhookUrl: string;
+  /** Formatted price, or null when the course has none and can't be bought. */
+  priceLabel: string | null;
+  /** Other courses this one's purchase also unlocks. */
+  bundleTitles: string[];
+  checkoutUrl: string;
   thankYouUrl: string;
 }
 export interface PurchaseRow {
@@ -30,108 +33,76 @@ export interface PurchaseRow {
   createdAt: string;
 }
 
-/** Builds the bundle callback URL live as the owner ticks courses. */
-function BundleBuilder({ courses, urlBase }: { courses: PaymentCourse[]; urlBase: string }) {
-  const [picked, setPicked] = useState<string[]>([]);
-  const url = useMemo(
-    () => (picked.length >= 2 ? `${urlBase}&c=${picked.join(',')}` : ''),
-    [picked, urlBase],
-  );
-  const toggle = (id: string) =>
-    setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
-
-  return (
-    <div className="bg-card border border-line rounded-xl2 shadow-card p-4">
-      <p className="font-display font-bold">{he.bundleTitle}</p>
-      <p className="text-sm text-muted mt-1 leading-relaxed">{he.bundleHint}</p>
-
-      <p className="text-sm font-medium mt-4 mb-2">{he.bundlePick}</p>
-      <div className="space-y-2">
-        {courses.map((c) => (
-          <label key={c.id} className="flex items-start gap-2.5 text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              checked={picked.includes(c.id)}
-              onChange={() => toggle(c.id)}
-              className="mt-1 w-4 h-4 accent-brand-600 shrink-0"
-            />
-            <span className="min-w-0">
-              <span className="font-medium">{c.title}</span>
-              <span className="block text-[11px] text-muted truncate" dir="ltr">
-                {he.bundleCourseId}: {c.id}
-              </span>
-            </span>
-          </label>
-        ))}
-      </div>
-
-      <div className="mt-4">
-        {url ? (
-          <CopyRow label={he.webhookUrlLabel} url={url} copyLabel={he.copyWebhookUrl} />
-        ) : (
-          <p className="text-sm text-muted">{he.bundleNeedTwo}</p>
-        )}
-      </div>
-      <p className="text-xs text-muted mt-3 leading-relaxed">{he.bundleCatalogHint}</p>
-    </div>
-  );
-}
-
 export default function PaymentsPanel({
   courses,
   whatsappOn,
+  hypOn,
   purchases,
-  bundleUrlBase,
 }: {
   courses: PaymentCourse[];
   whatsappOn: boolean;
+  /** Whether Hyp credentials are configured platform-side. */
+  hypOn: boolean;
   purchases: PurchaseRow[];
-  /** `{APP_URL}/api/pay/grow?t=…&k=…` — the builder appends the chosen `&c=`. */
-  bundleUrlBase: string;
 }) {
   return (
     <div className="space-y-6">
-      {/* How-to + WhatsApp status */}
+      {/* Gateway + WhatsApp status */}
       <Card>
         <CardHeader
-          title={he.paymentsHowTitle}
+          title={he.paymentsHypTitle}
           actions={
-            <Badge tone={whatsappOn ? 'ok' : 'warn'} dot>
-              {he.whatsappStatus}: {whatsappOn ? he.whatsappOn : he.whatsappOff}
-            </Badge>
+            <div className="flex flex-wrap gap-2">
+              <Badge tone={hypOn ? 'ok' : 'warn'} dot>
+                {hypOn ? he.paymentsHypConnected : he.paymentsHypMissing}
+              </Badge>
+              <Badge tone={whatsappOn ? 'ok' : 'warn'} dot>
+                {he.whatsappStatus}: {whatsappOn ? he.whatsappOn : he.whatsappOff}
+              </Badge>
+            </div>
           }
         />
         <CardBody>
-          <ol className="space-y-1.5 text-sm text-muted list-decimal ps-5">
-            <li>{he.paymentsHowStep1}</li>
-            <li>{he.paymentsHowStep2}</li>
-            <li>{he.paymentsHowStep3}</li>
-            <li>{he.paymentsHowStep4}</li>
-          </ol>
+          <p className="text-sm text-muted leading-relaxed">{he.paymentsHypNote}</p>
         </CardBody>
       </Card>
 
-      {/* Per-course webhook URLs */}
+      {/* Per-course price, bundle and checkout link */}
       <div className="space-y-3">
         {courses.map((c) => (
           <div key={c.id} className="bg-card border border-line rounded-xl2 shadow-card p-4">
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <span className="font-display font-bold min-w-0">{c.title}</span>
-              {!c.hasPaymentLink && (
+              {c.priceLabel ? (
+                <Badge tone="ok" className="ms-auto">
+                  {c.priceLabel}
+                </Badge>
+              ) : (
                 <Badge tone="warn" className="ms-auto">
-                  {he.noPaymentLinkYet}
+                  {he.coursePriceEmpty}
                 </Badge>
               )}
             </div>
-            <div className="space-y-3">
-              <CopyRow label={he.webhookUrlLabel} url={c.webhookUrl} copyLabel={he.copyWebhookUrl} />
-              <CopyRow label={he.thankYouUrlLabel} url={c.thankYouUrl} copyLabel={he.copyThankYouUrl} />
-            </div>
+            {c.bundleTitles.length > 0 && (
+              <p className="text-xs text-muted mb-2.5">
+                {he.checkoutIncludes}: {[c.title, ...c.bundleTitles].join(' + ')}
+              </p>
+            )}
+            {c.priceLabel ? (
+              <div className="space-y-3">
+                <CopyRow label={he.checkoutUrlLabel} url={c.checkoutUrl} copyLabel={he.copy} />
+                <CopyRow
+                  label={he.thankYouUrlLabel}
+                  url={c.thankYouUrl}
+                  copyLabel={he.copyThankYouUrl}
+                />
+              </div>
+            ) : (
+              <p className="text-xs text-muted">{he.paymentsSetPriceCta}</p>
+            )}
           </div>
         ))}
       </div>
-
-      {courses.length > 1 && <BundleBuilder courses={courses} urlBase={bundleUrlBase} />}
 
       {/* Recent sales */}
       <div>

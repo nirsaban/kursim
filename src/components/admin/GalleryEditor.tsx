@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { he } from '@/lib/he';
-import { signCourseUpload, uploadToCloudinary } from '@/lib/client/upload';
+import { signCourseUpload, uploadToCloudinary, uploadErrorMessage } from '@/lib/client/upload';
 import { Input } from '@/components/ui/Field';
 import Button from '@/components/ui/Button';
 import type { CourseMarketing } from '@/lib/validation/marketing';
@@ -43,8 +43,8 @@ export default function GalleryEditor({
     try {
       const result = await uploadToCloudinary(file, signed.sign, setProgress);
       return result.public_id;
-    } catch {
-      setError(he.uploadFailed);
+    } catch (err) {
+      setError(uploadErrorMessage(err));
       return null;
     } finally {
       setProgress(null);

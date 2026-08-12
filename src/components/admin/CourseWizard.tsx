@@ -317,14 +317,6 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
               <Field label={he.priceText}>
                 <Input value={m.priceText} onChange={(e) => set({ priceText: e.target.value })} />
               </Field>
-              <Field label={he.paymentLink} hint={he.paymentLinkHint}>
-                <Input
-                  dir="ltr"
-                  value={m.paymentLink}
-                  placeholder="https://pay.example.com/..."
-                  onChange={(e) => set({ paymentLink: e.target.value })}
-                />
-              </Field>
               <Field label={he.ctaText}>
                 <Input
                   value={m.ctaText}

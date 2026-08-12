@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiFetch } from '@/lib/client/api';
 import { he } from '@/lib/he';
-import { signCourseUpload, uploadToCloudinary } from '@/lib/client/upload';
+import { signCourseUpload, uploadToCloudinary, uploadErrorMessage } from '@/lib/client/upload';
 import { Input } from '@/components/ui/Field';
 import Button from '@/components/ui/Button';
 import type { CourseMarketing } from '@/lib/validation/marketing';
@@ -73,8 +73,8 @@ export default function ResultsEditor({
       try {
         const result = await uploadToCloudinary(queue[i], signed.sign, setProgress);
         added.push({ publicId: result.public_id, caption: '' });
-      } catch {
-        setError(he.uploadFailed);
+      } catch (err) {
+        setError(uploadErrorMessage(err));
         break;
       }
     }

@@ -40,88 +40,131 @@ enum AttachmentKind {
   OTHER
 }
 
-model Tenant {
-  id              String        @id @default(uuid()) @db.Uuid
-  slug            String        @unique
-  name            String
-  status          TenantStatus  @default(ACTIVE)
-  sessionLimit    Int           @default(3)
-  evictionPolicy  EvictionPolicy @default(BLOCK)
-  /// Owner-customizable student-home content (validated by homepageSchema).
-  homepage        Json?
-  /// Secret embedded in the Grow payment-webhook URL to authenticate callbacks.
-  webhookSecret   String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+/// Where a lesson video lives. Cloudinary caps an upload at the plan's video
+/// size (100MB on Free), so anything larger is stored on this server's own
+/// disk under MEDIA_ROOT instead.
+enum MediaProvider {
+  CLOUDINARY
+  LOCAL
+}
 
-  users           User[]
-  courses         Course[]
-  invites         Invite[]
-  modules         Module[]
-  lessons         Lesson[]
-  attachments     Attachment[]
-  enrollments     Enrollment[]
-  progress        Progress[]
-  reviews         CourseReview[]
-  affiliateLinks  AffiliateLink[]
-  courseMedia     CourseMedia[]
+model Tenant {
+  id             String         @id @default(uuid()) @db.Uuid
+  slug           String         @unique
+  name           String
+  status         TenantStatus   @default(ACTIVE)
+  sessionLimit   Int            @default(3)
+  evictionPolicy EvictionPolicy @default(BLOCK)
+  /// Owner-customizable student-home content (validated by homepageSchema).
+  homepage       Json?
+  /// Secret embedded in the Grow payment-webhook URL to authenticate callbacks.
+  webhookSecret  String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  users            User[]
+  courses          Course[]
+  invites          Invite[]
+  modules          Module[]
+  lessons          Lesson[]
+  attachments      Attachment[]
+  enrollments      Enrollment[]
+  progress         Progress[]
+  reviews          CourseReview[]
+  affiliateLinks   AffiliateLink[]
+  courseMedia      CourseMedia[]
   learningActivity LearningActivity[]
+  authTokens       AuthToken[]
 }
 
 model User {
-  id                  String      @id @default(uuid()) @db.Uuid
-  tenantId            String?     @db.Uuid
-  email               String
-  name                String?
-  passwordHash        String
-  role                UserRole
-  status              UserStatus  @default(ACTIVE)
-  mustChangePassword  Boolean     @default(false)
-  lastLoginAt         DateTime?
-  createdAt           DateTime    @default(now())
-  updatedAt           DateTime    @updatedAt
+  id                 String     @id @default(uuid()) @db.Uuid
+  tenantId           String?    @db.Uuid
+  email              String
+  name               String?
+  passwordHash       String
+  role               UserRole
+  status             UserStatus @default(ACTIVE)
+  mustChangePassword Boolean    @default(false)
+  lastLoginAt        DateTime?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
-  tenant              Tenant?     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  enrollments         Enrollment[]
-  progress            Progress[]
-  reviews             CourseReview[]
-  affiliateLinks      AffiliateLink[]
-  learningActivity    LearningActivity[]
+  tenant           Tenant?            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  enrollments      Enrollment[]
+  progress         Progress[]
+  reviews          CourseReview[]
+  affiliateLinks   AffiliateLink[]
+  learningActivity LearningActivity[]
+  authTokens       AuthToken[]
 
   @@unique([tenantId, email])
 }
 
-model Invite {
-  id        String      @id @default(uuid()) @db.Uuid
-  tenantId  String      @db.Uuid
-  tokenHash String      @unique
-  email     String?
-  role      UserRole    @default(STUDENT)
+enum AuthTokenKind {
+  RESET
+}
+
+/// Single-use, expiring token emailed to a user who can't log in. Only the
+/// SHA-256 hash of the token is stored (same contract as Invite.tokenHash).
+model AuthToken {
+  id        String        @id @default(uuid()) @db.Uuid
+  tenantId  String        @db.Uuid
+  userId    String        @db.Uuid
+  kind      AuthTokenKind @default(RESET)
+  tokenHash String        @unique
   expiresAt DateTime
   usedAt    DateTime?
-  createdAt DateTime    @default(now())
+  createdAt DateTime      @default(now())
 
-  tenant    Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, userId])
+}
+
+model Invite {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @db.Uuid
+  tokenHash String    @unique
+  email     String?
+  role      UserRole  @default(STUDENT)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model Course {
-  id               String        @id @default(uuid()) @db.Uuid
-  tenantId         String        @db.Uuid
+  id               String       @id @default(uuid()) @db.Uuid
+  tenantId         String       @db.Uuid
   title            String
-  description      String?       @db.Text
+  description      String?      @db.Text
   coverPublicId    String?
-  status           CourseStatus  @default(DRAFT)
+  status           CourseStatus @default(DRAFT)
+  /// Short per-tenant catalog number the owner puts in the matching Grow
+  /// product's "catalog_number" field. The payment callback matches on it to
+  /// tell which course a buyer actually bought, so a bundle link can grant
+  /// only what was paid for. Auto-assigned as max+1 on create; owner-editable.
+  catalogNumber    Int
+  /// Sale price in agorot (₪49.90 = 4990). Null means the course isn't sold
+  /// through Hyp checkout — the landing CTA falls back to `marketing.paymentLink`.
+  /// Agorot, not a decimal, so the amount we sign is exactly the amount we charge.
+  priceAgorot      Int?
   marketing        Json?
-  landingPublished Boolean       @default(false)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  landingPublished Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
-  tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  modules         Module[]
-  enrollments     Enrollment[]
-  reviews         CourseReview[]
-  affiliateLinks  AffiliateLink[]
-  media           CourseMedia?
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  modules        Module[]
+  enrollments    Enrollment[]
+  reviews        CourseReview[]
+  affiliateLinks AffiliateLink[]
+  media          CourseMedia?
+
+  @@unique([tenantId, catalogNumber])
 }
 
 /// AI-generated marketing media for a course landing page: a Veo video rendered
@@ -153,14 +196,16 @@ model CourseMedia {
 }
 
 model CourseReview {
-  id        String   @id @default(uuid()) @db.Uuid
-  tenantId  String   @db.Uuid
-  courseId  String   @db.Uuid
-  studentId String   @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid
+  courseId    String   @db.Uuid
+  studentId   String   @db.Uuid
   name        String   @default("")
   rating      Int
   text        String   @db.Text
-  /** Private feedback for the owner — never shown on the landing page. */
+  /**
+   * Private feedback for the owner — never shown on the landing page.
+   */
   privateNote String   @default("") @db.Text
   approved    Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -177,9 +222,13 @@ model AffiliateLink {
   tenantId  String   @db.Uuid
   courseId  String   @db.Uuid
   studentId String   @db.Uuid
-  /** Short public share code carried as ?ref= on the landing page. */
+  /**
+   * Short public share code carried as ?ref= on the landing page.
+   */
   code      String   @unique
-  /** Unique visitors who opened the landing page via this link. */
+  /**
+   * Unique visitors who opened the landing page via this link.
+   */
   visits    Int      @default(0)
   createdAt DateTime @default(now())
 
@@ -191,45 +240,46 @@ model AffiliateLink {
 }
 
 model Module {
-  id        String    @id @default(uuid()) @db.Uuid
-  tenantId  String    @db.Uuid
-  courseId  String    @db.Uuid
+  id        String @id @default(uuid()) @db.Uuid
+  tenantId  String @db.Uuid
+  courseId  String @db.Uuid
   title     String
-  sortOrder Int       @default(0)
+  sortOrder Int    @default(0)
   /// Drip release: unlock this module only N days after the student enrolls (0 = immediate).
-  dripDays  Int       @default(0)
+  dripDays  Int    @default(0)
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  lessons   Lesson[]
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
 }
 
 model Lesson {
-  id            String    @id @default(uuid()) @db.Uuid
-  tenantId      String    @db.Uuid
-  moduleId      String    @db.Uuid
+  id            String        @id @default(uuid()) @db.Uuid
+  tenantId      String        @db.Uuid
+  moduleId      String        @db.Uuid
   title         String
-  notes         String?   @db.Text
+  notes         String?       @db.Text
   videoPublicId String?
+  videoProvider MediaProvider @default(CLOUDINARY)
   durationSec   Int?
-  sortOrder     Int       @default(0)
+  sortOrder     Int           @default(0)
 
-  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  module        Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  attachments   Attachment[]
-  progress      Progress[]
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  attachments Attachment[]
+  progress    Progress[]
 }
 
 model Attachment {
-  id        String          @id @default(uuid()) @db.Uuid
-  tenantId  String          @db.Uuid
-  lessonId  String          @db.Uuid
-  publicId  String
-  filename  String
-  kind      AttachmentKind  @default(OTHER)
+  id       String         @id @default(uuid()) @db.Uuid
+  tenantId String         @db.Uuid
+  lessonId String         @db.Uuid
+  publicId String
+  filename String
+  kind     AttachmentKind @default(OTHER)
 
-  tenant    Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  lesson    Lesson          @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Progress {
@@ -241,9 +291,9 @@ model Progress {
   completedAt     DateTime?
   updatedAt       DateTime  @updatedAt
 
-  tenant          Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  student         User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  lesson          Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  lesson  Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, lessonId])
 }
@@ -258,8 +308,8 @@ model LearningActivity {
   date      DateTime @db.Date
   createdAt DateTime @default(now())
 
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, date])
   @@index([tenantId])
@@ -267,15 +317,15 @@ model LearningActivity {
 }
 
 model Enrollment {
-  id        String    @id @default(uuid()) @db.Uuid
-  tenantId  String    @db.Uuid
-  studentId String    @db.Uuid
-  courseId  String    @db.Uuid
-  createdAt DateTime  @default(now())
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  studentId String   @db.Uuid
+  courseId  String   @db.Uuid
+  createdAt DateTime @default(now())
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  student   User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, courseId])
 }
@@ -383,14 +433,14 @@ model AccessCode {
 
 /// A certificate issued when a student completes a course.
 model Certificate {
-  id        String   @id @default(uuid()) @db.Uuid
-  tenantId  String   @db.Uuid
-  courseId  String   @db.Uuid
-  studentId String   @db.Uuid
-  studentName String @default("")
-  courseTitle String @default("")
-  serial    String   @unique
-  issuedAt  DateTime @default(now())
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid
+  courseId    String   @db.Uuid
+  studentId   String   @db.Uuid
+  studentName String   @default("")
+  courseTitle String   @default("")
+  serial      String   @unique
+  issuedAt    DateTime @default(now())
 
   @@unique([courseId, studentId])
   @@index([tenantId])
@@ -439,6 +489,45 @@ model WhatsappMessage {
   @@index([tenantId, createdAt])
 }
 
+/// A checkout attempt, created before the buyer is sent to Hyp's payment page.
+///
+/// Hyp's success URL is configured per TERMINAL, not per transaction, so the
+/// completion redirect cannot carry the tenant or course in its URL. This row
+/// is what makes the redirect meaningful: we pass its id as Hyp's `Order`
+/// parameter and get it back, which is how one platform-wide return endpoint
+/// resolves which tenant, which courses, and — critically — which amount was
+/// supposed to be charged.
+model PaymentOrder {
+  id               String             @id @default(uuid()) @db.Uuid
+  tenantId         String             @db.Uuid
+  /// Courses this order grants on payment. First one is the primary.
+  courseIds        String[]           @db.Uuid
+  /// What we asked Hyp to charge, in agorot. Compared against the amount Hyp
+  /// reports back, so a tampered redirect cannot buy a course for less.
+  amountAgorot     Int
+  status           PaymentOrderStatus @default(PENDING)
+  /// Buyer details collected before checkout — Hyp does not require them, but
+  /// provisioning does (we create the student account from them).
+  buyerEmail       String             @default("")
+  buyerPhone       String             @default("")
+  buyerName        String             @default("")
+  /// Hyp's transaction id (`Id`) and status code (`CCode`) once it comes back.
+  hypTransactionId String?
+  ccode            String?
+  failureReason    String?            @db.Text
+  createdAt        DateTime           @default(now())
+  completedAt      DateTime?
+
+  @@index([tenantId, createdAt])
+  @@index([tenantId, status])
+}
+
+enum PaymentOrderStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
 /// A completed Grow payment: auto-provisions/enrolls the buyer and records the
 /// sale. transactionId is unique per tenant for idempotent webhook delivery.
 model Purchase {
@@ -451,6 +540,8 @@ model Purchase {
   /// row count stays one-per-transaction so revenue isn't double-counted.
   courseIds         String[] @db.Uuid
   transactionId     String
+  /// Which gateway settled this sale: "grow" (legacy links) or "hyp".
+  provider          String   @default("grow")
   payerEmail        String
   payerPhone        String   @default("")
   payerName         String   @default("")
@@ -459,6 +550,10 @@ model Purchase {
   isNewUser         Boolean  @default(false)
   delivered         Boolean  @default(false)
   deliveryError     String?  @db.Text
+  /// Whether the buyer's receipt email actually went out, and why not if it
+  /// didn't. WhatsApp delivery is tracked separately by `delivered`.
+  mailedBuyer       Boolean  @default(false)
+  mailError         String?  @db.Text
   createdAt         DateTime @default(now())
 
   @@unique([tenantId, transactionId])

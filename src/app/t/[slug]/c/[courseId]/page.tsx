@@ -4,6 +4,7 @@ import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { getAuth } from '@/lib/auth/guards';
 import { parseMarketing, saleActive } from '@/lib/validation/marketing';
 import { LANDING_THEMES } from '@/lib/landing-themes';
+import { formatAgorot } from '@/lib/money';
 import { isCloudinaryConfigured } from '@/lib/cloudinary/client';
 import { signedDeliveryUrl, VIDEO_URL_TTL_SEC } from '@/lib/cloudinary/sign-delivery';
 import ClassicLanding from '@/components/landing/ClassicLanding';
@@ -69,10 +70,17 @@ export default async function CourseLandingPage({ params, searchParams }: Params
 
   const theme = LANDING_THEMES[m.accent];
   const headline = m.headline || course.title;
-  // Payment link wins: the CTA leads straight to checkout when one is set.
-  const ctaHref = m.paymentLink || m.ctaLink || `/t/${slug}/login`;
-  const ctaText = m.ctaText || (m.paymentLink ? he.payNow : he.enrollNow);
+  // A priced course sells through our own checkout (Hyp). Falling back to the
+  // legacy Grow link keeps pages configured before the switch selling as they
+  // did — a landing page must never lose its buy button on deploy.
+  const forSale = Boolean(course.priceAgorot && course.priceAgorot > 0);
+  const checkoutHref = `/t/${slug}/c/${courseId}/checkout`;
+  const ctaHref = forSale ? checkoutHref : m.paymentLink || m.ctaLink || `/t/${slug}/login`;
+  const ctaText = m.ctaText || (forSale || m.paymentLink ? he.payNow : he.enrollNow);
   const ctaExternal = /^https?:\/\//.test(ctaHref);
+  const paid = forSale || Boolean(m.paymentLink);
+  // Owner-written price wording still wins — it may say "2 payments of ₪175".
+  const priceLabel = m.priceText || (forSale ? formatAgorot(course.priceAgorot!) : '');
   const lessonCount = course.modules.reduce((n, mod) => n + mod.lessons.length, 0);
 
   // Approved student reviews (collected at course completion)
@@ -170,9 +178,9 @@ export default async function CourseLandingPage({ params, searchParams }: Params
       className={`group inline-flex items-center justify-center gap-2.5 font-bold text-[17px] rounded-full px-9 py-4 text-card transition-transform hover:scale-[1.03] active:scale-[0.99] ${extra}`}
       style={{ background: theme.main }}
     >
-      {m.paymentLink && <span aria-hidden>🔒</span>}
+      {paid && <span aria-hidden>🔒</span>}
       {ctaText}
-      {m.priceText && <span className="font-medium opacity-90">· {m.priceText}</span>}
+      {priceLabel && <span className="font-medium opacity-90">· {priceLabel}</span>}
       {!ctaHasArrow && (
         <span aria-hidden className="transition-transform duration-300 group-hover:-translate-x-1">
           ←
@@ -186,7 +194,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
     he.trustInstantAccess,
     he.trustLifetime,
     he.trustAnyDevice,
-    ...(m.paymentLink ? [he.trustSecurePayment] : []),
+    ...(paid ? [he.trustSecurePayment] : []),
   ];
 
   const landingProps: LandingProps = {
@@ -201,6 +209,8 @@ export default async function CourseLandingPage({ params, searchParams }: Params
     ctaHref,
     ctaText,
     ctaExternal,
+    paid,
+    priceLabel,
     externalProps,
     cta,
     trustBullets,

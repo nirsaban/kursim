@@ -8,6 +8,7 @@ import {
   VIDEO_URL_TTL_SEC,
   DOC_URL_TTL_SEC,
 } from '@/lib/cloudinary/sign-delivery';
+import { signedMediaUrl } from '@/lib/media-store/sign';
 
 type Params = { params: Promise<{ lessonId: string }> };
 
@@ -36,20 +37,34 @@ export async function GET(req: Request, { params }: Params) {
     if (!enrolled) return forbidden('not_enrolled');
   }
 
-  if (!isCloudinaryConfigured()) {
+  const cloudinaryOn = isCloudinaryConfigured();
+  if (!cloudinaryOn && !lesson.videoPublicId) {
     return NextResponse.json({ videoUrl: null, attachments: [], configured: false });
+  }
+
+  // The video is signed by whichever backend holds it; attachments are always
+  // Cloudinary. Both URLs expire, so a shared link outlives nothing.
+  let videoUrl: string | null = null;
+  if (lesson.videoPublicId) {
+    if (lesson.videoProvider === 'LOCAL') {
+      videoUrl = signedMediaUrl(lesson.videoPublicId, VIDEO_URL_TTL_SEC);
+    } else {
+      videoUrl = cloudinaryOn
+        ? signedDeliveryUrl(lesson.videoPublicId, 'video', VIDEO_URL_TTL_SEC, 'mp4')
+        : null;
+    }
   }
 
   return NextResponse.json({
     configured: true,
-    videoUrl: lesson.videoPublicId
-      ? signedDeliveryUrl(lesson.videoPublicId, 'video', VIDEO_URL_TTL_SEC, 'mp4')
-      : null,
-    attachments: lesson.attachments.map((a) => ({
-      id: a.id,
-      filename: a.filename,
-      kind: a.kind,
-      url: signedDeliveryUrl(a.publicId, a.kind === 'IMAGE' ? 'image' : 'raw', DOC_URL_TTL_SEC),
-    })),
+    videoUrl,
+    attachments: cloudinaryOn
+      ? lesson.attachments.map((a) => ({
+          id: a.id,
+          filename: a.filename,
+          kind: a.kind,
+          url: signedDeliveryUrl(a.publicId, a.kind === 'IMAGE' ? 'image' : 'raw', DOC_URL_TTL_SEC),
+        }))
+      : [],
   });
 }

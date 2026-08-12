@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { he } from '@/lib/he';
 import { Field, Input } from '@/components/ui/Field';
@@ -164,6 +165,14 @@ export default function LoginForm({ tenantSlug }: { tenantSlug?: string }) {
           {busy ? he.loggingIn : he.login}
         </Button>
       </form>
+      {tenantSlug && (
+        <Link
+          href={`/t/${tenantSlug}/forgot`}
+          className="block text-center text-sm text-muted hover:text-ink"
+        >
+          {he.forgotLink}
+        </Link>
+      )}
     </div>
   );
 }

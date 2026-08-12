@@ -32,6 +32,8 @@ export default function CoralHotaLanding({
   ctaHref,
   ctaText,
   ctaExternal,
+  paid,
+  priceLabel,
   externalProps,
   trustBullets,
   lessonCount,
@@ -81,9 +83,9 @@ export default function CoralHotaLanding({
         big ? 'text-[17px] px-9 py-4' : 'text-sm px-6 py-3'
       } ${extra}`}
     >
-      {m.paymentLink && <span aria-hidden>🔒</span>}
+      {paid && <span aria-hidden>🔒</span>}
       {ctaText}
-      {m.priceText && <span className="font-medium opacity-80">· {m.priceText}</span>}
+      {priceLabel && <span className="font-medium opacity-80">· {priceLabel}</span>}
     </a>
   );
 
@@ -796,11 +798,11 @@ export default function CoralHotaLanding({
         href={ctaHref}
         external={ctaExternal}
         text={ctaText}
-        priceText={m.priceText || undefined}
+        priceText={priceLabel || undefined}
         note={he.ctaAccessNote.replace('{n}', String(sessionLimit))}
         accent="#000000"
         deep="#000000"
-        locked={Boolean(m.paymentLink)}
+        locked={paid}
       />
     </main>
   );

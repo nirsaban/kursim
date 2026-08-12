@@ -4,6 +4,7 @@ import { apiError, parseBody } from '@/lib/api';
 import { courseSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { destroyCoursePrefix } from '@/lib/cloudinary/cleanup';
+import { destroyLocalCoursePrefix } from '@/lib/media-store/store';
 
 type Params = { params: Promise<{ courseId: string }> };
 
@@ -50,6 +51,15 @@ export async function PATCH(req: Request, { params }: Params) {
   const existing = await db.course.findFirst({ where: { id: courseId } });
   if (!existing) return apiError(404, 'not_found');
 
+  // Catalog numbers are what the Grow callback matches on, so a duplicate
+  // would make a purchase ambiguous. Reject instead of letting the unique
+  // index surface as a 500.
+  const { catalogNumber } = parsed.data;
+  if (catalogNumber !== undefined && catalogNumber !== existing.catalogNumber) {
+    const clash = await db.course.findFirst({ where: { catalogNumber } });
+    if (clash) return apiError(409, 'catalog_number_taken');
+  }
+
   const course = await db.course.update({
     where: { id: courseId },
     data: parsed.data,
@@ -69,5 +79,6 @@ export async function DELETE(req: Request, { params }: Params) {
   await db.course.delete({ where: { id: courseId } });
   // Best-effort media cleanup; DB is already consistent if this fails.
   destroyCoursePrefix(auth.tenantId!, courseId).catch(() => {});
+  destroyLocalCoursePrefix(auth.tenantId!, courseId).catch(() => {});
   return NextResponse.json({ ok: true });
 }

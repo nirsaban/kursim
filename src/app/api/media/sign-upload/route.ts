@@ -5,6 +5,7 @@ import { signUploadSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { isCloudinaryConfigured } from '@/lib/cloudinary/client';
 import { signUpload } from '@/lib/cloudinary/sign-upload';
+import { isMediaStoreWritable } from '@/lib/media-store/store';
 
 /**
  * Signs a direct browser→Cloudinary upload. The signature pins the tenant's
@@ -24,5 +25,10 @@ export async function POST(req: Request) {
   });
   if (!course) return apiError(404, 'not_found');
 
-  return NextResponse.json(signUpload(auth.tenantId!, course.id, parsed.data.kind));
+  const signature = await signUpload(auth.tenantId!, course.id, parsed.data.kind);
+  // Tells the uploader whether a file over Cloudinary's cap has somewhere else
+  // to go, so it can route by size instead of just refusing.
+  const fallback =
+    parsed.data.kind === 'video' && (await isMediaStoreWritable()) ? 'local' : null;
+  return NextResponse.json({ ...signature, fallback });
 }

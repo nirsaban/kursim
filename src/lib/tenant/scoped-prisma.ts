@@ -4,6 +4,7 @@ import { prisma } from './prisma';
 const TENANT_MODELS = new Set([
   'User',
   'Invite',
+  'AuthToken',
   'Course',
   'Module',
   'Lesson',
@@ -24,6 +25,7 @@ const TENANT_MODELS = new Set([
   'LessonNote',
   'Wishlist',
   'Purchase',
+  'PaymentOrder',
   'WhatsappMessage',
 ]);
 

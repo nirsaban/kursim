@@ -36,6 +36,33 @@ export const he = {
   evictedBody: 'מישהו נכנס לחשבון ממכשיר חדש, אז המכשיר הזה נותק אוטומטית. אם זה הייתם אתם — פשוט נכנסים שוב וממשיכים.',
   passwordHint: 'לפחות 8 תווים',
 
+  // password recovery (self-serve)
+  forgotLink: 'שכחתם את הסיסמה?',
+  forgotTitle: 'נחזיר לכם את הגישה',
+  forgotSubtitle: 'נשלח קישור למייל, ותבחרו סיסמה חדשה משלכם',
+  forgotEmailHint: 'האימייל שאיתו נרשמתם',
+  forgotSubmit: 'שליחת קישור לאיפוס',
+  forgotSending: 'שולחים...',
+  forgotSentTitle: 'הקישור בדרך אליכם 📬',
+  forgotSentBody:
+    'אם קיים חשבון עם האימייל הזה — שלחנו אליו קישור לבחירת סיסמה חדשה. הקישור בתוקף לשעה. שווה להציץ גם בתיקיית הספאם.',
+  resetTitle: 'בוחרים סיסמה חדשה',
+  resetSubtitle: 'עוד רגע אחד וחוזרים ללמוד',
+  resetConfirmLabel: 'שוב, ליתר ביטחון',
+  resetSubmit: 'שמירת הסיסמה',
+  resetSaving: 'שומרים...',
+  resetMismatch: 'שתי הסיסמאות לא זהות. ננסה שוב?',
+  resetDoneTitle: 'הסיסמה הוחלפה ✓',
+  resetDoneBody: 'אפשר להיכנס עכשיו עם הסיסמה החדשה. לכל שאר המכשירים נצטרך להיכנס מחדש.',
+  resetInvalidTitle: 'הקישור כבר לא בתוקף',
+  resetInvalidBody:
+    'קישורי איפוס תקפים לשעה אחת ולשימוש אחד בלבד. אפשר לבקש קישור חדש — לוקח שנייה.',
+
+  // platform support contact (one number for the whole platform)
+  supportPhone: '053-289-8849',
+  supportPhoneIntl: '972532898849',
+  supportLine: 'צריכים עזרה? אנחנו כאן בוואטסאפ: {phone}',
+
   // nav
   dashboard: 'לוח הבקרה',
   courses: 'קורסים',
@@ -113,6 +140,9 @@ export const he = {
   removeVideo: 'הסרת הווידאו',
   uploading: 'מעלה...',
   uploadFailed: 'ההעלאה לא הצליחה. ננסה שוב?',
+  uploadTooLarge: 'הקובץ גדול מדי — אפשר להעלות עד {size}. כדאי לדחוס אותו ולנסות שוב',
+  uploadTooLargeUnknown: 'הקובץ גדול מדי להעלאה. כדאי לדחוס אותו ולנסות שוב',
+  uploadNetworkError: 'ההעלאה נקטעה באמצע — בדקו את החיבור לאינטרנט ונסו שוב',
   attachments: 'קבצים מצורפים',
   addAttachment: 'צירוף קובץ',
   noVideo: 'עוד לא העליתם וידאו לשיעור הזה',
@@ -293,6 +323,31 @@ export const he = {
   paymentLink: 'קישור לתשלום (דף סליקה)',
   paymentLinkHint: 'ברגע שיש קישור — כפתור ההרשמה בדף יוביל ישר לתשלום',
   payNow: 'לתשלום מאובטח',
+
+  // Checkout — the form we collect before handing the buyer to Hyp's page.
+  checkoutTitle: 'סיום רכישה',
+  checkoutSubtitle: 'עוד רגע קטן והקורס שלכם. נשלח את פרטי הכניסה לוואטסאפ ולמייל מיד אחרי התשלום.',
+  checkoutIncludes: 'הרכישה כוללת',
+  checkoutTotal: 'סה"כ לתשלום',
+  checkoutName: 'שם מלא',
+  checkoutEmail: 'דוא"ל',
+  checkoutEmailHint: 'לכאן יגיעו פרטי הכניסה — בדקו שאין טעות',
+  checkoutPhone: 'טלפון נייד',
+  checkoutPhoneHint: 'לוואטסאפ עם שם המשתמש והסיסמה',
+  checkoutPay: 'מעבר לתשלום מאובטח',
+  checkoutSubmitting: 'מעבירים אתכם לתשלום…',
+  checkoutSecureNote: '🔒 התשלום מתבצע בדף מאובטח של Hyp. פרטי האשראי לא עוברים דרכנו ולא נשמרים אצלנו.',
+  checkoutBackToCourse: 'חזרה לדף הקורס',
+  checkoutError: 'משהו השתבש בדרך לתשלום. נסו שוב עוד רגע, ואם זה חוזר — דברו איתנו.',
+  checkoutErrorNoPrice: 'הקורס הזה עדיין לא פתוח לרכישה. דברו איתנו ונסדר.',
+
+  // Payment failure landing (Hyp redirects here when the charge did not go through)
+  payFailedTitle: 'התשלום לא הושלם',
+  payFailedBody: 'לא חויבתם. זה קורה לפעמים — כרטיס שנדחה, חיבור שנפל, או סתם דף שנסגר באמצע.',
+  payFailedRetry: 'לנסות שוב',
+  payFailedSupport: 'אם ירדו לכם כספים או שזה חוזר — כתבו לנו ונטפל בזה מיד.',
+  payFailedBackHome: 'חזרה לדף הבית',
+
   thankYouTitle: 'הרכישה התקבלה! 🎉',
   thankYouBody: 'שלחנו לכם הודעה עם פרטי הכניסה לקורס "{course}" — לדוא"ל ולוואטסאפ. בדקו את תיבת הדואר הנכנס (וגם את הספאם) כדי להתחבר.',
   thankYouHint: 'ההודעה יכולה לקחת כמה דקות להגיע.',
@@ -633,7 +688,7 @@ export const he = {
 
   // ── payments (Grow webhook → auto-provision + WhatsApp) ──
   payments: 'מכירות ותשלומים',
-  paymentsSubtitle: 'חיבור לדף התשלום של Grow — כל רכישה פותחת חשבון לתלמיד ושולחת לו את פרטי הכניסה בוואטסאפ',
+  paymentsSubtitle: 'כל רכישה פותחת חשבון לתלמיד, רושמת אותו לקורס ושולחת לו את פרטי הכניסה בוואטסאפ ובמייל',
   paymentsHowTitle: 'איך מחברים',
   paymentsHowStep1: 'מעתיקים את כתובת ה-Webhook של הקורס',
   paymentsHowStep2: 'ב-Grow, בדף התשלום של הקורס, מדביקים אותה בשדה ה-Webhook / קריאה חוזרת לשרת',
@@ -664,6 +719,25 @@ export const he = {
     'רוצים שהקונה יוכל לבחור רק חלק מהמוצרים? הגדירו ב-Grow את "מספר קטלוגי" של כל מוצר למזהה הקורס המופיע כאן, ואז תינתן גישה רק למה שנרכש בפועל.',
   bundleCourseId: 'מזהה הקורס',
   salePhoneLabel: 'טלפון',
+
+  // ── price + bundle (Hyp checkout, replaces the Grow link) ──
+  coursePrice: 'מחיר הקורס',
+  coursePriceHint: 'המחיר בשקלים שהקונה יחויב בו. אפשר גם עם אגורות, למשל 349.90. השאירו ריק כדי לא למכור את הקורס כרגע.',
+  coursePriceCurrency: '₪',
+  coursePriceEmpty: 'ללא מחיר — כפתור הרכישה לא יופיע',
+  coursePriceSaved: 'המחיר נשמר ✓',
+  courseBundleTitle: 'הרכישה כוללת גם',
+  courseBundleHint: 'סמנו קורסים נוספים שכל מי שקונה את הקורס הזה יקבל אליהם גישה — במחיר אחד, בתשלום אחד.',
+  courseBundleNone: 'אין עדיין קורסים אחרים לצרף',
+  courseBundleSummary: 'הקונה יקבל גישה ל-{n} קורסים',
+  checkoutUrlLabel: 'כתובת דף הרכישה',
+  paymentsHypTitle: 'סליקה בכרטיס אשראי (Hyp)',
+  paymentsHypConnected: 'מחוברת ✓',
+  paymentsHypMissing: 'לא מוגדרת — פנו לתמיכה',
+  paymentsHypNote:
+    'הקונה ממלא שם, דוא"ל וטלפון בדף הרכישה שלנו, משלם בדף המאובטח של Hyp, וחוזר לדף התודה. החשבון נפתח אוטומטית ופרטי הכניסה נשלחים בוואטסאפ ובמייל.',
+  paymentsSetPriceCta: 'להגדרת מחיר — לשונית השיווק של הקורס',
+
   resendWa: 'שליחה מחדש בוואטסאפ',
   resendSent: 'נשלח! ✓',
   resendQueued: 'ממתין לחיבור וואטסאפ',
@@ -705,6 +779,20 @@ export const he = {
     'היי {name},\n\nתודה על ההרשמה! הגישה שלך מוכנה לקורסים הבאים:\n{courses}\n\nכניסה למערכת: {url}\nאימייל: {email}\nסיסמה זמנית: {pass}\n\nבכניסה הראשונה תתבקש/י לבחור סיסמה חדשה משלך.\nשמרו את המייל הזה עד שתחליפו סיסמה.\n\nבהצלחה ובתיאבון!',
   mailBuyerExistingMulti:
     'היי {name},\n\nתודה על ההרשמה! הקורסים הבאים נוספו לחשבון הקיים שלך:\n{courses}\n\nכניסה למערכת: {url}\nאימייל: {email}\n\nהסיסמה שלך לא השתנתה.\n\nבהצלחה ובתיאבון!',
+  // course catalog number (ties a course to its Grow product)
+  catalogNumber: 'מספר קטלוגי',
+  catalogNumberHint:
+    'העתיקו את המספר הזה לשדה "catalog_number" של המוצר המתאים בגרואו. כך אנחנו יודעים בדיוק איזה קורס נקנה, ותלמיד מקבל רק את מה ששילם עליו.',
+  catalogNumberTaken: 'המספר הזה כבר תפוס בקורס אחר. בחרו מספר אחר.',
+  catalogNumberInvalid: 'צריך מספר שלם, 1 ומעלה',
+
+  saleUntaggedTitle: 'שימו לב: מכירה ללא מספר קטלוגי ⚠️',
+  saleUntaggedBody:
+    'בעסקה האחרונה לא זוהה מספר קטלוגי, ולכן ניתנה גישה לכל הקורסים בקישור: {courses}. כדי שתלמיד יקבל רק את מה שקנה — מלאו בגרואו את שדה "catalog_number" של כל מוצר במספר הקטלוגי של הקורס המתאים.',
+
+  mailResetSubject: 'איפוס הסיסמה שלך',
+  mailResetBody:
+    'קיבלנו בקשה לאיפוס הסיסמה שלך.\n\nלבחירת סיסמה חדשה, היכנסו לקישור הבא:\n{url}\n\nהקישור בתוקף לשעה אחת, ולשימוש חד-פעמי.\nאם לא ביקשתם לאפס סיסמה — אפשר פשוט להתעלם מהמייל הזה. שום דבר בחשבון לא השתנה.\n\nצריכים עזרה? אנחנו כאן בוואטסאפ: {support}',
   mailOwnerSubject: 'מכירה חדשה: {course}',
   mailOwnerBody:
     'מכירה חדשה נרשמה במערכת 🎉\n\nקורס: {course}\nלקוח/ה: {name}\nאימייל: {email}\nטלפון: {phone}\nסכום: {amount}\nמספר עסקה: {txn}\nלקוח/ה חדש/ה: {isNew}\nמשלוח וואטסאפ: {wa}\n\nיומן המכירות: {link}',

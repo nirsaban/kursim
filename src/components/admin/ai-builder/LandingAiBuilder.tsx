@@ -38,6 +38,10 @@ function buildPreviewProps(m: CourseMarketing, tenantSlug: string, courseTitle: 
     m,
     theme,
     previewMode: true,
+    // Copy-only preview: no course row here, so price wording is whatever the
+    // owner typed and the padlock follows the legacy link.
+    paid: Boolean(m.paymentLink),
+    priceLabel: m.priceText,
     headline,
     ctaHref,
     ctaText,
