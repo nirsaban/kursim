@@ -74,7 +74,7 @@ export default function AffiliateCard({ courseId }: { courseId: string }) {
             setTimeout(() => setCopied(false), 1500);
           }}
         >
-          {copied ? he.copied : he.copy}
+          <span className="transition-opacity duration-200">{copied ? he.copied : he.copy}</span>
         </Button>
       </div>
 

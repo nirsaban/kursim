@@ -3,11 +3,11 @@ import { cn } from '@/lib/cn';
 export type SeatState = 'active' | 'occupied' | 'idle' | 'free' | 'limit-active' | 'limit';
 
 const seatStyles: Record<SeatState, string> = {
-  active: 'bg-live animate-pulse-live',
+  active: 'bg-live animate-pulse-live ring-2 ring-live/30',
   occupied: 'bg-live',
   idle: 'bg-seat',
   free: 'border-2 border-dashed border-seat box-border',
-  'limit-active': 'bg-coin animate-pulse-amber',
+  'limit-active': 'bg-coin animate-pulse-amber ring-2 ring-coin/30',
   limit: 'bg-coin',
 };
 

@@ -18,6 +18,7 @@ export default function WishlistButton({
   const [saved, setSaved] = useState(initialSaved);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
+  const [pulsing, setPulsing] = useState(false);
 
   async function toggle(e: React.MouseEvent) {
     // Cards are often wrapped in a link — don't navigate when toggling.
@@ -34,6 +35,8 @@ export default function WishlistButton({
     if (res.ok) {
       const data = await res.json();
       setSaved(Boolean(data.saved));
+      setPulsing(true);
+      setTimeout(() => setPulsing(false), 150);
     } else {
       // Don't flip the optimistic state — the toggle didn't actually happen.
       setError(true);
@@ -56,7 +59,12 @@ export default function WishlistButton({
           className,
         )}
       >
-        <span aria-hidden>{saved ? '🔖' : '🏷️'}</span>
+        <span
+          aria-hidden
+          className={cn('inline-block transition-transform duration-150', pulsing && 'scale-125')}
+        >
+          {saved ? '🔖' : '🏷️'}
+        </span>
         {saved ? he.removeFromWishlist : he.addToWishlist}
       </button>
       {error && (

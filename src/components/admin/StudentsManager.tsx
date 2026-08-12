@@ -246,7 +246,7 @@ export default function StudentsManager() {
                     </button>
                     <button
                       onClick={() => removeStudent(s.id)}
-                      className="text-xs font-medium text-danger hover:underline"
+                      className="text-xs font-semibold text-danger hover:underline"
                     >
                       {he.delete}
                     </button>

@@ -30,7 +30,7 @@ export function Th({
     <th
       {...props}
       className={cn(
-        'text-start px-4 py-3 text-xs font-semibold text-muted bg-paper/60 border-b border-line whitespace-nowrap',
+        'text-start px-4 py-3 text-xs font-semibold text-muted bg-paper/60 border-b border-line/60 whitespace-nowrap',
         className,
       )}
     />

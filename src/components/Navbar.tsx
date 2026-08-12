@@ -166,6 +166,8 @@ function NavGroupItem({
   ink: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
+  const [menuEntered, setMenuEntered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -175,6 +177,17 @@ function NavGroupItem({
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
+  }, [open]);
+
+  useEffect(() => {
+    if (open) {
+      setMenuMounted(true);
+      const id = requestAnimationFrame(() => setMenuEntered(true));
+      return () => cancelAnimationFrame(id);
+    }
+    setMenuEntered(false);
+    const timer = setTimeout(() => setMenuMounted(false), 200);
+    return () => clearTimeout(timer);
   }, [open]);
 
   const isActive = (l: NavLink) => (l.exact ? pathname === l.href : pathname.startsWith(l.href));
@@ -201,10 +214,13 @@ function NavGroupItem({
         {group.label}
         <span aria-hidden className="text-[10px] opacity-70">▾</span>
       </button>
-      {open && (
+      {menuMounted && (
         <div
           role="menu"
-          className="absolute end-0 mt-2 w-52 bg-card text-ink border border-line rounded-xl shadow-lift py-1.5 z-50"
+          className={cn(
+            'absolute end-0 mt-2 w-52 bg-card text-ink border border-line rounded-xl shadow-lift py-1.5 z-50 origin-top transition-[opacity,transform] duration-200 ease-out',
+            menuEntered ? 'opacity-100 scale-100' : 'opacity-0 scale-95',
+          )}
         >
           {group.items.map((l) => (
             <Link
@@ -236,6 +252,8 @@ function UserMenu({
   ink: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
+  const [menuEntered, setMenuEntered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -245,6 +263,17 @@ function UserMenu({
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
+  }, [open]);
+
+  useEffect(() => {
+    if (open) {
+      setMenuMounted(true);
+      const id = requestAnimationFrame(() => setMenuEntered(true));
+      return () => cancelAnimationFrame(id);
+    }
+    setMenuEntered(false);
+    const timer = setTimeout(() => setMenuMounted(false), 200);
+    return () => clearTimeout(timer);
   }, [open]);
 
   async function logout() {
@@ -259,7 +288,7 @@ function UserMenu({
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'w-9 h-9 rounded-full font-display font-bold text-sm flex items-center justify-center transition-colors',
+          'w-10 h-10 rounded-full font-display font-bold text-sm flex items-center justify-center transition-colors',
           ink
             ? 'bg-copper-500 text-card hover:bg-copper-600'
             : 'bg-ink text-card hover:bg-ink-surface',
@@ -270,10 +299,13 @@ function UserMenu({
       >
         <span dir="ltr">{initial}</span>
       </button>
-      {open && (
+      {menuMounted && (
         <div
           role="menu"
-          className="absolute end-0 mt-2 w-56 bg-card text-ink border border-line rounded-xl shadow-lift py-1.5 z-50"
+          className={cn(
+            'absolute end-0 mt-2 w-56 bg-card text-ink border border-line rounded-xl shadow-lift py-1.5 z-50 origin-top transition-[opacity,transform] duration-200 ease-out',
+            menuEntered ? 'opacity-100 scale-100' : 'opacity-0 scale-95',
+          )}
         >
           <p className="px-4 py-2 text-xs text-muted border-b border-line truncate" dir="ltr">
             {email}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/client/api';
 import { he } from '@/lib/he';
@@ -13,6 +13,13 @@ export default function RedeemForm({ slug }: { slug: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimer.current) clearTimeout(redirectTimer.current);
+    };
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,7 +32,7 @@ export default function RedeemForm({ slug }: { slug: string }) {
     if (res.ok) {
       const data = await res.json();
       setSuccess(true);
-      setTimeout(() => {
+      redirectTimer.current = setTimeout(() => {
         router.push(`/t/${slug}/course/${data.courseId}`);
       }, 1500);
     } else {
@@ -51,8 +58,18 @@ export default function RedeemForm({ slug }: { slug: string }) {
           autoComplete="off"
         />
       </Field>
-      {error && <p className="text-sm text-danger font-medium">{error}</p>}
+      {error && (
+        <div className="rounded-xl2 border border-danger-line bg-danger-soft px-5 py-4">
+          <p className="text-sm text-danger font-medium">{error}</p>
+        </div>
+      )}
       <Button type="submit" size="lg" disabled={busy} className="w-full">
+        {busy && (
+          <span
+            className="inline-block h-3.5 w-3.5 rounded-full border-2 border-current border-t-transparent animate-spin"
+            aria-hidden="true"
+          />
+        )}
         {he.redeemSubmit}
       </Button>
     </form>

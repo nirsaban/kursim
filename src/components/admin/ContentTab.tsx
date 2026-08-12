@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn';
 import Button from '@/components/ui/Button';
 import { Input } from '@/components/ui/Field';
 import EmptyState from '@/components/ui/EmptyState';
+import SavedFlash from '@/components/ui/SavedFlash';
 import MediaUploader from './MediaUploader';
 
 interface Attachment {
@@ -34,21 +35,6 @@ export interface CourseStructure {
   description: string | null;
   status: 'DRAFT' | 'PUBLISHED';
   modules: Module[];
-}
-
-/** Small transient "✓ saved" flash next to whatever field just autosaved. */
-function SavedFlash({ shown }: { shown: boolean }) {
-  return (
-    <span
-      className={cn(
-        'text-xs font-medium text-ok transition-opacity duration-300',
-        shown ? 'opacity-100' : 'opacity-0',
-      )}
-      aria-hidden={!shown}
-    >
-      {he.saved}
-    </span>
-  );
 }
 
 export default function ContentTab({
@@ -189,7 +175,7 @@ export default function ContentTab({
       {course.modules.map((mod, mi) => (
         <section key={mod.id} className="bg-card border border-line rounded-xl2 shadow-card">
           <div className="flex items-center flex-wrap gap-3 px-5 py-3.5 border-b border-line bg-paper/50 rounded-t-xl2">
-            <div className="flex flex-col shrink-0" aria-hidden>
+            <div className="flex flex-col gap-1 shrink-0" aria-hidden>
               <button
                 type="button"
                 onClick={() => moveModule(mi, -1)}
@@ -269,7 +255,7 @@ export default function ContentTab({
             {mod.lessons.map((lesson, li) => (
               <li key={lesson.id} className="px-5 py-3.5">
                 <div className="flex items-center flex-wrap gap-3">
-                  <div className="flex flex-col shrink-0" aria-hidden>
+                  <div className="flex flex-col gap-1 shrink-0" aria-hidden>
                     <button
                       type="button"
                       onClick={() => moveLesson(mod, li, -1)}

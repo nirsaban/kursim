@@ -1,7 +1,8 @@
 'use client';
 
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { cn } from '@/lib/cn';
+import { usePrefersReducedMotion } from '@/components/media/hooks';
 
 /**
  * Pointer-tracked 3D tilt with a moving glare highlight — the "premium card"
@@ -22,11 +23,16 @@ export default function TiltCard({
   const ref = useRef<HTMLDivElement>(null);
   const glareRef = useRef<HTMLDivElement>(null);
   const frame = useRef<number>(0);
+  const reducedMotion = usePrefersReducedMotion();
+  const reducedMotionRef = useRef(reducedMotion);
+  useEffect(() => {
+    reducedMotionRef.current = reducedMotion;
+  }, [reducedMotion]);
 
   const onMove = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       if (e.pointerType !== 'mouse') return;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (reducedMotionRef.current) return;
       const el = ref.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();

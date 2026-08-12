@@ -180,7 +180,7 @@ export default function ClassicLanding({
                       />
                     </span>
                   </span>
-                  <h1 className="font-display text-4xl sm:text-[52px] font-black leading-[1.15] max-w-3xl text-paper">
+                  <h1 className="font-display text-4xl sm:text-[52px] font-black leading-[1.15] tracking-tight max-w-3xl text-paper">
                     {headlineWords.length > 1 ? (
                       <>
                         {headlineLead}{headlineLead && ' '}

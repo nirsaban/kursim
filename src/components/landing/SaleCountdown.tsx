@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { he } from '@/lib/he';
+import { usePrefersReducedMotion } from '@/components/media/hooks';
 
 function partsUntil(endsAt: string) {
   const end = new Date(`${endsAt}T23:59:59`).getTime();
@@ -28,6 +29,7 @@ export default function SaleCountdown({
   accent: string;
 }) {
   const [t, setT] = useState<ReturnType<typeof partsUntil> | null>(null);
+  const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
     setT(partsUntil(endsAt));
@@ -58,7 +60,7 @@ export default function SaleCountdown({
           >
             <div
               className="font-display font-black text-2xl tabular-nums leading-none"
-              style={{ color: accent }}
+              style={{ color: accent, transition: reduced ? 'none' : undefined }}
             >
               {String(c.v).padStart(2, '0')}
             </div>

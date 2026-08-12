@@ -38,7 +38,12 @@ export default function LessonNotes({
       <div className="bg-card border border-line rounded-xl2 shadow-card p-5">
         <div className="flex items-baseline justify-between gap-3 mb-1">
           <h2 className="font-display text-lg font-bold">{he.lessonNotesLabel}</h2>
-          {saved && <span className="text-xs font-semibold text-ok">{he.notesSaved}</span>}
+          <span
+            className={`text-xs font-semibold text-ok transition-opacity duration-200 ${saved ? 'opacity-100' : 'opacity-0'}`}
+            aria-hidden={!saved}
+          >
+            {he.notesSaved}
+          </span>
         </div>
         <p className="text-sm text-muted mb-3">{he.lessonNotesHint}</p>
         <Textarea

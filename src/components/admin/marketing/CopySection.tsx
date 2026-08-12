@@ -21,7 +21,7 @@ export default function CopySection({
 }) {
   const [courseTitle, setCourseTitle] = useState('');
   const [showAiBuilder, setShowAiBuilder] = useState(false);
-  const { value: m, set, save, saved, dirty, busy } = useEditableResource<CourseMarketing>({
+  const { value: m, set, save, saved, dirty, busy, error } = useEditableResource<CourseMarketing>({
     load: async () => {
       const r = await apiFetch(`/api/courses/${courseId}/marketing`);
       return r.ok ? (await r.json()).marketing : null;
@@ -198,7 +198,7 @@ export default function CopySection({
         </CardBody>
       </Card>
 
-      <SaveBar busy={busy} saved={saved} dirty={dirty} onSave={() => save()} />
+      <SaveBar busy={busy} saved={saved} dirty={dirty} error={error} onSave={() => save()} />
     </div>
   );
 }

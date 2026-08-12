@@ -28,7 +28,7 @@ export default function PublishSection({
   const [price, setPrice] = useState('');
   const [priceSaved, setPriceSaved] = useState(false);
   const [siblings, setSiblings] = useState<SiblingCourse[]>([]);
-  const { value: m, set, save, saved, dirty, busy } = useEditableResource<CourseMarketing>({
+  const { value: m, set, save, saved, dirty, busy, error } = useEditableResource<CourseMarketing>({
     load: async () => {
       const r = await apiFetch(`/api/courses/${courseId}/marketing`);
       if (!r.ok) return null;
@@ -216,7 +216,7 @@ export default function PublishSection({
         </CardBody>
       </Card>
 
-      <SaveBar busy={busy} saved={saved} dirty={dirty} onSave={() => save()} />
+      <SaveBar busy={busy} saved={saved} dirty={dirty} error={error} onSave={() => save()} />
     </div>
   );
 }

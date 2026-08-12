@@ -92,8 +92,18 @@ export default function ResetForm({
           autoComplete="new-password"
         />
       </Field>
-      {error && <p className="text-sm text-danger font-medium">{error}</p>}
+      {error && (
+        <div className="rounded-xl2 border border-danger-line bg-danger-soft px-5 py-4">
+          <p className="text-sm text-danger font-medium">{error}</p>
+        </div>
+      )}
       <Button type="submit" size="lg" disabled={busy} className="w-full">
+        {busy && (
+          <span
+            className="inline-block h-3.5 w-3.5 rounded-full border-2 border-current border-t-transparent animate-spin"
+            aria-hidden="true"
+          />
+        )}
         {busy ? he.resetSaving : he.resetSubmit}
       </Button>
       <Link

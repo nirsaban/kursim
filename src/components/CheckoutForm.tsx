@@ -92,6 +92,12 @@ export default function CheckoutForm({
         className="mt-1"
         style={{ background: accent }}
       >
+        {busy && (
+          <span
+            aria-hidden
+            className="inline-block h-3.5 w-3.5 rounded-full border-2 border-card border-t-transparent animate-spin"
+          />
+        )}
         {busy ? he.checkoutSubmitting : he.checkoutPay}
       </Button>
 

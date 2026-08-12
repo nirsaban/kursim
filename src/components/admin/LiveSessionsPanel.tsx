@@ -175,10 +175,8 @@ function StudentCard({
   return (
     <div
       className={cn(
-        'bg-card rounded-[18px] p-5',
-        atLimit
-          ? 'border-[1.5px] border-warn-line shadow-[0_2px_10px_rgba(161,98,7,0.06)]'
-          : 'border border-line',
+        'bg-card rounded-xl2 p-5',
+        atLimit ? 'border-[1.5px] border-warn-line shadow-card' : 'border border-line',
       )}
     >
       <div className="flex items-center gap-3.5 mb-4">
@@ -212,7 +210,7 @@ function StudentCard({
           return (
             <div
               key={s.sid}
-              className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-paper rounded-[11px] px-3.5 py-2.5 text-sm"
+              className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-paper rounded-xl px-3.5 py-2.5 text-sm"
             >
               <span
                 className={cn(

@@ -12,7 +12,7 @@ export default function ProgressBar({
   const pct = Math.max(0, Math.min(100, value));
   return (
     <div
-      className={cn('h-2 bg-ink/[0.07] rounded-full overflow-hidden', className)}
+      className={cn('h-2 bg-ink/[0.12] rounded-full overflow-hidden', className)}
       role="progressbar"
       aria-valuenow={pct}
       aria-valuemin={0}

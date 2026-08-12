@@ -19,7 +19,7 @@ export default function NavTile({
       href={href}
       className={cn(
         'group bg-card border border-line rounded-xl2 shadow-card p-6 sm:p-7 h-full flex flex-col gap-3',
-        'transition-all duration-300 hover:shadow-lift hover:-translate-y-1',
+        'transition-[transform,box-shadow] duration-200 hover:shadow-lift hover:-translate-y-1 active:translate-y-0 active:shadow-card',
       )}
     >
       <span

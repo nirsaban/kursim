@@ -57,7 +57,7 @@ export default async function LessonPage({
       </Link>
       <div className="flex items-baseline gap-3 mt-2 mb-5">
         <p className="kicker">{lesson.module.title}</p>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold">{lesson.title}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl">{lesson.title}</h1>
       </div>
     </>
   );

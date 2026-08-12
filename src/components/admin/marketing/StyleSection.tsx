@@ -9,7 +9,7 @@ import { AccentPicker, EmojiPicker, LayoutPicker } from '@/components/admin/Mark
 import SaveBar from '@/components/admin/SaveBar';
 
 export default function StyleSection({ courseId }: { courseId: string }) {
-  const { value: m, set, save, saved, dirty, busy } = useEditableResource<CourseMarketing>({
+  const { value: m, set, save, saved, dirty, busy, error } = useEditableResource<CourseMarketing>({
     load: async () => {
       const r = await apiFetch(`/api/courses/${courseId}/marketing`);
       return r.ok ? (await r.json()).marketing : null;
@@ -42,7 +42,7 @@ export default function StyleSection({ courseId }: { courseId: string }) {
         </CardBody>
       </Card>
 
-      <SaveBar busy={busy} saved={saved} dirty={dirty} onSave={() => save()} />
+      <SaveBar busy={busy} saved={saved} dirty={dirty} error={error} onSave={() => save()} />
     </div>
   );
 }

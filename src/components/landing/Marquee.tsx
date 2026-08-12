@@ -1,8 +1,12 @@
+'use client';
+
+import { usePrefersReducedMotion } from '@/components/media/hooks';
+
 /**
  * Infinite scrolling strip of keywords/outcomes — the "exclusive brand" band
  * under the hero. Pure CSS animation (animate-marquee translates the doubled
  * track by exactly one copy, so the loop is seamless); reduced-motion users
- * get a static strip via the global media query.
+ * get a single static, non-duplicated strip instead.
  */
 export default function Marquee({
   items,
@@ -13,6 +17,7 @@ export default function Marquee({
   accent: string;
   className?: string;
 }) {
+  const reduced = usePrefersReducedMotion();
   if (items.length === 0) return null;
   const copy = (key: string, hidden = false) => (
     <div key={key} className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
@@ -31,9 +36,9 @@ export default function Marquee({
   );
   return (
     <div className={`overflow-hidden border-y border-line bg-paper py-3.5 ${className}`}>
-      <div className="flex w-max animate-marquee will-change-transform">
+      <div className={reduced ? 'flex w-max' : 'flex w-max animate-marquee will-change-transform'}>
         {copy('a')}
-        {copy('b', true)}
+        {!reduced && copy('b', true)}
       </div>
     </div>
   );

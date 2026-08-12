@@ -45,15 +45,21 @@
     transform-style: preserve-3d;
   }
 
-  /* Sheen sweep — put on a relative overflow-hidden element */
+  /* Sheen sweep — put on a relative overflow-hidden element. Plays once on
+     hover/focus rather than looping forever, so it stays a deliberate
+     "catching the light" cue instead of a persistent distraction. */
   .fx-sheen::after {
     content: '';
     position: absolute;
     inset-block: 0;
     inline-size: 40%;
     background: linear-gradient(105deg, transparent, rgba(255, 253, 248, 0.35), transparent);
-    animation: sheen 2.6s ease-in-out infinite;
+    transform: translateX(-150%) skewX(-18deg);
     pointer-events: none;
+  }
+  .fx-sheen:hover::after,
+  .fx-sheen:focus-visible::after {
+    animation: sheen 0.9s ease-in-out 1;
   }
 
   /* Subtle film grain for dark hero surfaces */
@@ -75,5 +81,13 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .backdrop-blur,
+  .backdrop-blur-sm,
+  .backdrop-blur-\[2px\] {
+    backdrop-filter: none !important;
   }
 }

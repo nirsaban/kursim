@@ -9,7 +9,7 @@ export default function LogoutButton() {
     window.location.href = loginPathFor(window.location.pathname);
   }
   return (
-    <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-800">
+    <button onClick={logout} className="text-sm text-muted hover:text-ink transition-colors">
       {he.logout}
     </button>
   );

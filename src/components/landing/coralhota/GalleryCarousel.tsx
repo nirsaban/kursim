@@ -1,15 +1,17 @@
 'use client';
 
 import { useRef } from 'react';
+import { usePrefersReducedMotion } from '@/components/media/hooks';
 
 /** Horizontal scroll-snap strip with prev/next arrows, like the reference's video carousel. */
 export default function GalleryCarousel({ children }: { children: React.ReactNode }) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const reduced = usePrefersReducedMotion();
 
   const scrollBy = (dir: 1 | -1) => {
     const el = trackRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' });
+    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: reduced ? 'auto' : 'smooth' });
   };
 
   return (

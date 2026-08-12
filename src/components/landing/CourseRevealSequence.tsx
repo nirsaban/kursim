@@ -53,7 +53,7 @@ export default function CourseRevealSequence({
                 {badge}
               </span>
             )}
-            <h1 className="font-display text-4xl sm:text-[56px] font-black leading-[1.12] max-w-3xl text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]">
+            <h1 className="font-display text-4xl sm:text-[56px] font-black leading-[1.12] tracking-tight max-w-3xl text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]">
               {headline}
             </h1>
           </div>

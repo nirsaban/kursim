@@ -66,7 +66,7 @@ export default function NotificationBell({ slug }: { slug: string }) {
         type="button"
         onClick={toggle}
         aria-label={he.notifications}
-        className="relative inline-flex items-center justify-center w-9 h-9 rounded-xl text-muted hover:text-ink hover:bg-ink/5 transition-colors"
+        className="relative inline-flex items-center justify-center w-10 h-10 rounded-xl text-muted hover:text-ink hover:bg-ink/5 transition-colors"
       >
         <span className="text-lg" aria-hidden>
           🔔

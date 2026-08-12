@@ -30,12 +30,25 @@ export default function LessonNav({
   currentId: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
+  const [menuEntered, setMenuEntered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const currentRef = useRef<HTMLAnchorElement | null>(null);
 
   const idx = lessons.findIndex((l) => l.id === currentId);
   const prev = idx > 0 ? lessons[idx - 1] : null;
   const next = idx >= 0 && idx < lessons.length - 1 ? lessons[idx + 1] : null;
+
+  useEffect(() => {
+    if (open) {
+      setMenuMounted(true);
+      const id = requestAnimationFrame(() => setMenuEntered(true));
+      return () => cancelAnimationFrame(id);
+    }
+    setMenuEntered(false);
+    const timer = setTimeout(() => setMenuMounted(false), 200);
+    return () => clearTimeout(timer);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -59,7 +72,7 @@ export default function LessonNav({
     .replace('{n}', String(lessons.length));
 
   const sideBtn =
-    'shrink-0 inline-flex items-center gap-1.5 text-sm font-medium bg-card border border-line rounded-xl px-3 py-2.5 hover:border-brand-300 transition-colors disabled:opacity-40';
+    'shrink-0 inline-flex items-center gap-1.5 text-sm font-medium bg-card border border-line rounded-xl px-3 py-2.5 min-h-[44px] hover:border-brand-300 transition-colors disabled:opacity-40';
 
   let lastModule = '';
 
@@ -93,14 +106,20 @@ export default function LessonNav({
             </span>
             {he.jumpToLesson}
           </span>
-          <span className={cn('transition-transform text-muted', open && 'rotate-180')} aria-hidden>
+          <span
+            className={cn('transition-transform duration-200 text-muted', open && 'rotate-180')}
+            aria-hidden
+          >
             ▾
           </span>
         </button>
 
-        {open && (
+        {menuMounted && (
           <div
-            className="absolute z-30 top-full mt-2 inset-x-0 bg-card border border-line rounded-xl2 shadow-card overflow-hidden"
+            className={cn(
+              'absolute z-30 top-full mt-2 inset-x-0 bg-card border border-line rounded-xl2 shadow-card overflow-hidden origin-top transition-[opacity,transform] duration-200 ease-out',
+              menuEntered ? 'opacity-100 scale-100' : 'opacity-0 scale-95',
+            )}
             role="menu"
           >
             <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-line bg-paper">
@@ -113,6 +132,7 @@ export default function LessonNav({
                 {he.closeMenu}
               </button>
             </div>
+            <div className="relative">
             <div className="max-h-80 overflow-y-auto py-1">
               {lessons.map((l, i) => {
                 const isCurrent = l.id === currentId;
@@ -153,7 +173,7 @@ export default function LessonNav({
                           'flex items-center gap-2 px-4 py-2 text-sm transition-colors',
                           isCurrent
                             ? 'bg-copper-50 text-copper-800 font-semibold'
-                            : 'hover:bg-ink/5',
+                            : 'hover:bg-ink/5 active:bg-paper',
                         )}
                       >
                         {row}
@@ -162,6 +182,11 @@ export default function LessonNav({
                   </div>
                 );
               })}
+            </div>
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-card to-transparent"
+              aria-hidden
+            />
             </div>
           </div>
         )}

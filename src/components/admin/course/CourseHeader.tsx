@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/client/api';
-import { cn } from '@/lib/cn';
 import { he } from '@/lib/he';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
+import SavedFlash from '@/components/ui/SavedFlash';
 
 interface CourseHead {
   id: string;
@@ -101,15 +101,7 @@ export default function CourseHeader({
               }
             }}
           />
-          <span
-            className={cn(
-              'text-xs font-medium text-ok transition-opacity duration-300 shrink-0',
-              savedField === 'title' ? 'opacity-100' : 'opacity-0',
-            )}
-            aria-hidden={savedField !== 'title'}
-          >
-            {he.saved}
-          </span>
+          <SavedFlash shown={savedField === 'title'} />
           <Badge tone={course.status === 'PUBLISHED' ? 'ok' : 'neutral'}>
             {course.status === 'PUBLISHED' ? he.published : he.draft}
           </Badge>
@@ -125,9 +117,12 @@ export default function CourseHeader({
             {course.status === 'PUBLISHED' ? he.unpublish : he.publish}
           </Button>
           {isOwner && (
-            <Button variant="danger" size="sm" onClick={deleteCourse}>
-              {he.delete}
-            </Button>
+            <>
+              <span className="w-px h-5 bg-line shrink-0" aria-hidden />
+              <Button variant="danger" size="sm" onClick={deleteCourse}>
+                {he.delete}
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -142,15 +137,9 @@ export default function CourseHeader({
           }
         }}
       />
-      <span
-        className={cn(
-          'block text-xs font-medium text-ok transition-opacity duration-300 mt-1',
-          savedField === 'description' ? 'opacity-100' : 'opacity-0',
-        )}
-        aria-hidden={savedField !== 'description'}
-      >
-        {he.saved}
-      </span>
+      <div className="mt-1">
+        <SavedFlash shown={savedField === 'description'} />
+      </div>
 
       {/* Catalog number — the key that ties this course to its Grow product. */}
       <div className="mt-3 pt-3 border-t border-line flex items-start gap-3 flex-wrap">
@@ -171,15 +160,7 @@ export default function CourseHeader({
               }
             }}
           />
-          <span
-            className={cn(
-              'text-xs font-medium text-ok transition-opacity duration-300 shrink-0',
-              savedField === 'catalogNumber' ? 'opacity-100' : 'opacity-0',
-            )}
-            aria-hidden={savedField !== 'catalogNumber'}
-          >
-            {he.saved}
-          </span>
+          <SavedFlash shown={savedField === 'catalogNumber'} />
         </div>
         <p className="text-xs text-muted leading-relaxed flex-1 min-w-52">
           {catalogError ? (

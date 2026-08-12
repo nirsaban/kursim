@@ -17,8 +17,8 @@ export default function StatCard({
   const inner = (
     <div
       className={cn(
-        'bg-card border border-line rounded-xl2 shadow-card p-4 sm:p-5 h-full transition-all duration-300',
-        href && 'hover:shadow-lift hover:-translate-y-1',
+        'bg-card border border-line rounded-xl2 shadow-card p-4 sm:p-5 h-full transition-[transform,box-shadow] duration-200',
+        href && 'hover:shadow-lift hover:-translate-y-1 active:translate-y-0 active:shadow-card',
       )}
     >
       <p className="kicker">{label}</p>

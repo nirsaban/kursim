@@ -89,7 +89,7 @@ export default async function CoursePage({
       </Link>
 
       <div className="bg-card border border-line rounded-xl2 shadow-card p-6 mt-4 mb-8">
-        <h1 className="font-display text-3xl font-bold">{course.title}</h1>
+        <h1 className="font-display text-3xl">{course.title}</h1>
         {course.description && <p className="text-muted mt-2 leading-relaxed">{course.description}</p>}
         <div className="flex items-center gap-4 mt-5">
           <div className="flex-1">
@@ -163,7 +163,7 @@ export default async function CoursePage({
                         <li key={lesson.id}>
                           <Link
                             href={`/t/${slug}/lesson/${lesson.id}`}
-                            className="flex items-center gap-3 px-5 py-3.5 hover:bg-paper transition-colors"
+                            className="flex items-center gap-3 px-5 py-3.5 hover:bg-paper active:bg-paper/80 transition-colors"
                           >
                             <span
                               className={

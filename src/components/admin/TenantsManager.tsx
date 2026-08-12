@@ -150,7 +150,7 @@ export default function TenantsManager() {
                         setDeleteTarget(t);
                         setDeleteConfirmText('');
                       }}
-                      className="text-xs font-medium text-danger hover:underline"
+                      className="text-xs font-semibold text-danger hover:underline"
                     >
                       {he.delete}
                     </button>

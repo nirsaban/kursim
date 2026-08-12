@@ -119,7 +119,7 @@ export default function LessonPlayer({
                   href={a.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 border border-line rounded-xl px-3.5 py-2.5 text-sm font-medium hover:border-brand-300 hover:bg-brand-50 transition-colors"
+                  className="flex items-center gap-2.5 border border-line rounded-xl px-3.5 py-2.5 min-h-[44px] text-sm font-medium hover:border-brand-300 hover:bg-brand-50 transition-colors"
                 >
                   <span aria-hidden>📎</span>
                   <span className="truncate">{a.filename}</span>

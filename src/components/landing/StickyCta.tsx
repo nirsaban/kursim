@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePrefersReducedMotion } from '@/components/media/hooks';
 
 /**
  * Conversion bar pinned to the bottom of the viewport. Hidden over the hero
@@ -27,9 +28,10 @@ export default function StickyCta({
   locked: boolean;
 }) {
   const [shown, setShown] = useState(false);
+  const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
-    const onScroll = () => setShown(window.scrollY > 560);
+    const onScroll = () => setShown(window.scrollY > window.innerHeight * 0.9);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -37,9 +39,15 @@ export default function StickyCta({
 
   return (
     <div
-      className={`fixed bottom-0 inset-x-0 z-40 transition-transform duration-500 ease-out ${
-        shown ? 'translate-y-0' : 'translate-y-full'
-      }`}
+      className={
+        reduced
+          ? `fixed bottom-0 inset-x-0 z-40 transition-none ${
+              shown ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`
+          : `fixed bottom-0 inset-x-0 z-40 transition-transform duration-500 ease-out ${
+              shown ? 'translate-y-0' : 'translate-y-full'
+            }`
+      }
       aria-hidden={!shown}
     >
       <div className="bg-card/95 backdrop-blur border-t border-line px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">

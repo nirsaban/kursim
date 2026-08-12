@@ -76,7 +76,9 @@ export default function AuthShell({
             )}
             <h1 className="font-display text-3xl font-black animate-rise rise-1">{title}</h1>
             {subtitle && <p className="text-muted mt-2 animate-rise rise-2">{subtitle}</p>}
-            <div className="mt-8 animate-rise rise-3">{children}</div>
+            <div className="mt-8 animate-rise rise-3 rounded-xl2 border border-line bg-card shadow-card p-6 sm:p-7">
+              {children}
+            </div>
           </div>
         </section>
 
