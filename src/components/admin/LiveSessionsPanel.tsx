@@ -28,6 +28,15 @@ interface StudentGroup {
   sessions: LiveSession[];
 }
 
+/**
+ * Seats a student is actually holding: screens open right now. Sessions that
+ * are only logged-in — the phone in a pocket, yesterday's tab — are listed
+ * with a grey dot but cost nothing, exactly as the server counts them.
+ */
+function openSeats(group: StudentGroup): number {
+  return group.sessions.filter((s) => isLiveNow(s.lastSeenAt)).length;
+}
+
 export default function LiveSessionsPanel() {
   const [sessions, setSessions] = useState<LiveSession[] | null>(null);
   const [limit, setLimit] = useState(3);
@@ -72,8 +81,8 @@ export default function LiveSessionsPanel() {
     return [...byUser.values()]
       .filter((g) => !q || g.email.toLowerCase().includes(q))
       .sort((a, b) => {
-        const aLimit = a.sessions.length >= limit ? 1 : 0;
-        const bLimit = b.sessions.length >= limit ? 1 : 0;
+        const aLimit = openSeats(a) >= limit ? 1 : 0;
+        const bLimit = openSeats(b) >= limit ? 1 : 0;
         if (aLimit !== bLimit) return bLimit - aLimit;
         return (
           Math.max(...b.sessions.map((s) => s.lastSeenAt)) -
@@ -97,7 +106,9 @@ export default function LiveSessionsPanel() {
     reload();
   }
 
-  const studentCount = new Set(sessions.map((s) => s.userId)).size;
+  // The headline counts open screens, not logged-in accounts — same as the limit.
+  const openSessions = sessions.filter((s) => isLiveNow(s.lastSeenAt));
+  const studentCount = new Set(openSessions.map((s) => s.userId)).size;
   const policyLabel = policy === 'EVICT_OLDEST' ? he.policyEvictOldest : he.policyBlock;
 
   return (
@@ -109,7 +120,7 @@ export default function LiveSessionsPanel() {
           </Badge>
           <span className="text-sm text-muted">
             {he.sessionsSummary
-              .replace('{n}', String(sessions.length))
+              .replace('{n}', String(openSessions.length))
               .replace('{m}', String(studentCount))}{' '}
             · {he.policyPrefix} <b className="text-ink">{policyLabel}</b>,{' '}
             {he.upToDevices.replace('{n}', String(limit))}
@@ -153,7 +164,8 @@ function StudentCard({
   limit: number;
   onKill: (s: LiveSession) => void;
 }) {
-  const atLimit = group.sessions.length >= limit;
+  const openNow = openSeats(group);
+  const atLimit = openNow >= limit;
   const distinctIps = new Set(group.sessions.map((s) => s.ip));
   const multiIp = distinctIps.size > 1;
   // The minority IP is the suspicious one — highlight everything that differs from the mode.
@@ -161,13 +173,12 @@ function StudentCard({
   for (const s of group.sessions) ipCounts.set(s.ip, (ipCounts.get(s.ip) ?? 0) + 1);
   const mainIp = [...ipCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
 
+  // One dot per seat: taken dots are open screens, the rest are free.
   const seats: SeatState[] = [
-    ...group.sessions.map((s, i): SeatState => {
-      const live = isLiveNow(s.lastSeenAt);
-      if (atLimit) return live && i === 0 ? 'limit-active' : 'limit';
-      return live ? 'active' : 'occupied';
-    }),
-    ...Array.from({ length: Math.max(0, limit - group.sessions.length) }, (): SeatState => 'free'),
+    ...Array.from({ length: openNow }, (_, i): SeatState =>
+      atLimit ? (i === 0 ? 'limit-active' : 'limit') : 'active',
+    ),
+    ...Array.from({ length: Math.max(0, limit - openNow) }, (): SeatState => 'free'),
   ];
 
   const initials = group.email.slice(0, 2).toUpperCase();
@@ -195,7 +206,7 @@ function StudentCard({
           {atLimit && (
             <div className="text-xs font-bold text-warn mt-0.5">
               <span dir="ltr">
-                {group.sessions.length}/{limit}
+                {openNow}/{limit}
               </span>{' '}
               · {he.atLimitBadge}
             </div>

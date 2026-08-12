@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { he } from '@/lib/he';
-import { loginPathFor } from '@/lib/client/api';
+import { apiFetch, loginPathFor } from '@/lib/client/api';
 import SeatDots from '@/components/ui/SeatDots';
 
 const REDIRECT_DELAY_MS = 1200;
+const HEARTBEAT_MS = 60_000;
 
 /**
  * Holds the SSE eviction channel. The moment this session is evicted (device
@@ -14,6 +15,13 @@ const REDIRECT_DELAY_MS = 1200;
  * in-page notice — same copy the login page renders for `?evicted=1` — so the
  * page doesn't yank out from under the user, then bounce to login.
  * Reconnects automatically while the session is alive.
+ *
+ * Mounted on every authenticated layout, it is also what tells the server this
+ * screen is open — and an open screen is what holds a seat against the device
+ * limit. The SSE stream touches the session on each ping, and the heartbeat
+ * below covers the case the stream can't: an EventSource reconnect carrying an
+ * expired access token 401s forever on its own, while `apiFetch` refreshes the
+ * token so both this beat and the next reconnect go through.
  */
 export default function SessionWatcher() {
   const [evicted, setEvicted] = useState(false);
@@ -52,6 +60,25 @@ export default function SessionWatcher() {
       if (redirectTimer) clearTimeout(redirectTimer);
     };
   }, []);
+
+  // Keeps the seat while this screen is open. Silent while the tab is hidden —
+  // the open SSE stream already pings for a backgrounded tab, so this only
+  // needs to fire for the screen in front of the student, and beats again the
+  // moment they come back to it.
+  useEffect(() => {
+    if (evicted) return;
+    const beat = () => {
+      if (document.visibilityState !== 'visible') return;
+      apiFetch('/api/auth/heartbeat', { method: 'POST' }).catch(() => {});
+    };
+    beat();
+    const interval = setInterval(beat, HEARTBEAT_MS);
+    document.addEventListener('visibilitychange', beat);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', beat);
+    };
+  }, [evicted]);
 
   useEffect(() => {
     if (!evicted) return;
