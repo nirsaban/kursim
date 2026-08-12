@@ -62,6 +62,21 @@ export type SignResult =
 
 export type VerifyResult = { ok: boolean; ccode: string; raw: string };
 
+/**
+ * Split the buyer's full name into the two fields Hyp's page expects.
+ *
+ * Our checkout asks for one "full name", but Hyp has separate first and last
+ * name inputs — sending the whole string as `ClientName` prefills its
+ * first-name box with the surname attached. Everything up to the last word is
+ * the first name and the last word the surname; a one-word name leaves the
+ * surname empty rather than inventing one.
+ */
+export function splitFullName(full: string): { first: string; last: string } {
+  const parts = full.trim().split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return { first: parts[0] ?? '', last: '' };
+  return { first: parts.slice(0, -1).join(' '), last: parts[parts.length - 1] };
+}
+
 /** Money: Hyp wants major units with up to two decimals, never agorot. */
 export function agorotToAmount(agorot: number): string {
   return (agorot / 100).toFixed(2);

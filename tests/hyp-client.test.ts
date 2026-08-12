@@ -5,6 +5,7 @@ import {
   isPaid,
   isTestTerminal,
   parseHypResponse,
+  splitFullName,
   verifyTransaction,
 } from '@/lib/hyp/client';
 
@@ -31,6 +32,26 @@ describe('parseHypResponse', () => {
 
   it('decodes percent-encoded values', () => {
     expect(parseHypResponse('email=jennyp%40example.co.il').email).toBe('jennyp@example.co.il');
+  });
+});
+
+describe('splitFullName', () => {
+  it('sends the surname as the last name, not as part of the first', () => {
+    expect(splitFullName('מיטל טויטו')).toEqual({ first: 'מיטל', last: 'טויטו' });
+    expect(splitFullName('Jenny Parkington')).toEqual({ first: 'Jenny', last: 'Parkington' });
+  });
+
+  it('keeps middle words with the first name', () => {
+    expect(splitFullName('דנה בת אל כהן')).toEqual({ first: 'דנה בת אל', last: 'כהן' });
+  });
+
+  it('leaves the surname empty for a one-word name', () => {
+    expect(splitFullName('מיטל')).toEqual({ first: 'מיטל', last: '' });
+  });
+
+  it('tolerates stray whitespace', () => {
+    expect(splitFullName('  מיטל   טויטו  ')).toEqual({ first: 'מיטל', last: 'טויטו' });
+    expect(splitFullName('   ')).toEqual({ first: '', last: '' });
   });
 });
 

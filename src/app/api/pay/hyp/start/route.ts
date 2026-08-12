@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getTenantBySlug } from '@/lib/tenant/resolve';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { parseMarketing } from '@/lib/validation/marketing';
-import { agorotToAmount, createPaymentPage, hypCredentials } from '@/lib/hyp/client';
+import { agorotToAmount, createPaymentPage, hypCredentials, splitFullName } from '@/lib/hyp/client';
 
 export const runtime = 'nodejs';
 
@@ -78,13 +78,17 @@ export async function POST(req: Request) {
     select: { id: true },
   });
 
+  // We collect one "full name"; Hyp's page has a first and a last name field.
+  const buyer = splitFullName(name);
+
   const signed = await createPaymentPage(creds, {
     Amount: agorotToAmount(course.priceAgorot),
     Order: order.id,
     // Hyp shows `Info` on the payment page and the receipt; keep it short.
     Info: infoLine.slice(0, 150),
     heshDesc: infoLine.slice(0, 150),
-    ClientName: name.trim(),
+    ClientName: buyer.first,
+    ...(buyer.last ? { ClientLName: buyer.last } : {}),
     email: email.trim(),
     cell: phone.trim(),
     PageLang: 'HEB',
