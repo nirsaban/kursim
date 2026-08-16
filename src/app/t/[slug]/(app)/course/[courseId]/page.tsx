@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getAuth } from '@/lib/auth/guards';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import ProgressBar from '@/components/ui/ProgressBar';
+import Icon from '@/components/ui/Icon';
 import ReviewPrompt from '@/components/ReviewPrompt';
 import CourseSummary from '@/components/CourseSummary';
 import AffiliateCard from '@/components/AffiliateCard';
@@ -84,26 +85,33 @@ export default async function CoursePage({
 
   return (
     <div className="max-w-3xl mx-auto">
-      <Link href={`/t/${slug}`} className="text-sm text-brand-700 hover:underline font-medium">
-        → {he.backToCourses}
+      <Link
+        href={`/t/${slug}`}
+        className="inline-flex items-center gap-1.5 text-sm text-brand-700 hover:underline font-medium min-h-[44px]"
+      >
+        <Icon name="arrowBack" size={15} />
+        {he.backToCourses}
       </Link>
 
-      <div className="bg-card border border-line rounded-xl2 shadow-card p-6 mt-4 mb-8">
-        <h1 className="font-display text-3xl">{course.title}</h1>
-        {course.description && <p className="text-muted mt-2 leading-relaxed">{course.description}</p>}
-        <div className="flex items-center gap-4 mt-5">
-          <div className="flex-1">
+      <div className="bg-card border border-line rounded-xl2 shadow-card p-5 sm:p-6 mt-2 mb-8">
+        <h1 className="font-display text-2xl sm:text-3xl leading-snug">{course.title}</h1>
+        {course.description && (
+          <p className="text-muted mt-2 leading-relaxed">{course.description}</p>
+        )}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-3 mt-5">
+          <div className="flex-1 min-w-40">
             <ProgressBar value={pct} tone={pct === 100 ? 'ok' : 'brand'} />
           </div>
-          <span className="text-sm font-semibold text-brand-700 tabular-nums shrink-0">
+          <span className="text-sm font-semibold text-ink tabular-nums shrink-0">
             {pct}% {he.completed}
           </span>
           {nextLesson && (
             <Link
               href={`/t/${slug}/lesson/${nextLesson.id}`}
-              className="shrink-0 bg-brand-700 hover:bg-brand-800 text-white text-sm font-semibold rounded-xl px-4 py-2 transition-colors"
+              className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 bg-brand-700 hover:bg-brand-800 text-white text-sm font-semibold rounded-xl px-4 min-h-[44px] transition-[background-color,transform] duration-150 active:scale-[0.98]"
             >
-              ▶ {he.continueWatching}
+              <Icon name="play" size={13} />
+              {he.continueWatching}
             </Link>
           )}
         </div>
@@ -144,12 +152,12 @@ export default async function CoursePage({
                       if (moduleLockedDays > 0) {
                         return (
                           <li key={lesson.id}>
-                            <div className="flex items-center gap-3 px-5 py-3.5 opacity-60 cursor-not-allowed">
+                            <div className="flex items-center gap-3 px-4 sm:px-5 py-3.5 opacity-60 cursor-not-allowed">
                               <span
-                                className="w-6 h-6 rounded-full border-2 border-line shrink-0 flex items-center justify-center text-xs"
+                                className="w-6 h-6 rounded-full border-[1.5px] border-line text-muted shrink-0 grid place-items-center"
                                 aria-hidden
                               >
-                                🔒
+                                <Icon name="lock" size={12} />
                               </span>
                               <span className="flex-1 font-medium">{lesson.title}</span>
                               <span className="text-xs text-muted shrink-0">
@@ -163,28 +171,30 @@ export default async function CoursePage({
                         <li key={lesson.id}>
                           <Link
                             href={`/t/${slug}/lesson/${lesson.id}`}
-                            className="flex items-center gap-3 px-5 py-3.5 hover:bg-paper active:bg-paper/80 transition-colors"
+                            className="flex items-center gap-3 px-4 sm:px-5 py-3.5 min-h-[48px] hover:bg-paper active:bg-paper/80 transition-colors"
                           >
                             <span
                               className={
                                 isDone
-                                  ? 'w-6 h-6 rounded-full bg-ok text-white text-xs flex items-center justify-center shrink-0'
+                                  ? 'w-6 h-6 rounded-full bg-ok text-white shrink-0 grid place-items-center'
                                   : isStarted
-                                    ? 'w-6 h-6 rounded-full border-2 border-brand-500 text-brand-700 text-[10px] flex items-center justify-center shrink-0'
-                                    : 'w-6 h-6 rounded-full border-2 border-line shrink-0'
+                                    ? 'w-6 h-6 rounded-full border-[1.5px] border-brand-500 text-brand-700 shrink-0 grid place-items-center'
+                                    : 'w-6 h-6 rounded-full border-[1.5px] border-line shrink-0'
                               }
                               aria-hidden
                             >
-                              {isDone ? '✓' : isStarted ? '▶' : ''}
+                              {isDone ? (
+                                <Icon name="check" size={12} strokeWidth={2.5} />
+                              ) : isStarted ? (
+                                <Icon name="play" size={9} />
+                              ) : null}
                             </span>
-                            <span className="flex-1 font-medium">{lesson.title}</span>
+                            <span className="flex-1 font-medium leading-snug">{lesson.title}</span>
                             {lesson.videoPublicId && (
-                              <span className="text-muted text-xs" aria-hidden>
-                                🎬
-                              </span>
+                              <Icon name="video" size={14} className="text-muted/60 shrink-0" />
                             )}
                             {lesson.durationSec ? (
-                              <span className="text-xs text-muted tabular-nums" dir="ltr">
+                              <span className="text-xs text-muted tabular-nums shrink-0" dir="ltr">
                                 {fmtDuration(lesson.durationSec)}
                               </span>
                             ) : null}

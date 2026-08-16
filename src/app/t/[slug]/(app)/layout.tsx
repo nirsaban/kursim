@@ -4,6 +4,7 @@ import { getAuth } from '@/lib/auth/guards';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import SessionWatcher from '@/components/SessionWatcher';
 import Navbar, { NavLink } from '@/components/Navbar';
+import { parseBranding, parseTerms, termsGateBlocks } from '@/lib/validation/branding';
 import { he } from '@/lib/he';
 
 export default async function TenantAppLayout({
@@ -21,8 +22,14 @@ export default async function TenantAppLayout({
 
   const user = await forTenant(tenant.id).user.findFirst({
     where: { id: auth.userId },
-    select: { email: true },
+    select: { email: true, acceptedTermsAt: true, acceptedTermsVersion: true },
   });
+
+  // Terms gate: students must accept the academy's current terms first.
+  // Staff are exempt — they wrote them.
+  if (auth.role === 'STUDENT' && user && termsGateBlocks(parseTerms(tenant.terms), user)) {
+    redirect(`/t/${slug}/terms`);
+  }
 
   const links: NavLink[] = [{ href: `/t/${slug}`, label: he.myCourses, exact: true }];
   if (auth.role === 'STUDENT') {
@@ -33,12 +40,19 @@ export default async function TenantAppLayout({
     links.push({ href: `/t/${slug}/admin`, label: he.admin });
   }
 
+  const branding = parseBranding(tenant.branding);
+
   return (
-    <div className="min-h-screen">
+    <div
+      className="min-h-screen"
+      style={branding.primary ? ({ '--tenant-primary': branding.primary } as React.CSSProperties) : undefined}
+    >
       <SessionWatcher />
       <Navbar
         brandName={tenant.name}
         brandHref={`/t/${slug}`}
+        brandLogoUrl={branding.logo ?? undefined}
+        brandLogoSize={branding.logoSize}
         links={links}
         userEmail={user?.email}
         changePasswordHref={`/t/${slug}/change-password`}

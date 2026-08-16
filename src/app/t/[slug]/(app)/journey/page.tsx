@@ -11,6 +11,8 @@ import PageHeader from '@/components/ui/PageHeader';
 import StatCard from '@/components/ui/StatCard';
 import ProgressBar from '@/components/ui/ProgressBar';
 import EmptyState from '@/components/ui/EmptyState';
+import Icon from '@/components/ui/Icon';
+import Monogram from '@/components/ui/Monogram';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import { Table, TableWrap, Td, Th } from '@/components/ui/Table';
 import ActivityCalendar from '@/components/student/ActivityCalendar';
@@ -61,8 +63,16 @@ export default async function JourneyPage({
       <PageHeader kicker={he.myCourses} title={he.journeyTitle} subtitle={he.journeySubtitle} />
 
       {/* Totals */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label={he.statsStreak} value={`${streak} 🔥`} accent={streak >= 3} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <StatCard
+          label={he.statsStreak}
+          value={
+            <span className="inline-flex items-center gap-2">
+              {streak}
+              {streak > 0 && <Icon name="flame" size={18} className="text-copper-500" />}
+            </span>
+          }
+        />
         <StatCard label={he.statsLessonsDone} value={dash.totals.lessonsDone} />
         <StatCard label={he.statsMinutes} value={dash.totals.minutes} />
         <StatCard
@@ -89,21 +99,35 @@ export default async function JourneyPage({
           {unlocked}/{achievements.length}
         </span>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-10">
         {achievements.map((a) => (
           <div
             key={a.id}
             className={
               a.unlocked
-                ? 'bg-card border border-line rounded-xl2 shadow-card p-4 text-center'
-                : 'bg-card border border-line rounded-xl2 p-4 text-center opacity-40 grayscale'
+                ? 'bg-card border border-line rounded-xl2 shadow-card p-4'
+                : 'border border-dashed border-line rounded-xl2 p-4'
             }
           >
-            <span className="text-3xl block" aria-hidden>
-              {a.icon}
+            <span
+              className={
+                a.unlocked
+                  ? 'w-9 h-9 rounded-xl bg-copper-50 text-copper-600 grid place-items-center'
+                  : 'w-9 h-9 rounded-xl bg-paper text-muted/40 grid place-items-center'
+              }
+            >
+              <Icon name={a.icon} size={17} />
             </span>
-            <p className="font-display font-bold mt-2">{he[a.titleKey]}</p>
-            <p className="text-xs text-muted mt-1">
+            <p
+              className={
+                a.unlocked
+                  ? 'font-display font-bold mt-3 text-ink'
+                  : 'font-display font-bold mt-3 text-muted/60'
+              }
+            >
+              {he[a.titleKey]}
+            </p>
+            <p className="text-xs text-muted mt-1 leading-relaxed">
               {a.unlocked ? he[a.descKey] : he.achievementLocked}
             </p>
           </div>
@@ -115,51 +139,83 @@ export default async function JourneyPage({
         <h2 className="font-display text-xl font-bold">{he.perCourseProgress}</h2>
       </div>
       {dash.courses.length === 0 ? (
-        <EmptyState icon="📚" title={he.noCourses} hint={he.noCoursesHint} />
+        <EmptyState
+          icon={<Icon name="book" size={22} />}
+          title={he.noCourses}
+          hint={he.noCoursesHint}
+        />
       ) : (
-        <TableWrap>
-          <Table>
-            <thead>
-              <tr>
-                <Th>{he.courses}</Th>
-                <Th>{he.modules}</Th>
-                <Th>{he.lessons}</Th>
-                <Th className="w-1/3">{he.progress}</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {dash.courses.map((c) => (
-                <tr key={c.id} className="hover:bg-paper/60 transition-colors">
-                  <Td>
-                    <Link
-                      href={`/t/${slug}/course/${c.id}`}
-                      className="font-semibold hover:underline inline-flex items-center gap-2"
-                    >
-                      <span aria-hidden>{c.emoji}</span>
-                      {c.title}
-                    </Link>
-                  </Td>
-                  <Td className="tabular-nums">
-                    {c.milestones.filter((m) => m.done).length}/{c.milestones.length}
-                  </Td>
-                  <Td className="tabular-nums">
-                    {c.completedLessons}/{c.totalLessons}
-                  </Td>
-                  <Td>
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <ProgressBar value={c.pct} tone={c.pct === 100 ? 'ok' : 'brand'} />
-                      </div>
-                      <span className="text-xs font-semibold tabular-nums w-9 text-end">
-                        {c.pct}%
-                      </span>
-                    </div>
-                  </Td>
+        <>
+          {/* Phones: stacked rows — a wide table has no honest place on a narrow screen */}
+          <div className="sm:hidden space-y-3">
+            {dash.courses.map((c) => (
+              <Link
+                key={c.id}
+                href={`/t/${slug}/course/${c.id}`}
+                className="block bg-card border border-line rounded-xl2 shadow-card p-4 active:scale-[0.99] transition-transform duration-150"
+              >
+                <div className="flex items-center gap-3">
+                  <Monogram name={c.title} size="sm" />
+                  <span className="font-semibold text-ink flex-1 min-w-0 truncate">{c.title}</span>
+                  <span className="text-xs font-semibold tabular-nums text-ink shrink-0">
+                    {c.pct}%
+                  </span>
+                </div>
+                <div className="mt-3">
+                  <ProgressBar value={c.pct} tone={c.pct === 100 ? 'ok' : 'brand'} />
+                </div>
+                <p className="text-xs text-muted tabular-nums mt-2">
+                  {c.completedLessons}/{c.totalLessons} {he.lessons} ·{' '}
+                  {c.milestones.filter((m) => m.done).length}/{c.milestones.length} {he.modules}
+                </p>
+              </Link>
+            ))}
+          </div>
+
+          <TableWrap className="hidden sm:block">
+            <Table>
+              <thead>
+                <tr>
+                  <Th>{he.courses}</Th>
+                  <Th>{he.modules}</Th>
+                  <Th>{he.lessons}</Th>
+                  <Th className="w-1/3">{he.progress}</Th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        </TableWrap>
+              </thead>
+              <tbody>
+                {dash.courses.map((c) => (
+                  <tr key={c.id} className="hover:bg-paper/60 transition-colors">
+                    <Td>
+                      <Link
+                        href={`/t/${slug}/course/${c.id}`}
+                        className="font-semibold hover:underline inline-flex items-center gap-2.5"
+                      >
+                        <Monogram name={c.title} size="sm" />
+                        {c.title}
+                      </Link>
+                    </Td>
+                    <Td className="tabular-nums">
+                      {c.milestones.filter((m) => m.done).length}/{c.milestones.length}
+                    </Td>
+                    <Td className="tabular-nums">
+                      {c.completedLessons}/{c.totalLessons}
+                    </Td>
+                    <Td>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1">
+                          <ProgressBar value={c.pct} tone={c.pct === 100 ? 'ok' : 'brand'} />
+                        </div>
+                        <span className="text-xs font-semibold tabular-nums w-9 text-end">
+                          {c.pct}%
+                        </span>
+                      </div>
+                    </Td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableWrap>
+        </>
       )}
     </div>
   );

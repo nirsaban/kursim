@@ -1,4 +1,5 @@
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
+import Icon from '@/components/ui/Icon';
 import type { TenantHomepage } from '@/lib/validation/homepage';
 import { he } from '@/lib/he';
 
@@ -13,7 +14,14 @@ export default function AnnouncementsCard({
   if (announcements.length === 0) return null;
   return (
     <Card>
-      <CardHeader title={`📌 ${he.announcementsTitle}`} />
+      <CardHeader
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Icon name="pin" size={16} className="text-muted" />
+            {he.announcementsTitle}
+          </span>
+        }
+      />
       <CardBody className="p-0">
         <ul className="divide-y divide-line/70">
           {announcements.map((a, i) => (

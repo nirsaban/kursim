@@ -5,6 +5,7 @@ import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { getTenantBySlug } from '@/lib/tenant/resolve';
 import PageHeader from '@/components/ui/PageHeader';
 import EmptyState from '@/components/ui/EmptyState';
+import Icon from '@/components/ui/Icon';
 import { Card } from '@/components/ui/Card';
 import { he } from '@/lib/he';
 
@@ -31,14 +32,14 @@ export default async function CertificatesPage({
       <PageHeader kicker={he.myCourses} title={he.certificatesTitle} />
 
       {certificates.length === 0 ? (
-        <EmptyState icon="🎓" title={he.noCertificates} />
+        <EmptyState icon={<Icon name="award" size={22} />} title={he.noCertificates} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {certificates.map((c) => (
             <Card key={c.id} className="p-5 flex flex-col gap-3">
-              <div className="flex items-start gap-3">
-                <span className="text-3xl" aria-hidden>
-                  🎓
+              <div className="flex items-start gap-3.5">
+                <span className="w-11 h-11 rounded-xl bg-copper-50 text-copper-600 grid place-items-center shrink-0">
+                  <Icon name="award" size={20} />
                 </span>
                 <div className="min-w-0">
                   <p className="font-display font-bold text-lg text-ink truncate">

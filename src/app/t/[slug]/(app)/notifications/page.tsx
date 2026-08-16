@@ -5,6 +5,7 @@ import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { getTenantBySlug } from '@/lib/tenant/resolve';
 import PageHeader from '@/components/ui/PageHeader';
 import EmptyState from '@/components/ui/EmptyState';
+import Icon from '@/components/ui/Icon';
 import { Card } from '@/components/ui/Card';
 import { he } from '@/lib/he';
 import { relativeHe } from '@/lib/relative-time';
@@ -32,7 +33,7 @@ export default async function NotificationsPage({
       <PageHeader title={he.notifications} />
 
       {notifications.length === 0 ? (
-        <EmptyState icon="🔔" title={he.notificationsEmpty} />
+        <EmptyState icon={<Icon name="bell" size={22} />} title={he.notificationsEmpty} />
       ) : (
         <Card>
           <ul className="divide-y divide-line/70">

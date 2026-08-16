@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getTenantBySlug } from '@/lib/tenant/resolve';
 import LoginForm from '@/components/LoginForm';
 import AuthShell from '@/components/AuthShell';
+import { parseBranding } from '@/lib/validation/branding';
 import { he } from '@/lib/he';
 
 export default async function TenantLoginPage({
@@ -17,6 +18,7 @@ export default async function TenantLoginPage({
   return (
     <AuthShell
       orgName={tenant.name}
+      orgLogoUrl={parseBranding(tenant.branding).logo ?? undefined}
       title={he.loginWelcome}
       subtitle={he.loginSubtitle}
       panelTitle={he.authPanelTitle}

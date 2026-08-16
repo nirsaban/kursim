@@ -27,6 +27,9 @@ const TENANT_MODELS = new Set([
   'Purchase',
   'PaymentOrder',
   'WhatsappMessage',
+  'EmailAutomation',
+  'AutomationSend',
+  'ApiKey',
 ]);
 
 const WHERE_OPS = new Set([

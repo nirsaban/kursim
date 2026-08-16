@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/client/api';
+import Icon from '@/components/ui/Icon';
 import { he } from '@/lib/he';
 import { relativeHe } from '@/lib/relative-time';
 import Badge from '@/components/ui/Badge';
@@ -108,7 +109,7 @@ export default function CommunityBoard({
       </div>
 
       {initialPosts.length === 0 ? (
-        <EmptyState icon="💬" title={he.communityEmpty} />
+        <EmptyState icon={<Icon name="users" size={22} />} title={he.communityEmpty} />
       ) : (
         <ul className="space-y-3">
           {initialPosts.map((post) => (

@@ -12,6 +12,7 @@ import { he } from '@/lib/he';
 export default function AuthShell({
   orgName,
   orgSubtitle,
+  orgLogoUrl,
   title,
   subtitle,
   panelTitle,
@@ -20,12 +21,27 @@ export default function AuthShell({
 }: {
   orgName?: string;
   orgSubtitle?: string;
+  /** Tenant logo from the branding studio; replaces the initial-letter tile. */
+  orgLogoUrl?: string;
   title: string;
   subtitle?: string;
   panelTitle: string;
   panelText: string;
   children: React.ReactNode;
 }) {
+  const orgTile = (size: string, text: string) =>
+    orgLogoUrl ? (
+      <span className={`${size} rounded-xl bg-paper border border-line grid place-items-center overflow-hidden shrink-0`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={orgLogoUrl} alt="" className="max-w-full max-h-full object-contain" />
+      </span>
+    ) : (
+      <span
+        className={`${size} rounded-xl bg-ink text-paper grid place-items-center font-display font-black ${text} shrink-0`}
+      >
+        {orgName?.charAt(0)}
+      </span>
+    );
   return (
     <div className="min-h-screen flex flex-col bg-card">
       {/* Top nav */}
@@ -41,9 +57,7 @@ export default function AuthShell({
           {orgName && (
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-sm font-bold text-ink truncate">{orgName}</span>
-              <span className="w-8 h-8 rounded-lg bg-ink text-paper grid place-items-center font-display font-black text-sm shrink-0">
-                {orgName.charAt(0)}
-              </span>
+              {orgTile('w-8 h-8', 'text-sm')}
             </div>
           )}
         </div>
@@ -63,9 +77,7 @@ export default function AuthShell({
           <div className="w-full max-w-sm">
             {orgName ? (
               <div className="hidden lg:flex items-center gap-3 mb-8 animate-rise">
-                <div className="w-11 h-11 rounded-xl bg-ink text-paper grid place-items-center font-display font-black text-xl">
-                  {orgName.charAt(0)}
-                </div>
+                {orgTile('w-11 h-11', 'text-xl')}
                 <div>
                   <div className="font-bold text-ink">{orgName}</div>
                   {orgSubtitle && <div className="text-xs text-muted">{orgSubtitle}</div>}

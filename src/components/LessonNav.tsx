@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
+import Icon from '@/components/ui/Icon';
 import { he } from '@/lib/he';
 
 export interface LessonNavItem {
@@ -80,13 +81,13 @@ export default function LessonNav({
     <div className="mt-4 flex items-center gap-2">
       {prev ? (
         <Link href={`/t/${slug}/lesson/${prev.id}`} className={sideBtn} title={prev.title}>
-          <span aria-hidden>→</span>
+          <Icon name="arrowBack" size={15} />
           <span className="hidden sm:inline max-w-[9rem] truncate">{prev.title}</span>
           <span className="sm:hidden">{he.lessonNavPrev}</span>
         </Link>
       ) : (
         <span className={cn(sideBtn, 'opacity-40 pointer-events-none')} aria-hidden>
-          <span>→</span>
+          <Icon name="arrowBack" size={15} />
           <span className="hidden sm:inline">{he.lessonNavPrev}</span>
         </span>
       )}
@@ -143,12 +144,12 @@ export default function LessonNav({
                     <span className="w-6 shrink-0 text-xs text-muted tabular-nums">{i + 1}.</span>
                     <span className="flex-1 min-w-0 truncate">{l.title}</span>
                     {l.locked ? (
-                      <span title={he.lessonNavLocked} aria-label={he.lessonNavLocked}>
-                        🔒
+                      <span title={he.lessonNavLocked} aria-label={he.lessonNavLocked} className="text-muted">
+                        <Icon name="lock" size={13} />
                       </span>
                     ) : l.completed ? (
                       <span className="text-ok" title={he.lessonNavDone} aria-label={he.lessonNavDone}>
-                        ✓
+                        <Icon name="check" size={14} strokeWidth={2.5} />
                       </span>
                     ) : null}
                   </>
@@ -200,12 +201,12 @@ export default function LessonNav({
         >
           <span className="hidden sm:inline max-w-[9rem] truncate">{next.title}</span>
           <span className="sm:hidden">{he.lessonNavNext}</span>
-          <span aria-hidden>←</span>
+          <Icon name="arrowForward" size={15} />
         </Link>
       ) : (
         <span className={cn(sideBtn, 'opacity-40 pointer-events-none')} aria-hidden>
           <span className="hidden sm:inline">{he.lessonNavNext}</span>
-          <span>←</span>
+          <Icon name="arrowForward" size={15} />
         </span>
       )}
     </div>

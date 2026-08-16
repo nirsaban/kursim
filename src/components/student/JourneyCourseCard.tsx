@@ -1,12 +1,15 @@
 import Link from 'next/link';
 import { LANDING_THEMES } from '@/lib/landing-themes';
 import ProgressBar from '@/components/ui/ProgressBar';
+import Icon from '@/components/ui/Icon';
+import Monogram from '@/components/ui/Monogram';
 import type { CourseJourney } from '@/lib/student-dashboard';
 import { he } from '@/lib/he';
 
 /**
- * One enrolled course as a "journey" card: accent-themed header, progress,
- * module milestone dots, and a continue CTA straight into the next lesson.
+ * One enrolled course: monogram identity, module milestone dots, progress,
+ * and a continue CTA straight into the next lesson. The course accent is a
+ * quiet detail (milestones, percentage) — never a painted header.
  */
 export default function JourneyCourseCard({
   slug,
@@ -22,86 +25,80 @@ export default function JourneyCourseCard({
 
   return (
     <div
-      className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift hover:-translate-y-1 transition-all duration-300 overflow-hidden animate-rise flex flex-col"
-      style={{ animationDelay: `${Math.min(index, 5) * 80}ms` }}
+      className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift hover:-translate-y-0.5 transition-[transform,box-shadow] duration-200 animate-rise flex flex-col p-5"
+      style={{ animationDelay: `${Math.min(index, 5) * 60}ms` }}
     >
-      <Link href={`/t/${slug}/course/${course.id}`} className="block">
-        <div
-          className="h-24 flex items-end p-4"
-          style={{ background: `linear-gradient(to left, ${theme.deep}, ${theme.main})` }}
-        >
-          <span className="w-11 h-11 rounded-xl bg-card shadow-card flex items-center justify-center text-2xl translate-y-8">
-            {course.emoji}
-          </span>
-        </div>
-      </Link>
-      <div className="p-5 pt-10 flex flex-col flex-1">
-        <Link href={`/t/${slug}/course/${course.id}`}>
-          <h2 className="font-display font-bold text-lg group-hover:opacity-80 transition-opacity">
+      <Link href={`/t/${slug}/course/${course.id}`} className="flex items-start gap-3.5">
+        <Monogram name={course.title} size="lg" tint={theme.soft} ink={theme.deep} />
+        <div className="min-w-0 flex-1">
+          <h2 className="font-display font-bold text-lg leading-snug group-hover:text-brand-700 transition-colors">
             {course.title}
           </h2>
-        </Link>
-        {course.description && (
-          <p className="text-sm text-muted line-clamp-2 mt-1">{course.description}</p>
-        )}
-
-        {/* Module milestones — the journey path */}
-        {course.milestones.length > 0 && (
-          <div className="flex items-center mt-4" aria-label={he.modules}>
-            {course.milestones.slice(0, 8).map((m, i) => (
-              <span key={i} className="flex items-center flex-1 last:flex-none">
-                <span
-                  title={`${m.title} · ${m.completedLessons}/${m.totalLessons}`}
-                  className="w-3.5 h-3.5 rounded-full border-2 shrink-0 transition-colors"
-                  style={
-                    m.done
-                      ? { background: theme.main, borderColor: theme.main }
-                      : m.completedLessons > 0
-                        ? { background: theme.soft, borderColor: theme.main }
-                        : { background: 'transparent', borderColor: '#E5E2DA' }
-                  }
-                />
-                {i < Math.min(course.milestones.length, 8) - 1 && (
-                  <span
-                    className="h-0.5 flex-1 mx-1 rounded-full"
-                    style={{ background: m.done ? theme.main : '#E5E2DA' }}
-                  />
-                )}
-              </span>
-            ))}
-          </div>
-        )}
-
-        <div className="flex items-center justify-between text-xs text-muted mt-4 mb-2">
-          <span>
-            {course.completedLessons}/{course.totalLessons} {he.lessons}
-          </span>
-          <span className="font-semibold tabular-nums" style={{ color: theme.main }}>
-            {course.pct}%
-          </span>
-        </div>
-        <ProgressBar value={course.pct} tone={done ? 'ok' : 'brand'} />
-
-        <div className="mt-4 pt-3 border-t border-line/70 flex items-center gap-2">
-          {done ? (
-            <span className="text-sm font-semibold text-ok">✓ {he.completed}</span>
-          ) : course.nextLesson ? (
-            <>
-              <span className="text-xs text-muted truncate">
-                {he.nextLessonLabel}: {course.nextLesson.title}
-              </span>
-              <Link
-                href={`/t/${slug}/lesson/${course.nextLesson.id}`}
-                className="ms-auto shrink-0 text-white text-xs font-semibold rounded-lg px-3 py-1.5 transition-opacity hover:opacity-90"
-                style={{ background: theme.main }}
-              >
-                ▶ {he.continueWatching}
-              </Link>
-            </>
-          ) : (
-            <span className="text-xs text-muted">{he.noLessons}</span>
+          {course.description && (
+            <p className="text-sm text-muted line-clamp-2 mt-1 leading-relaxed">
+              {course.description}
+            </p>
           )}
         </div>
+      </Link>
+
+      {/* Module milestones — the journey path */}
+      {course.milestones.length > 0 && (
+        <div className="flex items-center mt-5" aria-label={he.modules}>
+          {course.milestones.slice(0, 8).map((m, i) => (
+            <span key={i} className="flex items-center flex-1 last:flex-none">
+              <span
+                title={`${m.title} · ${m.completedLessons}/${m.totalLessons}`}
+                className="w-3 h-3 rounded-full border-2 shrink-0"
+                style={
+                  m.done
+                    ? { background: theme.main, borderColor: theme.main }
+                    : m.completedLessons > 0
+                      ? { background: theme.soft, borderColor: theme.main }
+                      : { background: 'transparent', borderColor: '#E5E0D4' }
+                }
+              />
+              {i < Math.min(course.milestones.length, 8) - 1 && (
+                <span
+                  className="h-px flex-1 mx-1"
+                  style={{ background: m.done ? theme.main : '#E5E0D4' }}
+                />
+              )}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="flex items-baseline justify-between text-xs text-muted mt-5 mb-2">
+        <span className="tabular-nums">
+          {course.completedLessons}/{course.totalLessons} {he.lessons}
+        </span>
+        <span className="font-semibold tabular-nums text-ink">{course.pct}%</span>
+      </div>
+      <ProgressBar value={course.pct} tone={done ? 'ok' : 'brand'} />
+
+      <div className="mt-4 pt-4 border-t border-line/70 flex items-center gap-3 min-h-[44px]">
+        {done ? (
+          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-ok">
+            <Icon name="check" size={15} />
+            {he.completed}
+          </span>
+        ) : course.nextLesson ? (
+          <>
+            <span className="text-xs text-muted truncate leading-relaxed">
+              {he.nextLessonLabel}: {course.nextLesson.title}
+            </span>
+            <Link
+              href={`/t/${slug}/lesson/${course.nextLesson.id}`}
+              className="ms-auto shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-ink border-[1.5px] border-ink rounded-lg px-3.5 py-1.5 min-h-[36px] transition-[background-color,transform] duration-150 hover:bg-paper active:scale-[0.98]"
+            >
+              <Icon name="play" size={12} />
+              {he.continueWatching}
+            </Link>
+          </>
+        ) : (
+          <span className="text-xs text-muted">{he.noLessons}</span>
+        )}
       </div>
     </div>
   );

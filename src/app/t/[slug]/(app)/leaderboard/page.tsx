@@ -5,11 +5,10 @@ import { getTenantBySlug } from '@/lib/tenant/resolve';
 import PageHeader from '@/components/ui/PageHeader';
 import EmptyState from '@/components/ui/EmptyState';
 import Badge from '@/components/ui/Badge';
+import Icon from '@/components/ui/Icon';
 import { Table, TableWrap, Td, Th } from '@/components/ui/Table';
 import { cn } from '@/lib/cn';
 import { he } from '@/lib/he';
-
-const MEDALS = ['🥇', '🥈', '🥉'];
 
 export default async function LeaderboardPage({
   params,
@@ -58,7 +57,7 @@ export default async function LeaderboardPage({
       />
 
       {rows.length === 0 ? (
-        <EmptyState icon="🏆" title={he.leaderboardEmpty} />
+        <EmptyState icon={<Icon name="trophy" size={22} />} title={he.leaderboardEmpty} />
       ) : (
         <TableWrap>
           <Table>
@@ -84,12 +83,17 @@ export default async function LeaderboardPage({
                       isMe ? 'bg-copper-100/60' : 'hover:bg-paper/60',
                     )}
                   >
-                    <Td className="tabular-nums font-display font-bold text-lg">
-                      {i < 3 ? (
-                        <span aria-hidden>{MEDALS[i]}</span>
-                      ) : (
-                        <span className="text-muted">{i + 1}</span>
-                      )}
+                    <Td>
+                      <span
+                        className={cn(
+                          'inline-grid place-items-center w-8 h-8 rounded-lg font-display font-bold tabular-nums',
+                          i === 0 && 'bg-ink text-paper',
+                          i > 0 && i < 3 && 'bg-paper border border-line text-ink',
+                          i >= 3 && 'text-muted',
+                        )}
+                      >
+                        {i + 1}
+                      </span>
                     </Td>
                     <Td>
                       <span className="inline-flex items-center gap-2">

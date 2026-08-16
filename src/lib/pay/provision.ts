@@ -4,6 +4,7 @@ import { hashPassword } from '@/lib/auth/password';
 import { sendWhatsappText } from '@/lib/whatsapp';
 import { sendMail, isRealEmail } from '@/lib/email';
 import { notify } from '@/lib/notify';
+import { fireWelcomeAutomations } from '@/lib/automations';
 import { he } from '@/lib/he';
 
 /**
@@ -125,6 +126,7 @@ export async function provisionPurchase(
     const enrolled = await db.enrollment.findFirst({ where: { studentId: userId, courseId: id } });
     if (!enrolled) await db.enrollment.create({ data: { tenantId, studentId: userId, courseId: id } });
   }
+  await fireWelcomeAutomations(db, tenantId, userId, grantedIds[0]);
 
   // Deliver credentials over WhatsApp.
   const loginUrl = `${process.env.APP_URL ?? ''}/t/${slug}/login`;

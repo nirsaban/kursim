@@ -57,6 +57,12 @@ model Tenant {
   evictionPolicy EvictionPolicy @default(BLOCK)
   /// Owner-customizable student-home content (validated by homepageSchema).
   homepage       Json?
+  /// Owner branding: logo (small data URL), accent color, applied across the
+  /// student UI + login (validated by brandingSchema).
+  branding       Json?
+  /// Academy terms gate: when enabled, students must accept before entering
+  /// (validated by termsSchema). Bumping `version` re-prompts everyone.
+  terms          Json?
   /// Secret embedded in the Grow payment-webhook URL to authenticate callbacks.
   webhookSecret  String?
   createdAt      DateTime       @default(now())
@@ -86,6 +92,10 @@ model User {
   role               UserRole
   status             UserStatus @default(ACTIVE)
   mustChangePassword Boolean    @default(false)
+  /// When the user accepted the tenant's terms, and which version. Null (or a
+  /// stale version) with the gate enabled blocks the student UI until accepted.
+  acceptedTermsAt      DateTime?
+  acceptedTermsVersion Int       @default(0)
   lastLoginAt        DateTime?
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
@@ -526,6 +536,55 @@ enum PaymentOrderStatus {
   PENDING
   PAID
   FAILED
+}
+
+/// Owner-configured email automation ("learning reminders"): a trigger plus a
+/// message template with {{...}} variables. WELCOME fires inline when a student
+/// is enrolled; INACTIVITY fires from the periodic sweep in /api/cron/automations.
+model EmailAutomation {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  name      String
+  /// WELCOME | INACTIVITY
+  trigger   String
+  /// For INACTIVITY: days without any learning activity before the nudge fires.
+  days      Int      @default(3)
+  subject   String
+  body      String   @db.Text
+  active    Boolean  @default(true)
+  sentCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+/// Last time an automation reached a student — one row per pair, so an
+/// inactivity nudge fires once per quiet spell instead of every sweep.
+model AutomationSend {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  automationId String   @db.Uuid
+  studentId    String   @db.Uuid
+  sentAt       DateTime @default(now())
+
+  @@unique([automationId, studentId])
+  @@index([tenantId])
+}
+
+/// Per-tenant API key for the public auto-enroll endpoint. Only the SHA-256
+/// hash is stored; the plaintext is shown once at creation time.
+model ApiKey {
+  id         String    @id @default(uuid()) @db.Uuid
+  tenantId   String    @db.Uuid
+  name       String
+  keyHash    String    @unique
+  /// First characters of the plaintext, so the owner can tell keys apart.
+  prefix     String
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([tenantId])
 }
 
 /// A completed Grow payment: auto-provisions/enrolls the buyer and records the

@@ -10,6 +10,7 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { Field, Input, Select } from '@/components/ui/Field';
 import { Table, TableWrap, Td, Th } from '@/components/ui/Table';
 import EmptyState from '@/components/ui/EmptyState';
+import StudentsImport from '@/components/admin/StudentsImport';
 
 interface Student {
   id: string;
@@ -152,6 +153,7 @@ export default function StudentsManager() {
         <Button variant="secondary" onClick={createInvite}>
           🔗 {he.newInvite}
         </Button>
+        <StudentsImport onDone={reload} />
       </div>
 
       {inviteUrl && (

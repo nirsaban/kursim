@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { apiFetch } from '@/lib/client/api';
 import { cn } from '@/lib/cn';
+import Icon from '@/components/ui/Icon';
 import { he } from '@/lib/he';
 
 /** A bookmark toggle for saving a catalog course for later. */
@@ -63,7 +64,7 @@ export default function WishlistButton({
           aria-hidden
           className={cn('inline-block transition-transform duration-150', pulsing && 'scale-125')}
         >
-          {saved ? '🔖' : '🏷️'}
+          <Icon name={saved ? 'bookmarkFilled' : 'bookmark'} size={13} />
         </span>
         {saved ? he.removeFromWishlist : he.addToWishlist}
       </button>

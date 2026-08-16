@@ -6,6 +6,7 @@ import LessonPlayer from '@/components/LessonPlayer';
 import LessonQA, { QAItem } from '@/components/LessonQA';
 import LessonNotes from '@/components/LessonNotes';
 import LessonNav, { LessonNavItem } from '@/components/LessonNav';
+import Icon from '@/components/ui/Icon';
 import { he } from '@/lib/he';
 
 export default async function LessonPage({
@@ -51,9 +52,10 @@ export default async function LessonPage({
     <>
       <Link
         href={`/t/${slug}/course/${lesson.module.courseId}`}
-        className="text-sm text-brand-700 hover:underline font-medium"
+        className="inline-flex items-center gap-1.5 text-sm text-brand-700 hover:underline font-medium min-h-[44px]"
       >
-        → {lesson.module.course.title}
+        <Icon name="arrowBack" size={15} />
+        {lesson.module.course.title}
       </Link>
       <div className="flex items-baseline gap-3 mt-2 mb-5">
         <p className="kicker">{lesson.module.title}</p>

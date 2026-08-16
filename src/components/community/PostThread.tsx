@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/client/api';
+import Icon from '@/components/ui/Icon';
 import { he } from '@/lib/he';
 import { relativeHe } from '@/lib/relative-time';
 import Badge from '@/components/ui/Badge';
@@ -99,7 +100,7 @@ export default function PostThread({
         href={`/t/${slug}/community`}
         className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink transition-colors mb-5"
       >
-        <span aria-hidden>→</span>
+        <Icon name="arrowBack" size={15} />
         {he.backToCommunity}
       </Link>
 

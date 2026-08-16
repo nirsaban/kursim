@@ -107,6 +107,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
         href: (slug) => `/t/${slug}/admin/access-codes`,
       },
       {
+        key: 'reminders',
+        icon: '⏰',
+        label: he.remindersTitle,
+        description: he.adminItemRemindersDesc,
+        href: (slug) => `/t/${slug}/admin/reminders`,
+      },
+      {
         key: 'analytics',
         icon: '📈',
         label: he.analytics,
@@ -130,11 +137,25 @@ export const ADMIN_SECTIONS: AdminSection[] = [
         href: (slug) => `/t/${slug}/admin/homepage`,
       },
       {
+        key: 'branding',
+        icon: '🎨',
+        label: he.brandingTitle,
+        description: he.adminItemBrandingDesc,
+        href: (slug) => `/t/${slug}/admin/branding`,
+      },
+      {
         key: 'whatsapp',
         icon: '📱',
         label: he.whatsappTitle,
         description: he.adminItemWhatsappDesc,
         href: (slug) => `/t/${slug}/admin/whatsapp`,
+      },
+      {
+        key: 'api',
+        icon: '🔌',
+        label: he.apiPageTitle,
+        description: he.adminItemApiDesc,
+        href: (slug) => `/t/${slug}/admin/api`,
       },
       {
         key: 'settings',

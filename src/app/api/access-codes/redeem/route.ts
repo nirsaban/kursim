@@ -3,6 +3,7 @@ import { requireAuth } from '@/lib/auth/guards';
 import { apiError, parseBody } from '@/lib/api';
 import { redeemCodeSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
+import { fireWelcomeAutomations } from '@/lib/automations';
 
 /** Student: redeem an access code to enroll for free in its course. */
 export async function POST(req: Request) {
@@ -36,6 +37,7 @@ export async function POST(req: Request) {
   await db.enrollment.create({
     data: { tenantId: auth.tenantId!, studentId: auth.userId, courseId },
   });
+  await fireWelcomeAutomations(db, auth.tenantId!, auth.userId, courseId);
   await db.accessCode.updateMany({
     where: { id: accessCode.id },
     data: { uses: { increment: 1 } },

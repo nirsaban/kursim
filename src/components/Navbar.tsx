@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn';
 import { he } from '@/lib/he';
 import { loginPathFor } from '@/lib/client/api';
 import NotificationBell from '@/components/NotificationBell';
+import Monogram from '@/components/ui/Monogram';
 
 export interface NavLink {
   href: string;
@@ -32,7 +33,9 @@ function isGroup(e: NavEntry): e is NavGroup {
 export default function Navbar({
   brandName,
   brandHref,
-  brandEmoji = '🎓',
+  brandEmoji,
+  brandLogoUrl,
+  brandLogoSize = 36,
   links,
   userEmail,
   roleLabel,
@@ -43,6 +46,9 @@ export default function Navbar({
   brandName: string;
   brandHref: string;
   brandEmoji?: string;
+  /** Tenant logo (branding studio); replaces the emoji tile when set. */
+  brandLogoUrl?: string;
+  brandLogoSize?: number;
   links: NavEntry[];
   userEmail?: string;
   roleLabel?: string;
@@ -64,15 +70,29 @@ export default function Navbar({
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16 gap-4">
           <Link href={brandHref} className="flex items-center gap-2.5 min-w-0">
-            <span
-              className={cn(
-                'w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0',
-                ink ? 'bg-paper/10' : 'bg-paper border border-line',
-              )}
-              aria-hidden
-            >
-              {brandEmoji}
-            </span>
+            {brandLogoUrl || brandEmoji ? (
+              <span
+                className={cn(
+                  'rounded-xl flex items-center justify-center text-lg shrink-0 overflow-hidden',
+                  ink ? 'bg-paper/10' : 'bg-paper border border-line',
+                )}
+                style={{ width: brandLogoSize, height: brandLogoSize }}
+                aria-hidden
+              >
+                {brandLogoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={brandLogoUrl} alt="" className="max-w-full max-h-full object-contain" />
+                ) : (
+                  brandEmoji
+                )}
+              </span>
+            ) : (
+              <Monogram
+                name={brandName}
+                size="sm"
+                className={ink ? '!bg-paper/10 !border-transparent text-paper' : undefined}
+              />
+            )}
             <span className="font-display font-bold truncate">{brandName}</span>
             {roleLabel && (
               <span

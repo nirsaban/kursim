@@ -6,6 +6,8 @@ import { parseMarketing } from '@/lib/validation/marketing';
 import { LANDING_THEMES } from '@/lib/landing-themes';
 import PageHeader from '@/components/ui/PageHeader';
 import EmptyState from '@/components/ui/EmptyState';
+import Icon from '@/components/ui/Icon';
+import Monogram from '@/components/ui/Monogram';
 import WishlistButton from '@/components/WishlistButton';
 import { he } from '@/lib/he';
 
@@ -39,9 +41,9 @@ export default async function WishlistPage({
     <div>
       <PageHeader title={he.wishlistTitle} />
       {courses.length === 0 ? (
-        <EmptyState icon="🔖" title={he.wishlistEmpty} />
+        <EmptyState icon={<Icon name="bookmark" size={22} />} title={he.wishlistEmpty} />
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => {
             const m = parseMarketing(course.marketing);
             const t = LANDING_THEMES[m.accent];
@@ -49,25 +51,23 @@ export default async function WishlistPage({
               <a
                 key={course.id}
                 href={`/t/${slug}/c/${course.id}`}
-                className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift hover:-translate-y-1 transition-all duration-300 p-5 flex flex-col"
+                className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift hover:-translate-y-0.5 transition-[transform,box-shadow] duration-200 p-5 flex flex-col"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span
-                    className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0"
-                    style={{ background: t.soft }}
-                  >
-                    {m.emoji}
-                  </span>
+                  <Monogram name={m.headline || course.title} size="lg" tint={t.soft} ink={t.deep} />
                   <WishlistButton courseId={course.id} initialSaved />
                 </div>
-                <h3 className="font-display font-bold text-lg mt-3">{m.headline || course.title}</h3>
+                <h3 className="font-display font-bold text-lg mt-4 leading-snug">
+                  {m.headline || course.title}
+                </h3>
                 {(m.subheadline || course.description) && (
-                  <p className="text-sm text-muted line-clamp-2 mt-1">
+                  <p className="text-sm text-muted line-clamp-2 mt-1.5 leading-relaxed">
                     {m.subheadline || course.description}
                   </p>
                 )}
-                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold" style={{ color: t.main }}>
-                  {he.viewCourse} ↗
+                <span className="mt-4 pt-4 border-t border-line/70 inline-flex items-center gap-1.5 text-sm font-semibold text-ink group-hover:text-brand-700 transition-colors">
+                  {he.viewCourse}
+                  <Icon name="arrowForward" size={15} className="text-muted" />
                 </span>
               </a>
             );

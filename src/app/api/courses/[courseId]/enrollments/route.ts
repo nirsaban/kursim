@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth/guards';
 import { apiError, parseBody } from '@/lib/api';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
+import { fireWelcomeAutomations } from '@/lib/automations';
 import { z } from 'zod';
 
 type Params = { params: Promise<{ courseId: string }> };
@@ -43,6 +44,7 @@ export async function POST(req: Request, { params }: Params) {
   const enrollment = await db.enrollment.create({
     data: { tenantId: auth.tenantId!, courseId, studentId: student.id },
   });
+  await fireWelcomeAutomations(db, auth.tenantId!, student.id, courseId);
   return NextResponse.json({ enrollment }, { status: 201 });
 }
 

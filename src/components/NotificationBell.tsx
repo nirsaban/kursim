@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/client/api';
 import { cn } from '@/lib/cn';
+import Icon from '@/components/ui/Icon';
 import { he } from '@/lib/he';
 import { relativeHe } from '@/lib/relative-time';
 
@@ -68,9 +69,7 @@ export default function NotificationBell({ slug }: { slug: string }) {
         aria-label={he.notifications}
         className="relative inline-flex items-center justify-center w-10 h-10 rounded-xl text-muted hover:text-ink hover:bg-ink/5 transition-colors"
       >
-        <span className="text-lg" aria-hidden>
-          🔔
-        </span>
+        <Icon name="bell" size={19} />
         {unread > 0 && (
           <span className="absolute -top-0.5 -end-0.5 min-w-4 h-4 px-1 rounded-full bg-copper-500 text-card text-[10px] font-bold flex items-center justify-center tabular-nums">
             {unread > 9 ? '9+' : unread}

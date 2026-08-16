@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getAuth } from '@/lib/auth/guards';
 import SettingsForm from '@/components/admin/SettingsForm';
+import TermsSettings from '@/components/admin/TermsSettings';
 import PageHeader from '@/components/ui/PageHeader';
 import { he } from '@/lib/he';
 
@@ -17,7 +18,10 @@ export default async function AdminSettingsPage({
   return (
     <div className="max-w-xl">
       <PageHeader kicker={he.admin} title={he.settings} />
-      <SettingsForm />
+      <div className="space-y-6">
+        <SettingsForm />
+        <TermsSettings />
+      </div>
     </div>
   );
 }

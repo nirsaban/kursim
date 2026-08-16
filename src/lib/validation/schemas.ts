@@ -227,3 +227,47 @@ export const resendSchema = z.object({
 export const whatsappTestSchema = z.object({
   phone: z.string().min(6).max(30),
 });
+
+/** Owner creates/edits an email automation ("learning reminder"). */
+export const automationSchema = z.object({
+  name: z.string().min(1).max(120),
+  trigger: z.enum(['WELCOME', 'INACTIVITY']),
+  days: z.number().int().min(1).max(90).default(3),
+  subject: z.string().min(1).max(200),
+  body: z.string().min(1).max(10000),
+  active: z.boolean().default(true),
+});
+
+export const automationPatchSchema = automationSchema.partial();
+
+/** Owner mints a named API key (plaintext returned once). */
+export const apiKeyCreateSchema = z.object({
+  name: z.string().min(1).max(80),
+});
+
+/**
+ * Public auto-enroll call from a payment processor / funnel, authenticated by
+ * a tenant API key. snake_case on purpose — it matches what Make/Zapier users
+ * copy from the snippet generator.
+ */
+export const autoEnrollSchema = z.object({
+  email: z.string().email().max(320),
+  full_name: z.string().max(120).default(''),
+  course_ids: z.array(z.string().uuid()).min(1).max(20),
+  action: z.literal('enroll').default('enroll'),
+});
+
+/** Owner bulk-imports students from CSV rows (parsed client-side). */
+export const studentsImportSchema = z.object({
+  rows: z
+    .array(
+      z.object({
+        email: z.string().email().max(320),
+        name: z.string().trim().max(60).default(''),
+        password: z.string().min(8).max(128).optional(),
+        courseIds: z.array(z.string().uuid()).max(20).default([]),
+      }),
+    )
+    .min(1)
+    .max(500),
+});

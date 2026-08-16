@@ -54,7 +54,8 @@ export function computeStreak(activeDayKeys: Iterable<string>, today: Date): num
 
 export type Achievement = {
   id: string;
-  icon: string;
+  /** Icon name from components/ui/Icon — the product's single icon language. */
+  icon: 'leaf' | 'bolt' | 'trendingUp' | 'mountain' | 'flag' | 'crown' | 'flame' | 'star';
   titleKey: HeKey;
   descKey: HeKey;
   unlocked: boolean;
@@ -70,14 +71,14 @@ export type AchievementInput = {
 export function computeAchievements(input: AchievementInput): Achievement[] {
   const { completedLessons, completedCourses, streak } = input;
   return [
-    { id: 'first-lesson', icon: '🌱', titleKey: 'achFirstLesson', descKey: 'achFirstLessonDesc', unlocked: completedLessons >= 1 },
-    { id: 'lessons-5', icon: '⚡', titleKey: 'achLessons5', descKey: 'achLessons5Desc', unlocked: completedLessons >= 5 },
-    { id: 'lessons-10', icon: '🚀', titleKey: 'achLessons10', descKey: 'achLessons10Desc', unlocked: completedLessons >= 10 },
-    { id: 'lessons-25', icon: '🏔️', titleKey: 'achLessons25', descKey: 'achLessons25Desc', unlocked: completedLessons >= 25 },
-    { id: 'first-course', icon: '🏁', titleKey: 'achFirstCourse', descKey: 'achFirstCourseDesc', unlocked: completedCourses >= 1 },
-    { id: 'courses-3', icon: '👑', titleKey: 'achCourses3', descKey: 'achCourses3Desc', unlocked: completedCourses >= 3 },
-    { id: 'streak-3', icon: '🔥', titleKey: 'achStreak3', descKey: 'achStreak3Desc', unlocked: streak >= 3 },
-    { id: 'streak-7', icon: '🌟', titleKey: 'achStreak7', descKey: 'achStreak7Desc', unlocked: streak >= 7 },
+    { id: 'first-lesson', icon: 'leaf', titleKey: 'achFirstLesson', descKey: 'achFirstLessonDesc', unlocked: completedLessons >= 1 },
+    { id: 'lessons-5', icon: 'bolt', titleKey: 'achLessons5', descKey: 'achLessons5Desc', unlocked: completedLessons >= 5 },
+    { id: 'lessons-10', icon: 'trendingUp', titleKey: 'achLessons10', descKey: 'achLessons10Desc', unlocked: completedLessons >= 10 },
+    { id: 'lessons-25', icon: 'mountain', titleKey: 'achLessons25', descKey: 'achLessons25Desc', unlocked: completedLessons >= 25 },
+    { id: 'first-course', icon: 'flag', titleKey: 'achFirstCourse', descKey: 'achFirstCourseDesc', unlocked: completedCourses >= 1 },
+    { id: 'courses-3', icon: 'crown', titleKey: 'achCourses3', descKey: 'achCourses3Desc', unlocked: completedCourses >= 3 },
+    { id: 'streak-3', icon: 'flame', titleKey: 'achStreak3', descKey: 'achStreak3Desc', unlocked: streak >= 3 },
+    { id: 'streak-7', icon: 'star', titleKey: 'achStreak7', descKey: 'achStreak7Desc', unlocked: streak >= 7 },
   ];
 }
 
