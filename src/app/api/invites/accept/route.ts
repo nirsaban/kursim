@@ -6,6 +6,7 @@ import { asSuperAdmin, forTenant } from '@/lib/tenant/scoped-prisma';
 import { prisma } from '@/lib/tenant/prisma';
 import { hashInviteToken } from '@/lib/invites';
 import { hashPassword } from '@/lib/auth/password';
+import { studentSeatGate } from '@/lib/billing-server';
 
 /** Public endpoint: redeem an invite link into a new tenant account. */
 export async function POST(req: Request) {
@@ -34,6 +35,11 @@ export async function POST(req: Request) {
   const db = forTenant(tenant.id);
   const existing = await db.user.findFirst({ where: { email: normalizedEmail } });
   if (existing) return apiError(409, 'email_taken');
+
+  if (invite.role === 'STUDENT') {
+    const gate = await studentSeatGate(db, tenant.id);
+    if (gate) return gate;
+  }
 
   await db.user.create({
     data: {

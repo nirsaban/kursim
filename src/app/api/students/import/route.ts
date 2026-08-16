@@ -5,6 +5,7 @@ import { parseBody } from '@/lib/api';
 import { studentsImportSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { hashPassword } from '@/lib/auth/password';
+import { studentSeatGate } from '@/lib/billing-server';
 
 export interface ImportRowResult {
   email: string;
@@ -25,6 +26,9 @@ export async function POST(req: Request) {
   if ('error' in parsed) return parsed.error;
 
   const db = forTenant(auth.tenantId!);
+  const gate = await studentSeatGate(db, auth.tenantId!, parsed.data.rows.length);
+  if (gate) return gate;
+
   const results: ImportRowResult[] = [];
   const seen = new Set<string>();
 

@@ -15,10 +15,18 @@ interface Tenant {
   slug: string;
   name: string;
   status: 'ACTIVE' | 'SUSPENDED';
+  plan: 'FREE' | 'STARTER' | 'GROWTH' | 'UNLIMITED';
   sessionLimit: number;
   evictionPolicy: 'BLOCK' | 'EVICT_OLDEST';
   _count: { users: number; courses: number };
 }
+
+const PLAN_LABELS = {
+  FREE: he.planFree,
+  STARTER: he.planStarter,
+  GROWTH: he.planGrowth,
+  UNLIMITED: he.planUnlimited,
+} as const;
 
 export default function TenantsManager() {
   const [tenants, setTenants] = useState<Tenant[] | null>(null);
@@ -59,6 +67,17 @@ export default function TenantsManager() {
       const data = await res.json().catch(() => ({}));
       setError(data.error === 'slug_taken' ? he.slugTaken : he.error);
     }
+  }
+
+  // Package grant/change — takes effect immediately, including free grants.
+  async function setPlan(tenant: Tenant, plan: Tenant['plan']) {
+    setActionError(null);
+    const res = await apiFetch(`/api/tenants/${tenant.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ plan }),
+    });
+    if (res.ok) reload();
+    else setActionError(he.error);
   }
 
   async function setStatus(tenant: Tenant, status: 'ACTIVE' | 'SUSPENDED') {
@@ -104,6 +123,7 @@ export default function TenantsManager() {
                 <Th>{he.tenantName}</Th>
                 <Th>{he.tenantSlug}</Th>
                 <Th>{he.status}</Th>
+                <Th>{he.saPlanLabel}</Th>
                 <Th>{he.usersCount}</Th>
                 <Th>{he.coursesCount}</Th>
                 <Th>{he.sessionLimit}</Th>
@@ -127,6 +147,20 @@ export default function TenantsManager() {
                     <Badge tone={t.status === 'ACTIVE' ? 'ok' : 'danger'} dot>
                       {t.status === 'ACTIVE' ? he.active : he.suspended}
                     </Badge>
+                  </Td>
+                  <Td>
+                    <select
+                      value={t.plan}
+                      onChange={(e) => setPlan(t, e.target.value as Tenant['plan'])}
+                      title={he.saPlanGrantHint}
+                      className="text-xs font-semibold bg-card border border-line rounded-lg px-2 py-1.5 cursor-pointer hover:border-brand-300 transition-colors"
+                    >
+                      {(Object.keys(PLAN_LABELS) as Array<keyof typeof PLAN_LABELS>).map((p) => (
+                        <option key={p} value={p}>
+                          {PLAN_LABELS[p]}
+                        </option>
+                      ))}
+                    </select>
                   </Td>
                   <Td className="tabular-nums">{t._count.users}</Td>
                   <Td className="tabular-nums">{t._count.courses}</Td>

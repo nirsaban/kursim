@@ -5,7 +5,9 @@ import { Field, Input, Textarea } from '@/components/ui/Field';
 import Button from '@/components/ui/Button';
 import { he } from '@/lib/he';
 
-const LEADS_ENDPOINT = 'https://hub.miltech.cloud/api/public/leads';
+// Leads land in our own database (and kick off the WhatsApp scheduling bot);
+// no dependency on an external hub that may be down.
+const LEADS_ENDPOINT = '/api/leads';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -35,7 +37,7 @@ export function LeadForm() {
           const res = await fetch(LEADS_ENDPOINT, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ product: 'kursim', name, contact, message, website }),
+            body: JSON.stringify({ name, contact, message, website }),
           });
           if (!res.ok) throw new Error('request_failed');
           setStatus('success');

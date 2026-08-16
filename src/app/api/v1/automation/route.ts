@@ -7,6 +7,7 @@ import { hashApiKey } from '@/lib/api-keys';
 import { hashPassword } from '@/lib/auth/password';
 import { rateLimit } from '@/lib/rate-limit';
 import { fireWelcomeAutomations } from '@/lib/automations';
+import { studentSeatGate } from '@/lib/billing-server';
 
 /**
  * Public auto-enroll endpoint for payment processors and funnels, matching the
@@ -46,6 +47,8 @@ export async function POST(req: Request) {
   let user = await db.user.findFirst({ where: { email: normalized } });
   let userCreated = false;
   if (!user) {
+    const gate = await studentSeatGate(db, apiKey.tenantId);
+    if (gate) return gate;
     user = await db.user.create({
       data: {
         tenantId: apiKey.tenantId,

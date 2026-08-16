@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/client/api';
+import PaywallModal, { type PaywallInfo } from '@/components/admin/PaywallModal';
 import { he } from '@/lib/he';
 import { CourseMarketing } from '@/lib/validation/marketing';
 import { useEditableResource } from '@/lib/client/useEditableResource';
@@ -25,6 +26,7 @@ export default function PublishSection({
   tenantSlug: string;
 }) {
   const [published, setPublished] = useState(false);
+  const [paywall, setPaywall] = useState<PaywallInfo | null>(null);
   const [copied, setCopied] = useState(false);
   // Price lives on the Course row, not in marketing JSON, so it saves through
   // its own endpoint rather than the SaveBar below.
@@ -148,10 +150,14 @@ export default function PublishSection({
       body: JSON.stringify({ published: !published }),
     });
     if (res.ok) setPublished((await res.json()).landingPublished);
+    else if (res.status === 402) {
+      setPaywall({ ...(await res.json().catch(() => ({}))), context: 'publish' });
+    }
   }
 
   return (
     <div className="space-y-6">
+      <PaywallModal info={paywall} onClose={() => setPaywall(null)} />
       <Card>
         <CardBody className="flex flex-wrap items-center gap-3">
           {published ? (

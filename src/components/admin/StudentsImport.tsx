@@ -8,6 +8,7 @@ import Modal from '@/components/ui/Modal';
 import Badge from '@/components/ui/Badge';
 import { Field, Textarea } from '@/components/ui/Field';
 import { Table, TableWrap, Td, Th } from '@/components/ui/Table';
+import type { PaywallInfo } from '@/components/admin/PaywallModal';
 
 interface RowResult {
   email: string;
@@ -30,7 +31,13 @@ function parseCsv(text: string): Array<{ email: string; name: string }> {
     .filter((r) => EMAIL_RE.test(r.email));
 }
 
-export default function StudentsImport({ onDone }: { onDone: () => void }) {
+export default function StudentsImport({
+  onDone,
+  onPaywall,
+}: {
+  onDone: () => void;
+  onPaywall?: (info: PaywallInfo) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
@@ -58,6 +65,10 @@ export default function StudentsImport({ onDone }: { onDone: () => void }) {
     if (res.ok) {
       setResults((await res.json()).results);
       onDone();
+    } else if (res.status === 402) {
+      const data = await res.json().catch(() => ({}));
+      setOpen(false);
+      onPaywall?.({ ...data, context: 'students' });
     } else {
       setError(he.error);
     }

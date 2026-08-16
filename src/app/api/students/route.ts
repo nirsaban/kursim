@@ -5,6 +5,7 @@ import { createStudentSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { hashPassword } from '@/lib/auth/password';
 import { countActiveSessions } from '@/lib/session-registry/registry';
+import { studentSeatGate } from '@/lib/billing-server';
 
 export async function GET() {
   const auth = await requireAuth({ roles: ['OWNER', 'INSTRUCTOR'] });
@@ -41,6 +42,11 @@ export async function POST(req: Request) {
   const db = forTenant(auth.tenantId!);
   const existing = await db.user.findFirst({ where: { email: email.toLowerCase() } });
   if (existing) return apiError(409, 'email_taken');
+
+  if (role === 'STUDENT') {
+    const gate = await studentSeatGate(db, auth.tenantId!);
+    if (gate) return gate;
+  }
 
   const user = await db.user.create({
     data: {

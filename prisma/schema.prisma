@@ -53,6 +53,10 @@ model Tenant {
   slug           String         @unique
   name           String
   status         TenantStatus   @default(ACTIVE)
+  /// Billing package: FREE | STARTER | GROWTH | UNLIMITED (see lib/billing.ts).
+  /// FREE builds courses but can't invite students or publish landing pages.
+  plan            String    @default("FREE")
+  planActivatedAt DateTime?
   sessionLimit   Int            @default(3)
   evictionPolicy EvictionPolicy @default(BLOCK)
   /// Owner-customizable student-home content (validated by homepageSchema).
@@ -570,6 +574,30 @@ model AutomationSend {
 
   @@unique([automationId, studentId])
   @@index([tenantId])
+}
+
+/// A platform sales lead from the marketing site's contact form. Platform-level
+/// (no tenantId — like Tenant itself). When `contact` parses as a phone, the
+/// platform WhatsApp bot greets the lead and books an appointment with them.
+model Lead {
+  id            String    @id @default(uuid()) @db.Uuid
+  name          String
+  /// Raw contact input (phone or email, as typed).
+  contact       String
+  /// Normalized E.164 phone when contact is a usable Israeli number.
+  phone         String?
+  message       String    @default("") @db.Text
+  source        String    @default("landing")
+  /// new | greeted | scheduled | closed
+  status        String    @default("new")
+  appointmentAt DateTime?
+  /// Bot conversation state, e.g. { offeredSlots: [iso...] }.
+  botState      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([phone])
+  @@index([createdAt])
 }
 
 /// Per-tenant API key for the public auto-enroll endpoint. Only the SHA-256

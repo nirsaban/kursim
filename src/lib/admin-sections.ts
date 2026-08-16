@@ -151,6 +151,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
         href: (slug) => `/t/${slug}/admin/whatsapp`,
       },
       {
+        key: 'plan',
+        icon: '💎',
+        label: he.planPageTitle,
+        description: he.planPageSubtitle,
+        href: (slug) => `/t/${slug}/admin/plan`,
+      },
+      {
         key: 'api',
         icon: '🔌',
         label: he.apiPageTitle,

@@ -28,6 +28,9 @@ import {
   waAuthKey,
   type WaStatus,
 } from '@/lib/whatsapp';
+import { PLATFORM_WA_ID, sendPlatformWhatsapp } from '@/lib/platform-wa';
+import { handleLeadMessage, formatSlot } from '@/lib/lead-bot';
+import { he } from '@/lib/he';
 
 const requireCjs = createRequire(import.meta.url);
 const { proto } = requireCjs('baileys') as {
@@ -127,6 +130,38 @@ async function startSocket(tenantId: string): Promise<void> {
   sessions.set(tenantId, session);
   void persist();
   sock.ev.on('creds.update', () => void persist());
+
+  // The platform session is a two-way channel: the scheduling bot answers
+  // incoming lead messages. Tenant sessions stay outbound-only.
+  if (tenantId === PLATFORM_WA_ID) {
+    sock.ev.on('messages.upsert', async ({ messages, type }) => {
+      if (type !== 'notify') return;
+      for (const m of messages) {
+        try {
+          const jid = m.key.remoteJid ?? '';
+          if (m.key.fromMe || !jid.endsWith('@s.whatsapp.net')) continue;
+          const text =
+            m.message?.conversation ?? m.message?.extendedTextMessage?.text ?? '';
+          if (!text.trim()) continue;
+          const phone = jid.split('@')[0];
+          const reply = await handleLeadMessage(phone, text, m.pushName ?? undefined);
+          await sock.sendMessage(jid, { text: reply.text });
+          // A booked meeting is worth waking the admin for.
+          if (reply.booked && process.env.PLATFORM_ADMIN_PHONE) {
+            await sendPlatformWhatsapp(
+              process.env.PLATFORM_ADMIN_PHONE,
+              he.leadBotAdminAlert
+                .replace('{name}', reply.booked.name)
+                .replace('{phone}', reply.booked.phone)
+                .replace('{slot}', formatSlot(reply.booked.at)),
+            );
+          }
+        } catch (e) {
+          console.error(`[wa:platform] bot error: ${e instanceof Error ? e.message : e}`);
+        }
+      }
+    });
+  }
 
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;

@@ -4,6 +4,7 @@ import { parseBody } from '@/lib/api';
 import { inviteSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { generateInviteToken } from '@/lib/invites';
+import { studentSeatGate } from '@/lib/billing-server';
 
 export async function GET() {
   const auth = await requireAuth({ roles: ['OWNER'] });
@@ -27,6 +28,11 @@ export async function POST(req: Request) {
   if (auth instanceof NextResponse) return auth;
   const parsed = await parseBody(req, inviteSchema);
   if ('error' in parsed) return parsed.error;
+
+  if (parsed.data.role === 'STUDENT') {
+    const gate = await studentSeatGate(forTenant(auth.tenantId!), auth.tenantId!);
+    if (gate) return gate;
+  }
 
   const { token, tokenHash } = generateInviteToken();
   const invite = await forTenant(auth.tenantId!).invite.create({

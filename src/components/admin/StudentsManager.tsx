@@ -11,6 +11,7 @@ import { Field, Input, Select } from '@/components/ui/Field';
 import { Table, TableWrap, Td, Th } from '@/components/ui/Table';
 import EmptyState from '@/components/ui/EmptyState';
 import StudentsImport from '@/components/admin/StudentsImport';
+import PaywallModal, { type PaywallInfo } from '@/components/admin/PaywallModal';
 
 interface Student {
   id: string;
@@ -50,6 +51,7 @@ export default function StudentsManager() {
   const [resetPw, setResetPw] = useState('');
   const [resetError, setResetError] = useState<string | null>(null);
   const [resetDone, setResetDone] = useState(false);
+  const [paywall, setPaywall] = useState<PaywallInfo | null>(null);
 
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -81,6 +83,11 @@ export default function StudentsManager() {
       reload();
     } else {
       const data = await res.json().catch(() => ({}));
+      if (res.status === 402) {
+        setCreateOpen(false);
+        setPaywall({ ...data, context: 'students' });
+        return;
+      }
       setError(data.error === 'email_taken' ? he.emailTaken : he.error);
     }
   }
@@ -95,6 +102,8 @@ export default function StudentsManager() {
       setInviteUrl(data.url);
       setCopied(false);
       reload();
+    } else if (res.status === 402) {
+      setPaywall({ ...(await res.json().catch(() => ({}))), context: 'students' });
     }
   }
 
@@ -153,8 +162,9 @@ export default function StudentsManager() {
         <Button variant="secondary" onClick={createInvite}>
           🔗 {he.newInvite}
         </Button>
-        <StudentsImport onDone={reload} />
+        <StudentsImport onDone={reload} onPaywall={(info) => setPaywall(info)} />
       </div>
+      <PaywallModal info={paywall} onClose={() => setPaywall(null)} />
 
       {inviteUrl && (
         <div className="bg-brand-50 border border-brand-200 rounded-xl2 p-4 text-sm space-y-2">

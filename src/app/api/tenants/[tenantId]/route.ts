@@ -30,7 +30,16 @@ export async function PATCH(req: Request, { params }: Params) {
   const existing = await db.tenant.findFirst({ where: { id: tenantId } });
   if (!existing) return apiError(404, 'not_found');
 
-  const tenant = await db.tenant.update({ where: { id: tenantId }, data: parsed.data });
+  const tenant = await db.tenant.update({
+    where: { id: tenantId },
+    data: {
+      ...parsed.data,
+      // A package grant/change stamps its activation moment; FREE clears it.
+      ...(parsed.data.plan !== undefined && {
+        planActivatedAt: parsed.data.plan === 'FREE' ? null : new Date(),
+      }),
+    },
+  });
 
   // Suspension takes effect immediately: every user of the tenant is logged out everywhere.
   if (parsed.data.status === 'SUSPENDED' && existing.status !== 'SUSPENDED') {

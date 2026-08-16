@@ -105,6 +105,8 @@ export const createTenantSchema = z.object({
 export const updateTenantSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   status: z.enum(['ACTIVE', 'SUSPENDED']).optional(),
+  /// Super-admin package grant — FREE revokes, anything else activates.
+  plan: z.enum(['FREE', 'STARTER', 'GROWTH', 'UNLIMITED']).optional(),
   sessionLimit: z.number().int().min(1).max(20).optional(),
   evictionPolicy: z.enum(['BLOCK', 'EVICT_OLDEST']).optional(),
 });
@@ -270,4 +272,25 @@ export const studentsImportSchema = z.object({
     )
     .min(1)
     .max(500),
+});
+
+/** Public self-serve signup: a new school + its owner in one step. */
+export const signupSchema = z.object({
+  schoolName: z.string().trim().min(2).max(200),
+  slug: z
+    .string()
+    .min(2)
+    .max(64)
+    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'slug must be lowercase kebab-case'),
+  email: z.string().email().max(320),
+  password: passwordSchema,
+  name: nameSchema,
+});
+
+/** Public marketing-site lead ("website" is a honeypot — bots fill it). */
+export const leadSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  contact: z.string().trim().min(3).max(320),
+  message: z.string().max(2000).default(''),
+  website: z.string().max(200).default(''),
 });
