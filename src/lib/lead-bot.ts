@@ -1,12 +1,18 @@
 import { prisma } from '@/lib/tenant/prisma';
+import { loadCalcomConfig } from '@/lib/calcom';
 import { he } from '@/lib/he';
 
 /**
  * The appointment-scheduling bot behind the platform WhatsApp number.
  *
- * Deterministic state machine, deliberately not an LLM: a lead is offered
- * numbered meeting slots; replying with a number books it. Every dead end
- * lands on a human ("נציג") so the bot can never strand a paying customer.
+ * Deterministic state machine, deliberately not an LLM. Two modes:
+ * - Cal.com configured (super-admin → Leads page): the bot hands out the
+ *   booking URL and the /api/webhooks/calcom receiver records the actual
+ *   booking — real availability, not guessed slots.
+ * - No Cal.com: fallback to numbered business-day slots; replying with a
+ *   number books it.
+ * Every dead end lands on a human ("נציג") so the bot can never strand a
+ * paying customer.
  *
  * States (Lead.status): new → greeted → scheduled (→ greeted again on 'שינוי').
  */
@@ -73,6 +79,11 @@ export function slotListMessage(name: string, slots: Date[]): string {
   return he.leadBotGreeting.replace('{name}', name || '') + '\n\n' + lines.join('\n') + '\n\n' + he.leadBotPickHint;
 }
 
+/** Greeting when Cal.com is configured — the lead books on the real calendar. */
+export function calcomGreeting(name: string, url: string): string {
+  return he.leadBotCalcomGreeting.replace('{name}', name || '').replace('{url}', url);
+}
+
 export interface BotReply {
   text: string;
   /** Set when a meeting was just booked — callers notify the admin. */
@@ -85,6 +96,7 @@ export interface BotReply {
  */
 export async function handleLeadMessage(phone: string, text: string, pushName?: string): Promise<BotReply> {
   const trimmed = text.trim();
+  const calcom = await loadCalcomConfig();
   let lead = await prisma.lead.findFirst({
     where: { phone },
     orderBy: { createdAt: 'desc' },
@@ -92,7 +104,7 @@ export async function handleLeadMessage(phone: string, text: string, pushName?: 
 
   // Someone messaged the platform number out of the blue — treat as a fresh lead.
   if (!lead) {
-    const slots = upcomingSlots();
+    const slots = calcom.url ? null : upcomingSlots();
     lead = await prisma.lead.create({
       data: {
         name: pushName || '',
@@ -100,10 +112,12 @@ export async function handleLeadMessage(phone: string, text: string, pushName?: 
         phone,
         source: 'whatsapp',
         status: 'greeted',
-        botState: { offeredSlots: slots.map((s) => s.toISOString()) },
+        botState: slots ? { offeredSlots: slots.map((s) => s.toISOString()) } : undefined,
       },
     });
-    return { text: slotListMessage(lead.name, slots) };
+    return {
+      text: calcom.url ? calcomGreeting(lead.name, calcom.url) : slotListMessage(lead.name, slots!),
+    };
   }
 
   // Human handoff on request, from any state.
@@ -114,6 +128,10 @@ export async function handleLeadMessage(phone: string, text: string, pushName?: 
 
   if (lead.status === 'scheduled') {
     if (/שינוי|לשנות|ביטול/.test(trimmed)) {
+      if (calcom.url) {
+        // Rebooking happens on the calendar; the webhook keeps us in sync.
+        return { text: calcomGreeting(lead.name, calcom.url) };
+      }
       const slots = upcomingSlots();
       await prisma.lead.update({
         where: { id: lead.id },
@@ -127,6 +145,15 @@ export async function handleLeadMessage(phone: string, text: string, pushName?: 
         lead.appointmentAt ? formatSlot(lead.appointmentAt) : '',
       ),
     };
+  }
+
+  // Cal.com mode: any other message gets the booking link — the calendar,
+  // not the chat, is where the actual slot picking happens.
+  if (calcom.url) {
+    if (lead.status !== 'greeted') {
+      await prisma.lead.update({ where: { id: lead.id }, data: { status: 'greeted' } });
+    }
+    return { text: calcomGreeting(lead.name, calcom.url) };
   }
 
   // greeted / new / closed → try to read a slot number.

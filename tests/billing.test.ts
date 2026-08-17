@@ -85,3 +85,32 @@ describe('lead bot slots', () => {
     for (let i = 1; i <= 6; i++) expect(msg).toContain(`${i}. `);
   });
 });
+
+describe('cal.com payload parsing', async () => {
+  const { attendeePhone, attendeeName } = await import('@/lib/calcom');
+
+  it('reads the attendee phone and normalizes it', () => {
+    expect(attendeePhone({ attendees: [{ phoneNumber: '050-123-4567' }] })).toBe('972501234567');
+  });
+
+  it('reads wrapped form responses', () => {
+    expect(
+      attendeePhone({ responses: { phone: { label: 'טלפון', value: '0521111111' } } }),
+    ).toBe('972521111111');
+  });
+
+  it('takes the location answer only when the attendee chose a phone call', () => {
+    expect(
+      attendeePhone({ responses: { location: { value: { value: 'phone', optionValue: '0533333333' } } } }),
+    ).toBe('972533333333');
+    // Host-phone location must NOT match — it is the host's own number.
+    expect(
+      attendeePhone({ responses: { location: { value: { value: 'userPhone', optionValue: '' } } } }),
+    ).toBeNull();
+  });
+
+  it('returns null when nothing usable is present', () => {
+    expect(attendeePhone({ attendees: [{ name: 'דנה' }] })).toBeNull();
+    expect(attendeeName({ attendees: [{ name: '  דנה  ' }] })).toBe('דנה');
+  });
+});

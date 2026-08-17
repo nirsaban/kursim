@@ -599,6 +599,8 @@ model Lead {
   /// new | greeted | scheduled | closed
   status        String    @default("new")
   appointmentAt DateTime?
+  /// Cal.com booking uid — set by the webhook; makes retried deliveries no-ops.
+  calcomUid     String?
   /// Bot conversation state, e.g. { offeredSlots: [iso...] }.
   botState      Json?
   createdAt     DateTime  @default(now())

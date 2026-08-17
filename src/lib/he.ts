@@ -718,6 +718,8 @@ export const he = {
     'היי {name}, כאן Kursim 👋\nתודה שפניתם אלינו! נשמח לקבוע שיחת היכרות קצרה ולהראות לכם איך מקימים בית ספר דיגיטלי שמוכר.\n\nמתי נוח לכם?',
   leadBotPickHint: 'פשוט השיבו עם המספר של המועד שמתאים לכם. אפשר גם לכתוב "נציג" ונחזור אליכם אישית.',
   leadBotConfirmed: 'מעולה, קבענו! נדבר ב{slot}. נשלח תזכורת לפני, ואם צריך לשנות — כתבו "שינוי".',
+  leadBotCalcomGreeting:
+    'היי {name}, כאן Kursim 👋\nתודה שפניתם אלינו! נשמח לקבוע שיחת היכרות קצרה ולהראות לכם איך מקימים בית ספר דיגיטלי שמוכר.\n\nבוחרים זמן שנוח לכם ביומן, כאן:\n{url}\n\nצריכים עזרה? כתבו "נציג" ונחזור אליכם אישית.',
   leadBotAlreadyScheduled: 'הפגישה שלנו קבועה ל{slot}. לשינוי המועד כתבו "שינוי", ולכל דבר אחר — "נציג".',
   leadBotHuman: 'אין בעיה — נציג אנושי יחזור אליכם בהקדם. תודה על הסבלנות!',
   leadBotAdminAlert: 'נקבעה פגישה חדשה!\nליד: {name}\nטלפון: {phone}\nמועד: {slot}',
@@ -750,6 +752,15 @@ export const he = {
   saLeadStatusClosed: 'עבר לנציג',
   saLeadsEmpty: 'אין עדיין לידים',
   saLeadsEmptyHint: 'ברגע שמישהו ישאיר פרטים בדף הבית — הוא יופיע כאן.',
+  saCalcomTitle: 'יומן פגישות (Cal.com)',
+  saCalcomSubtitle: 'כשהיומן מחובר, הבוט שולח ללידים קישור לקביעת פגישה אמיתית ביומן — במקום להציע מועדים בעצמו.',
+  saCalcomUrl: 'קישור לדף הקביעה',
+  saCalcomUrlHint: 'למשל ‎https://cal.com/your-name/intro — זה הקישור שהבוט ישלח ללידים.',
+  saCalcomSecret: 'סוד החתימה (Webhook Secret)',
+  saCalcomSecretHint: 'אותו סוד שהגדרתם ב-Cal.com תחת Webhooks — מאמת שההזמנות באמת מגיעות מהיומן.',
+  saCalcomWebhookUrl: 'כתובת ה-Webhook להדבקה ב-Cal.com (אירועים: נקבע, בוטל, הוזז)',
+  saCalcomActive: 'היומן מחובר — הבוט שולח קישור',
+  saCalcomInactive: 'ללא יומן — הבוט מציע מועדים בעצמו',
 
   // self-serve signup
   signupTitle: 'פותחים בית ספר דיגיטלי',

@@ -306,3 +306,9 @@ export const platformPackagesSchema = z.object({
   GROWTH: packageOverrideSchema,
   UNLIMITED: packageOverrideSchema,
 });
+
+/** Super-admin Cal.com config: booking URL the bot sends + webhook secret. */
+export const calcomConfigSchema = z.object({
+  url: z.string().url().max(500).or(z.literal('')),
+  secret: z.string().trim().max(200),
+});

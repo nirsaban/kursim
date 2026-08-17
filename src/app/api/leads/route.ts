@@ -5,7 +5,8 @@ import { rateLimit } from '@/lib/rate-limit';
 import { prisma } from '@/lib/tenant/prisma';
 import { normalizeIlPhone } from '@/lib/whatsapp';
 import { sendPlatformWhatsapp } from '@/lib/platform-wa';
-import { slotListMessage, upcomingSlots } from '@/lib/lead-bot';
+import { calcomGreeting, slotListMessage, upcomingSlots } from '@/lib/lead-bot';
+import { loadCalcomConfig } from '@/lib/calcom';
 
 const LEAD_LIMIT = { limit: 5, windowSec: 3600 };
 
@@ -26,7 +27,8 @@ export async function POST(req: Request) {
   if (website) return NextResponse.json({ ok: true });
 
   const phone = normalizeIlPhone(contact);
-  const slots = phone ? upcomingSlots() : null;
+  const calcom = phone ? await loadCalcomConfig() : { url: '', secret: '' };
+  const slots = phone && !calcom.url ? upcomingSlots() : null;
 
   await prisma.lead.create({
     data: {
@@ -39,8 +41,11 @@ export async function POST(req: Request) {
     },
   });
 
-  if (phone && slots) {
-    await sendPlatformWhatsapp(phone, slotListMessage(name, slots));
+  if (phone) {
+    await sendPlatformWhatsapp(
+      phone,
+      calcom.url ? calcomGreeting(name, calcom.url) : slotListMessage(name, slots!),
+    );
   }
   return NextResponse.json({ ok: true }, { status: 201 });
 }
