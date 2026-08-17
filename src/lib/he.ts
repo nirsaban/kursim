@@ -722,6 +722,17 @@ export const he = {
   leadBotHuman: 'אין בעיה — נציג אנושי יחזור אליכם בהקדם. תודה על הסבלנות!',
   leadBotAdminAlert: 'נקבעה פגישה חדשה!\nליד: {name}\nטלפון: {phone}\nמועד: {slot}',
 
+  // superadmin — packages config
+  saPackagesNav: 'חבילות',
+  saPackagesTitle: 'חבילות ותשלום',
+  saPackagesSubtitle: 'המחירים וקישורי התשלום (Grow) שמוצגים לבעלי בתי הספר — נשמרים מיידית לכל המערכת.',
+  saPackagePrice: 'מחיר לתצוגה',
+  saPackagePriceHint: 'טקסט חופשי, למשל ‎₪49. הסכום בפועל נקבע בקישור התשלום.',
+  saPackageLink: 'קישור תשלום (Grow)',
+  saPackageLinkHint: 'ריק = יוצג "דברו איתנו להפעלה" במקום כפתור רכישה.',
+  saPackagesInvalid: 'השמירה נכשלה — ודאו שהקישורים תקינים (כתובת מלאה עם https).',
+  saPackagesFlowNote: 'זרימת הפעלה: לקוח משלם בקישור Grow ← אתם מקבלים התראה מ-Grow ← מעניקים לו את החבילה בעמוד בתי הספר.',
+
   // superadmin — leads panel
   saLeadsTitle: 'לידים ופגישות',
   saLeadsSubtitle: 'פניות מדף הבית, והבוט שקובע איתן פגישות בוואטסאפ.',

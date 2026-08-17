@@ -26,6 +26,7 @@ export default async function SuperAdminLayout({ children }: { children: React.R
         links={[
           { href: '/superadmin', label: he.tenants, exact: true },
           { href: '/superadmin/leads', label: he.saLeadsNav },
+          { href: '/superadmin/packages', label: he.saPackagesNav },
         ]}
         userEmail={user?.email}
       />

@@ -2,7 +2,8 @@ import { notFound, redirect } from 'next/navigation';
 import { getAuth } from '@/lib/auth/guards';
 import { getTenantBySlug } from '@/lib/tenant/resolve';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
-import { getPackages, normalizePlan, PLAN_STUDENT_CAP, type Plan } from '@/lib/billing';
+import { normalizePlan, PLAN_STUDENT_CAP, type Plan } from '@/lib/billing';
+import { loadPackages } from '@/lib/billing-server';
 import PageHeader from '@/components/ui/PageHeader';
 import Badge from '@/components/ui/Badge';
 import Icon from '@/components/ui/Icon';
@@ -37,7 +38,10 @@ export default async function AdminPlanPage({
   const tenant = await getTenantBySlug(slug);
   if (!tenant) notFound();
   const plan = normalizePlan(tenant.plan);
-  const studentCount = await forTenant(tenant.id).user.count({ where: { role: 'STUDENT' } });
+  const [studentCount, packages] = await Promise.all([
+    forTenant(tenant.id).user.count({ where: { role: 'STUDENT' } }),
+    loadPackages(),
+  ]);
   const cap = PLAN_STUDENT_CAP[plan];
 
   return (
@@ -66,7 +70,7 @@ export default async function AdminPlanPage({
 
       {/* The three packages */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
-        {getPackages().map((p, i) => {
+        {packages.map((p) => {
           const isCurrent = p.plan === plan;
           const popular = p.plan === 'GROWTH';
           return (

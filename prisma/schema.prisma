@@ -576,6 +576,14 @@ model AutomationSend {
   @@index([tenantId])
 }
 
+/// Platform-wide key/value config edited by the super-admin (e.g. 'packages' —
+/// package prices + Grow payment links). Platform-level table, no RLS.
+model PlatformSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
 /// A platform sales lead from the marketing site's contact form. Platform-level
 /// (no tenantId — like Tenant itself). When `contact` parses as a phone, the
 /// platform WhatsApp bot greets the lead and books an appointment with them.

@@ -294,3 +294,15 @@ export const leadSchema = z.object({
   message: z.string().max(2000).default(''),
   website: z.string().max(200).default(''),
 });
+
+/** Super-admin package config: display price + Grow payment link per package. */
+const packageOverrideSchema = z.object({
+  price: z.string().trim().min(1).max(20),
+  link: z.string().url().max(500).or(z.literal('')),
+});
+
+export const platformPackagesSchema = z.object({
+  STARTER: packageOverrideSchema,
+  GROWTH: packageOverrideSchema,
+  UNLIMITED: packageOverrideSchema,
+});

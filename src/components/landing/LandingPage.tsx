@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { he } from '@/lib/he';
-import { getPackages, PLAN_STUDENT_CAP } from '@/lib/billing';
+import { PLAN_STUDENT_CAP } from '@/lib/billing';
+import { loadPackages } from '@/lib/billing-server';
 import Icon, { type IconName } from '@/components/ui/Icon';
 import LogoMark from '@/components/ui/LogoMark';
 import { LeadForm } from './LeadForm';
@@ -271,13 +272,14 @@ const PLAN_DESCS: Record<string, string> = {
   UNLIMITED: he.planUnlimitedDesc,
 };
 
-function Pricing() {
+async function Pricing() {
+  const packages = await loadPackages();
   return (
     <section id="pricing" className="bg-card/60 border-y border-line scroll-mt-16">
       <div className="max-w-6xl mx-auto px-4 py-20 sm:py-24">
         <SectionHead eyebrow={he.lpNavPricing} title={he.lpPricingTitle} subtitle={he.lpPricingSubtitle} />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 max-w-4xl mx-auto">
-          {getPackages().map((p) => {
+          {packages.map((p) => {
             const popular = p.plan === 'GROWTH';
             return (
               <div
