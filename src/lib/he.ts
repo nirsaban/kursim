@@ -713,6 +713,18 @@ export const he = {
   adminItemWhatsappDesc: 'חיבור והודעות וואטסאפ.',
   adminItemSettingsDesc: 'הגדרות כלליות של בית הספר.',
 
+  studentPhoneLabel: 'וואטסאפ (לא חובה)',
+  studentPhoneHint: 'עם מספר — המנטור החכם יזהה את התלמיד כשיכתוב לוואטסאפ של בית הספר.',
+
+  // AI mentor (WhatsApp, per school)
+  mentorGreeting: 'היי {name} 👋 כאן המנטור של בית הספר — אני עונה על שאלות מתוך הקורסים שלך.\n\nעל איזה קורס נדבר?',
+  mentorPickHint: 'השיבו עם מספר הקורס. בכל שלב אפשר לכתוב "תפריט" כדי להחליף קורס.',
+  mentorSingleCourse: 'היי {name} 👋 כאן המנטור של הקורס "{course}". שאלו אותי כל דבר מתוך הקורס — אני כאן.',
+  mentorCourseBound: 'מעולה! אני המנטור של "{course}". מה השאלה הראשונה?',
+  mentorCapReached: 'שאלתם המון היום — וזה נהדר! נמשיך מחר, ובינתיים אפשר לחזור לשיעורים או לשאול את המרצה דרך עמוד השיעור.',
+  mentorUnavailable: 'המנטור נח כרגע. נסו שוב עוד רגע, או שאלו את המרצה דרך עמוד השיעור.',
+  mentorFooter: '— המנטור · "תפריט" להחלפת קורס',
+
   // platform lead bot (WhatsApp scheduling)
   leadBotGreeting:
     'היי {name}, כאן Kursim 👋\nתודה שפניתם אלינו! נשמח לקבוע שיחת היכרות קצרה ולהראות לכם איך מקימים בית ספר דיגיטלי שמוכר.\n\nמתי נוח לכם?',

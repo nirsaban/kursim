@@ -4,6 +4,7 @@ import { apiError, parseBody } from '@/lib/api';
 import { createStudentSchema } from '@/lib/validation/schemas';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { hashPassword } from '@/lib/auth/password';
+import { normalizeIlPhone } from '@/lib/whatsapp';
 import { countActiveSessions } from '@/lib/session-registry/registry';
 import { studentSeatGate } from '@/lib/billing-server';
 
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
   if (auth instanceof NextResponse) return auth;
   const parsed = await parseBody(req, createStudentSchema);
   if ('error' in parsed) return parsed.error;
-  const { email, password, role, courseIds, name } = parsed.data;
+  const { email, password, role, courseIds, name, phone } = parsed.data;
 
   const db = forTenant(auth.tenantId!);
   const existing = await db.user.findFirst({ where: { email: email.toLowerCase() } });
@@ -53,6 +54,7 @@ export async function POST(req: Request) {
       tenantId: auth.tenantId!,
       email: email.toLowerCase(),
       name,
+      phone: phone ? (normalizeIlPhone(phone) ?? undefined) : undefined,
       passwordHash: await hashPassword(password),
       role,
       status: 'ACTIVE',

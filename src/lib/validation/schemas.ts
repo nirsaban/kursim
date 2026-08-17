@@ -64,6 +64,8 @@ export const createStudentSchema = z.object({
   role: z.enum(['STUDENT', 'INSTRUCTOR']).default('STUDENT'),
   courseIds: z.array(z.string().uuid()).optional(),
   name: nameSchema,
+  /// WhatsApp phone — lets the AI mentor recognize the student.
+  phone: z.string().trim().max(30).optional(),
 });
 
 export const resetPasswordSchema = z.object({

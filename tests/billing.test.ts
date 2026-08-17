@@ -114,3 +114,14 @@ describe('cal.com payload parsing', async () => {
     expect(attendeeName({ attendees: [{ name: '  דנה  ' }] })).toBe('דנה');
   });
 });
+
+describe('mentor gating', async () => {
+  const { planHasMentor } = await import('@/lib/billing');
+
+  it('is a GROWTH-and-up feature', () => {
+    expect(planHasMentor('FREE')).toBe(false);
+    expect(planHasMentor('STARTER')).toBe(false);
+    expect(planHasMentor('GROWTH')).toBe(true);
+    expect(planHasMentor('UNLIMITED')).toBe(true);
+  });
+});

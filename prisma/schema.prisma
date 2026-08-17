@@ -96,6 +96,9 @@ model User {
   role               UserRole
   status             UserStatus @default(ACTIVE)
   mustChangePassword Boolean    @default(false)
+  /// WhatsApp phone (normalized 972…) — how the AI mentor recognizes the
+  /// student when they message the school's number. Filled from purchases.
+  phone                String?
   /// When the user accepted the tenant's terms, and which version. Null (or a
   /// stale version) with the gate enabled blocks the student UI until accepted.
   acceptedTermsAt      DateTime?
@@ -167,6 +170,8 @@ model Course {
   /// Agorot, not a decimal, so the amount we sign is exactly the amount we charge.
   priceAgorot      Int?
   marketing        Json?
+  /// Owner toggle for the WhatsApp AI mentor on this course (plan-gated too).
+  mentorEnabled    Boolean      @default(true)
   landingPublished Boolean      @default(false)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
@@ -273,6 +278,8 @@ model Lesson {
   moduleId      String        @db.Uuid
   title         String
   notes         String?       @db.Text
+  /// Auto-generated transcript of the lesson video — mentor knowledge source.
+  transcript    String?       @db.Text
   videoPublicId String?
   videoProvider MediaProvider @default(CLOUDINARY)
   durationSec   Int?

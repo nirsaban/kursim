@@ -55,6 +55,7 @@ export default function StudentsManager() {
 
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'STUDENT' | 'INSTRUCTOR'>('STUDENT');
 
@@ -73,11 +74,12 @@ export default function StudentsManager() {
     setError(null);
     const res = await apiFetch('/api/students', {
       method: 'POST',
-      body: JSON.stringify({ email, password, role, name }),
+      body: JSON.stringify({ email, password, role, name, phone: phone || undefined }),
     });
     if (res.ok) {
       setEmail('');
       setName('');
+      setPhone('');
       setPassword('');
       setCreateOpen(false);
       reload();
@@ -311,6 +313,15 @@ export default function StudentsManager() {
               placeholder={he.namePlaceholder}
               value={name}
               onChange={(e) => setName(e.target.value)}
+            />
+          </Field>
+          <Field label={he.studentPhoneLabel} hint={he.studentPhoneHint}>
+            <Input
+              type="tel"
+              dir="ltr"
+              placeholder="050-0000000"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
           </Field>
           <Field label={he.password} hint={he.newStudentPasswordHint}>

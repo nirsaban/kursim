@@ -79,3 +79,8 @@ export function checkStudentSeats(plan: Plan, current: number, adding = 1): Seat
 export function canPublishLanding(plan: Plan): boolean {
   return plan !== 'FREE';
 }
+
+/** The WhatsApp AI mentor is a GROWTH-and-up feature — the Skale-style upsell. */
+export function planHasMentor(plan: Plan): boolean {
+  return plan === 'GROWTH' || plan === 'UNLIMITED';
+}

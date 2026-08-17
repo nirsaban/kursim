@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto';
 import type { TenantClient } from '@/lib/tenant/scoped-prisma';
 import { hashPassword } from '@/lib/auth/password';
-import { sendWhatsappText } from '@/lib/whatsapp';
+import { sendWhatsappText, normalizeIlPhone } from '@/lib/whatsapp';
 import { sendMail, isRealEmail } from '@/lib/email';
 import { notify } from '@/lib/notify';
 import { fireWelcomeAutomations } from '@/lib/automations';
@@ -98,18 +98,30 @@ export async function provisionPurchase(
   }
 
   // Reuse the account if this email already exists in this tenant.
-  const existing = await db.user.findFirst({ where: { email: buyer.email }, select: { id: true } });
+  const existing = await db.user.findFirst({
+    where: { email: buyer.email },
+    select: { id: true, phone: true },
+  });
   let userId: string;
   let isNew = false;
   let plainPassword: string | null = null;
   if (existing) {
     userId = existing.id;
+    // The buyer's phone is how the WhatsApp mentor recognizes them — fill it
+    // in when we have it, but never overwrite a number already on the account.
+    if (!existing.phone && buyer.phone) {
+      const normalized = normalizeIlPhone(buyer.phone);
+      if (normalized) {
+        await db.user.update({ where: { id: userId }, data: { phone: normalized } });
+      }
+    }
   } else {
     plainPassword = tempPassword();
     const created = await db.user.create({
       data: {
         tenantId,
         email: buyer.email,
+        phone: normalizeIlPhone(buyer.phone) ?? undefined,
         passwordHash: await hashPassword(plainPassword),
         role: 'STUDENT',
         status: 'ACTIVE',
