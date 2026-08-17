@@ -125,3 +125,23 @@ describe('mentor gating', async () => {
     expect(planHasMentor('UNLIMITED')).toBe(true);
   });
 });
+
+describe('mentor cost accounting', async () => {
+  const { usageCents, currentMonth } = await import('@/lib/mentor');
+
+  it('prices gemini-2.5-flash tokens correctly ($0.30/$2.50 per 1M)', () => {
+    expect(usageCents(1_000_000, 0)).toBeCloseTo(30);
+    expect(usageCents(0, 1_000_000)).toBeCloseTo(250);
+    // A typical answer: ~6k in, ~300 out ≈ a fifth of a cent.
+    expect(usageCents(6_000, 300)).toBeCloseTo(0.255, 3);
+  });
+
+  it('$10 budget covers thousands of typical answers', () => {
+    const perAnswer = usageCents(6_000, 300);
+    expect(Math.floor(1000 / perAnswer)).toBeGreaterThan(3000);
+  });
+
+  it('month key is stable calendar format', () => {
+    expect(currentMonth(new Date('2026-08-17T10:00:00Z'))).toBe('2026-08');
+  });
+});

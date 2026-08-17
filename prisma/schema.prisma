@@ -57,6 +57,10 @@ model Tenant {
   /// FREE builds courses but can't invite students or publish landing pages.
   plan            String    @default("FREE")
   planActivatedAt DateTime?
+  /// Monthly AI-mentor spend ceiling for this school, in US cents ($10 default).
+  /// When the month's Gemini cost reaches it, the mentor pauses and the owner
+  /// is offered a top-up. Super-admin edits it on the Costs page.
+  mentorBudgetCents Int      @default(1000)
   sessionLimit   Int            @default(3)
   evictionPolicy EvictionPolicy @default(BLOCK)
   /// Owner-customizable student-home content (validated by homepageSchema).
@@ -615,6 +619,22 @@ model Lead {
 
   @@index([phone])
   @@index([createdAt])
+}
+
+/// One row per school per month: AI-mentor token usage. Cost is derived from
+/// tokens at display time, so a price change never rewrites history.
+model MentorUsage {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  /// Calendar month, '2026-08'.
+  month        String
+  inputTokens  Int      @default(0)
+  outputTokens Int      @default(0)
+  messages     Int      @default(0)
+  updatedAt    DateTime @updatedAt
+
+  @@unique([tenantId, month])
+  @@index([month])
 }
 
 /// Per-tenant API key for the public auto-enroll endpoint. Only the SHA-256

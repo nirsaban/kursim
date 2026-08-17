@@ -2,6 +2,7 @@ import { getRedis } from '@/lib/redis';
 import { prisma } from '@/lib/tenant/prisma';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { normalizePlan, planHasMentor } from '@/lib/billing';
+import { notify } from '@/lib/notify';
 import { he } from '@/lib/he';
 
 /**
@@ -22,6 +23,19 @@ const SESSION_TTL_SEC = 12 * 3600;
 const BRAIN_TTL_SEC = 15 * 60;
 const DAILY_CAP = 30;
 const HISTORY_TURNS = 8;
+
+// ── Cost accounting ──────────────────────────────────────────────────────────
+// gemini-2.5-flash list price: $0.30 / $2.50 per 1M input/output tokens.
+// Cost is derived from stored tokens, so a price update never rewrites history.
+const IN_CENTS_PER_M = 30;
+const OUT_CENTS_PER_M = 250;
+
+export const currentMonth = (d = new Date()) => d.toISOString().slice(0, 7);
+
+/** Month cost in US cents (fractional) for a token count pair. */
+export function usageCents(inputTokens: number, outputTokens: number): number {
+  return (inputTokens * IN_CENTS_PER_M + outputTokens * OUT_CENTS_PER_M) / 1_000_000;
+}
 
 const sessKey = (tenantId: string, userId: string) => `mentor:sess:${tenantId}:${userId}`;
 const brainKey = (courseId: string) => `mentor:brain:${courseId}`;
@@ -102,11 +116,22 @@ const SYSTEM_PROMPT = `אתה "המנטור" — עוזר לימודי של קו
 - אם התשובה לא נמצאת בתוכן הקורס — אמור זאת בכנות והפנה את התלמיד לשאול את המרצה דרך עמוד השיעור.
 - אל תדון בנושאים שאינם הקורס (פוליטיקה, בקשות אישיות וכו') — החזר בעדינות לנושא הקורס.`;
 
-async function askGemini(brain: string, history: MentorSession['history'], question: string): Promise<string | null> {
+interface GeminiAnswer {
+  text: string;
+  inputTokens: number;
+  outputTokens: number;
+}
+
+async function askGemini(
+  brain: string,
+  history: MentorSession['history'],
+  question: string,
+): Promise<GeminiAnswer | null> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) return null;
-  const model =
-    process.env.GEMINI_MENTOR_MODEL || process.env.GEMINI_TEXT_MODEL || 'gemini-3.1-pro-preview';
+  // Flash by choice: with the answer grounded in the course content, the
+  // cheap tier is plenty — roughly one agora per answer.
+  const model = process.env.GEMINI_MENTOR_MODEL || 'gemini-2.5-flash';
 
   const contents = [
     ...history.flatMap((t) => [
@@ -131,11 +156,92 @@ async function askGemini(brain: string, history: MentorSession['history'], quest
     if (!res.ok) return null;
     const data = (await res.json()) as {
       candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+      usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number };
     };
     const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('') ?? '';
-    return text.trim() || null;
+    if (!text.trim()) return null;
+    return {
+      text: text.trim(),
+      inputTokens: data.usageMetadata?.promptTokenCount ?? 0,
+      outputTokens: data.usageMetadata?.candidatesTokenCount ?? 0,
+    };
   } catch {
     return null;
+  }
+}
+
+// ── Budget ───────────────────────────────────────────────────────────────────
+
+/**
+ * Has this school used up its monthly mentor budget? When it just crossed the
+ * line, the owners get ONE in-app notification for the month with a top-up
+ * offer (link configured by the super-admin on the Costs page).
+ */
+async function budgetExhausted(tenantId: string, budgetCents: number): Promise<boolean> {
+  const usage = await forTenant(tenantId).mentorUsage.findFirst({
+    where: { month: currentMonth() },
+    select: { inputTokens: true, outputTokens: true },
+  });
+  if (!usage) return false;
+  if (usageCents(usage.inputTokens, usage.outputTokens) < budgetCents) return false;
+
+  // Notify the owners once per month — Redis NX flag keeps it single-shot.
+  const flag = await getRedis().set(
+    `mentor:budgetnotice:${tenantId}:${currentMonth()}`,
+    '1',
+    'EX',
+    35 * 86_400,
+    'NX',
+  );
+  if (flag) {
+    try {
+      const db = forTenant(tenantId);
+      const setting = await prisma.platformSetting.findUnique({ where: { key: 'mentor' } });
+      const topupLink = ((setting?.value ?? {}) as { topupLink?: string }).topupLink ?? '';
+      const owners = await db.user.findMany({
+        where: { role: 'OWNER', status: 'ACTIVE' },
+        select: { id: true },
+      });
+      for (const o of owners) {
+        await notify(db, tenantId, {
+          userId: o.id,
+          type: 'broadcast',
+          title: he.mentorBudgetNotifyTitle,
+          body: topupLink
+            ? `${he.mentorBudgetNotifyBody}\n${topupLink}`
+            : he.mentorBudgetNotifyBody,
+        });
+      }
+    } catch {
+      // Notification is best-effort; the budget stop itself already happened.
+    }
+  }
+  return true;
+}
+
+async function recordUsage(tenantId: string, answer: GeminiAnswer): Promise<void> {
+  const db = forTenant(tenantId);
+  const month = currentMonth();
+  const existing = await db.mentorUsage.findFirst({ where: { month }, select: { id: true } });
+  if (existing) {
+    await db.mentorUsage.updateMany({
+      where: { id: existing.id },
+      data: {
+        inputTokens: { increment: answer.inputTokens },
+        outputTokens: { increment: answer.outputTokens },
+        messages: { increment: 1 },
+      },
+    });
+  } else {
+    await db.mentorUsage.create({
+      data: {
+        tenantId,
+        month,
+        inputTokens: answer.inputTokens,
+        outputTokens: answer.outputTokens,
+        messages: 1,
+      },
+    });
   }
 }
 
@@ -168,7 +274,7 @@ export async function handleMentorMessage(
   // Feature gate: GROWTH and up.
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
-    select: { plan: true, status: true },
+    select: { plan: true, status: true, mentorBudgetCents: true },
   });
   if (!tenant || tenant.status !== 'ACTIVE' || !planHasMentor(normalizePlan(tenant.plan))) {
     return null;
@@ -223,8 +329,12 @@ export async function handleMentorMessage(
     return he.mentorCourseBound.replace('{course}', chosen.title);
   }
 
-  // Bound session: answer from the course, within the daily cap.
+  // Bound session: answer from the course, within the daily cap and the
+  // school's monthly budget.
   const active = session;
+  if (await budgetExhausted(tenantId, tenant.mentorBudgetCents)) {
+    return he.mentorBudgetStudentMsg;
+  }
   const r = getRedis();
   const used = await r.incr(capKey(student.id));
   if (used === 1) await r.expire(capKey(student.id), 26 * 3600);
@@ -245,7 +355,8 @@ export async function handleMentorMessage(
   const answer = brain ? await askGemini(brain, active.history, trimmed) : null;
   if (!answer) return he.mentorUnavailable;
 
-  active.history = [...active.history, { q: trimmed, a: answer }].slice(-HISTORY_TURNS);
+  await recordUsage(tenantId, answer);
+  active.history = [...active.history, { q: trimmed, a: answer.text }].slice(-HISTORY_TURNS);
   await saveSession(tenantId, student.id, active);
-  return `${answer}\n\n${he.mentorFooter}`;
+  return `${answer.text}\n\n${he.mentorFooter}`;
 }

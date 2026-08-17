@@ -109,6 +109,8 @@ export const updateTenantSchema = z.object({
   status: z.enum(['ACTIVE', 'SUSPENDED']).optional(),
   /// Super-admin package grant — FREE revokes, anything else activates.
   plan: z.enum(['FREE', 'STARTER', 'GROWTH', 'UNLIMITED']).optional(),
+  /// Monthly AI-mentor spend ceiling, US cents (Costs page).
+  mentorBudgetCents: z.number().int().min(0).max(1_000_000).optional(),
   sessionLimit: z.number().int().min(1).max(20).optional(),
   evictionPolicy: z.enum(['BLOCK', 'EVICT_OLDEST']).optional(),
 });
@@ -313,4 +315,9 @@ export const platformPackagesSchema = z.object({
 export const calcomConfigSchema = z.object({
   url: z.string().url().max(500).or(z.literal('')),
   secret: z.string().trim().max(200),
+});
+
+/** Super-admin mentor settings: the top-up payment link offered on budget exhaustion. */
+export const mentorSettingsSchema = z.object({
+  topupLink: z.string().url().max(500).or(z.literal('')),
 });

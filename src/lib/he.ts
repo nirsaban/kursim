@@ -725,6 +725,28 @@ export const he = {
   mentorUnavailable: 'המנטור נח כרגע. נסו שוב עוד רגע, או שאלו את המרצה דרך עמוד השיעור.',
   mentorFooter: '— המנטור · "תפריט" להחלפת קורס',
 
+  mentorBudgetStudentMsg: 'המנטור הגיע למכסת השימוש החודשית של בית הספר. בינתיים אפשר לשאול את המרצה דרך עמוד השיעור — או לבקש מבית הספר להרחיב את המכסה.',
+  mentorBudgetNotifyTitle: 'תקציב המנטור לחודש נוצל',
+  mentorBudgetNotifyBody: 'המנטור החכם הגיע לתקרת השימוש החודשית והושהה עד תחילת החודש הבא. רוצים שהוא ימשיך לענות לתלמידים כבר עכשיו? אפשר להרחיב את המכסה:',
+
+  // superadmin — mentor costs panel
+  saCostsNav: 'עלויות',
+  saCostsTitle: 'עלויות ותקציבי מנטור',
+  saCostsSubtitle: 'כמה עולה המנטור החכם החודש, לכל בית ספר — והתקרה שמגינה עליכם.',
+  saCostsTotal: 'עלות החודש (כל בתי הספר)',
+  saCostsMessages: 'תשובות מנטור החודש',
+  saCostsOverBudget: 'בתי ספר שמיצו תקציב',
+  saCostsSchool: 'בית ספר',
+  saCostsUsage: 'שימוש',
+  saCostsCost: 'עלות',
+  saCostsBudget: 'תקציב חודשי ($)',
+  saCostsMsgs: 'תשובות',
+  saCostsEmpty: 'אין עדיין שימוש במנטור החודש',
+  saCostsEmptyHint: 'ברגע שתלמיד ידבר עם המנטור בוואטסאפ — המספרים יופיעו כאן.',
+  saCostsTopupLink: 'קישור תשלום להרחבת מכסה (Grow)',
+  saCostsTopupHint: 'יישלח לבעלי בתי ספר שמיצו את התקציב. ריק = יוצגו בלי קישור.',
+  saCostsBudgetSaved: 'התקציב עודכן',
+
   // platform lead bot (WhatsApp scheduling)
   leadBotGreeting:
     'היי {name}, כאן Kursim 👋\nתודה שפניתם אלינו! נשמח לקבוע שיחת היכרות קצרה ולהראות לכם איך מקימים בית ספר דיגיטלי שמוכר.\n\nמתי נוח לכם?',

@@ -30,6 +30,7 @@ const TENANT_MODELS = new Set([
   'EmailAutomation',
   'AutomationSend',
   'ApiKey',
+  'MentorUsage',
 ]);
 
 const WHERE_OPS = new Set([
