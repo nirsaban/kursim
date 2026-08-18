@@ -64,6 +64,11 @@ const STROKE_PATHS: Record<string, string[]> = {
     'M15.5 7.5h.01',
   ],
   shield: ['M12 2.5 4.5 5.5v6c0 4.5 3 8.5 7.5 10 4.5-1.5 7.5-5.5 7.5-10v-6z'],
+  sparkles: [
+    'M11 4.5 12.8 9.2 17.5 11 12.8 12.8 11 17.5 9.2 12.8 4.5 11 9.2 9.2z',
+    'M18.5 14.5v5',
+    'M16 17h5',
+  ],
 };
 
 /** Filled glyphs — shapes that read poorly as outlines at small sizes. */

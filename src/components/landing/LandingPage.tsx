@@ -193,6 +193,25 @@ function Features() {
     <section id="features" className="max-w-6xl mx-auto px-4 py-20 sm:py-24 scroll-mt-16">
       <SectionHead eyebrow={he.lpNavFeatures} title={he.lpFeaturesTitle} subtitle={he.lpFeaturesSubtitle} />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        <div className="sm:col-span-2 lg:col-span-3 relative bg-ink text-paper rounded-xl2 shadow-lift p-5 sm:p-6 fx-grain">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+            <span className="w-12 h-12 shrink-0 rounded-xl bg-copper-500 text-card grid place-items-center">
+              <Icon name="sparkles" size={22} />
+            </span>
+            <div className="flex-1">
+              <div className="flex items-center gap-2.5 mb-1.5">
+                <h3 className="font-display font-bold text-xl">{he.lpFeatMentorTitle}</h3>
+                <span className="bg-copper-500 text-card text-[11px] font-bold rounded-full px-2 py-0.5">
+                  {he.lpFeatMentorBadge}
+                </span>
+              </div>
+              <p className="text-paper/70 text-sm leading-relaxed max-w-2xl">{he.lpFeatMentorBody}</p>
+            </div>
+            <span className="shrink-0 text-xs font-semibold text-paper/50 border border-paper/20 rounded-full px-3 py-1.5 self-start sm:self-center">
+              {he.lpFeatMentorPlanNote}
+            </span>
+          </div>
+        </div>
         {FEATURES.map((f) => (
           <div
             key={f.titleKey}
@@ -362,6 +381,7 @@ const FAQS = [
   ['lpFaq3Q', 'lpFaq3A'],
   ['lpFaq4Q', 'lpFaq4A'],
   ['lpFaq5Q', 'lpFaq5A'],
+  ['lpFaq6Q', 'lpFaq6A'],
 ] as const;
 
 function Faq() {
