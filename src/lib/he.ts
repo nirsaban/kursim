@@ -1445,6 +1445,8 @@ export const he = {
   linktreeCardTitle: 'עמוד הקישורים (LinkTree)',
   linktreeCardSubtitle:
     'עמוד ציבורי ממותג עם כל הקישורים שלכם — שמים אותו בביו של אינסטגרם/טיקטוק וכל הדרכים מובילות אליכם.',
+  linktreeLogo: 'הלוגו של העסק',
+  linktreeLogoHint: 'מופיע בראש עמוד הקישורים. זה אותו לוגו כמו במיתוג בית הספר — עדכון כאן מתעדכן בכל מקום.',
   linktreePublish: 'עמוד פעיל',
   linktreePublishHint: 'כשהעמוד כבוי הוא זמין רק לכם כתצוגה מקדימה.',
   linktreeHeadline: 'כותרת',

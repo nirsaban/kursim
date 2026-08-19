@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { apiFetch } from '@/lib/client/api';
+import { fileToLogoDataUrl } from '@/lib/client/logo';
+import type { Branding } from '@/lib/validation/branding';
 import { he } from '@/lib/he';
 import { cn } from '@/lib/cn';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
@@ -37,28 +39,33 @@ const BUTTON_STYLE_LABELS: Record<LinktreeButtonStyle, string> = {
 export default function LinksStudio({ slug }: { slug: string }) {
   const [socials, setSocials] = useState<Socials | null>(null);
   const [linktree, setLinktree] = useState<Linktree | null>(null);
+  const [branding, setBranding] = useState<Branding | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
-  const [busy, setBusy] = useState<'socials' | 'linktree' | null>(null);
+  const [busy, setBusy] = useState<'socials' | 'linktree' | 'logo' | null>(null);
   const [savedAt, setSavedAt] = useState<'socials' | 'linktree' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const logoFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     Promise.all([
       apiFetch('/api/settings/socials').then((r) => (r.ok ? r.json() : null)),
       apiFetch('/api/settings/linktree').then((r) => (r.ok ? r.json() : null)),
+      apiFetch('/api/settings/branding').then((r) => (r.ok ? r.json() : null)),
     ])
-      .then(([s, l]) => {
-        if (s && l) {
+      .then(([s, l, b]) => {
+        if (s && l && b) {
           setSocials(s.socials);
           setLinktree(l.linktree);
+          setBranding(b.branding);
         } else setLoadFailed(true);
       })
       .catch(() => setLoadFailed(true));
   }, []);
 
   if (loadFailed) return <p className="text-sm text-danger font-medium">{he.loadFailed}</p>;
-  if (!socials || !linktree) return <div className="h-96 rounded-xl2 bg-ink/[0.04] animate-pulse" />;
+  if (!socials || !linktree || !branding)
+    return <div className="h-96 rounded-xl2 bg-ink/[0.04] animate-pulse" />;
 
   async function saveSocials() {
     setBusy('socials');
@@ -89,6 +96,37 @@ export default function LinksStudio({ slug }: { slug: string }) {
       setLinktree(clean);
       setSavedAt('linktree');
     } else setError(he.error);
+  }
+
+  async function saveLogo(logo: string | null) {
+    setBusy('logo');
+    setError(null);
+    const next = { ...branding!, logo };
+    const res = await apiFetch('/api/settings/branding', {
+      method: 'PATCH',
+      body: JSON.stringify(next),
+    });
+    setBusy(null);
+    if (res.ok) setBranding(next);
+    else setError(he.error);
+  }
+
+  async function onPickLogo(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError(null);
+    try {
+      const logo = await fileToLogoDataUrl(file);
+      if (logo.length > 400_000) {
+        setError(he.brandingLogoTooBig);
+        return;
+      }
+      await saveLogo(logo);
+    } catch {
+      setError(he.error);
+    } finally {
+      e.target.value = '';
+    }
   }
 
   const publicPath = `/t/${slug}/links`;
@@ -152,6 +190,53 @@ export default function LinksStudio({ slug }: { slug: string }) {
       <Card>
         <CardHeader title={he.linktreeCardTitle} subtitle={he.linktreeCardSubtitle} />
         <CardBody className="space-y-5">
+          {/* Business logo (shared with the branding page) */}
+          <div className="flex items-center gap-4">
+            <span className="w-20 h-20 rounded-full border border-line bg-paper grid place-items-center overflow-hidden shrink-0">
+              {branding.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={branding.logo} alt="" className="max-w-[80%] max-h-[80%] object-contain" />
+              ) : (
+                <span className="text-2xl" aria-hidden>
+                  🎓
+                </span>
+              )}
+            </span>
+            <div className="flex-1 min-w-40">
+              <p className="text-sm font-semibold text-ink">{he.linktreeLogo}</p>
+              <p className="text-xs text-muted mt-0.5">{he.linktreeLogoHint}</p>
+              <div className="flex flex-wrap gap-2 mt-2.5">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  disabled={busy === 'logo'}
+                  onClick={() => logoFileRef.current?.click()}
+                >
+                  {he.brandingUpload}
+                </Button>
+                {branding.logo && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={busy === 'logo'}
+                    onClick={() => saveLogo(null)}
+                  >
+                    {he.brandingRemoveLogo}
+                  </Button>
+                )}
+              </div>
+            </div>
+            <input
+              ref={logoFileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={onPickLogo}
+            />
+          </div>
+
           {/* Publish + public URL */}
           <div className="flex flex-wrap items-center gap-3 bg-paper/70 border border-line rounded-xl px-4 py-3">
             <button

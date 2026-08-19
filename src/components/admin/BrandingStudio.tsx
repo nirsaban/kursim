@@ -7,22 +7,9 @@ import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import { Field, Input } from '@/components/ui/Field';
 import Button from '@/components/ui/Button';
 import { darkenHex, type Branding } from '@/lib/validation/branding';
+import { fileToLogoDataUrl } from '@/lib/client/logo';
 
 const DEFAULTS: Branding = { logo: null, logoSize: 36, primary: null };
-
-/** Downscale an uploaded image to a small square-ish data URL for the logo. */
-async function fileToLogoDataUrl(file: File): Promise<string> {
-  const bitmap = await createImageBitmap(file);
-  const max = 256;
-  const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height));
-  const w = Math.max(1, Math.round(bitmap.width * scale));
-  const h = Math.max(1, Math.round(bitmap.height * scale));
-  const canvas = document.createElement('canvas');
-  canvas.width = w;
-  canvas.height = h;
-  canvas.getContext('2d')!.drawImage(bitmap, 0, 0, w, h);
-  return canvas.toDataURL('image/png');
-}
 
 export default function BrandingStudio() {
   const [branding, setBranding] = useState<Branding | null>(null);
