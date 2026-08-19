@@ -39,6 +39,20 @@ const { proto } = requireCjs('baileys') as {
 };
 
 const RECONNECT_DELAY_MS = 3000;
+
+/** LID → phone-jid pairs harvested from raw stanzas (see CB:message below). */
+const LID_MAP_KEY = 'wa:lidmap';
+const lidToPn = new Map<string, string>();
+
+async function resolveLidPhone(lidJid: string): Promise<string> {
+  const cached = lidToPn.get(lidJid);
+  if (cached) return cached;
+  const stored = await getRedis()
+    .hget(LID_MAP_KEY, lidJid)
+    .catch(() => null);
+  if (stored) lidToPn.set(lidJid, stored);
+  return stored ?? '';
+}
 const logger = pino({ level: process.env.BAILEYS_LOG_LEVEL ?? 'silent' });
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -132,6 +146,25 @@ async function startSocket(tenantId: string): Promise<void> {
   void persist();
   sock.ev.on('creds.update', () => void persist());
 
+  // WhatsApp increasingly addresses direct chats by LID (privacy id) — the
+  // message KEY then carries no phone number at all on this Baileys line. The
+  // raw stanza does (sender_pn), so harvest the LID→phone pairs off the wire
+  // and let messages.upsert resolve senders through them (Redis-backed so a
+  // restart keeps what we've learned).
+  (sock.ws as unknown as NodeJS.EventEmitter).on('CB:message', (node: unknown) => {
+    const attrs = (node as { attrs?: Record<string, string> })?.attrs ?? {};
+    const from = attrs.from ?? '';
+    const pn = attrs.sender_pn || attrs.participant_pn || attrs.peer_recipient_pn || '';
+    if (from.endsWith('@lid') && pn) {
+      if (lidToPn.get(from) !== pn) {
+        lidToPn.set(from, pn);
+        void getRedis()
+          .hset(LID_MAP_KEY, from, pn)
+          .catch(() => {});
+      }
+    }
+  });
+
   // Every session is a two-way channel now: the platform number runs the
   // lead-scheduling bot; each school's number runs the course AI mentor
   // (which stays SILENT for anyone who isn't a recognized enrolled student —
@@ -156,8 +189,10 @@ async function startSocket(tenantId: string): Promise<void> {
           );
           continue;
         }
-        // A LID hides the sender's number; newer protocol versions carry the
-        // real one in an alt field. Without it we can't identify the student.
+        // A LID hides the sender's number. Newer protocol versions put the real
+        // one in an alt key field; otherwise fall back to the pairs we harvest
+        // off the raw stanzas (CB:message above). Without either we can't
+        // identify the student.
         const altKey = m.key as {
           senderPn?: string;
           participantPn?: string;
@@ -165,7 +200,11 @@ async function startSocket(tenantId: string): Promise<void> {
           participantAlt?: string;
         };
         const pnJid = isLid
-          ? (altKey.senderPn ?? altKey.remoteJidAlt ?? altKey.participantPn ?? altKey.participantAlt ?? '')
+          ? (altKey.senderPn ??
+            altKey.remoteJidAlt ??
+            altKey.participantPn ??
+            altKey.participantAlt ??
+            (await resolveLidPhone(jid)))
           : jid;
         const phone = pnJid.split('@')[0];
         if (!phone) {
