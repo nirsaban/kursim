@@ -281,22 +281,33 @@ export async function handleMentorMessage(
   }
 
   // Recognize the student by phone (suffix match meets both 05… and 972… forms).
+  // Several accounts can share one phone (a purchase-provisioned duplicate, a
+  // family member) — answer as the first of them that has eligible courses.
   const db = forTenant(tenantId);
-  const student = await db.user.findFirst({
+  const candidates = await db.user.findMany({
     where: { role: 'STUDENT', status: 'ACTIVE', phone: { endsWith: phone.slice(-9) } },
     select: { id: true, name: true, email: true },
+    orderBy: { createdAt: 'asc' },
   });
-  if (!student) return null;
+  if (candidates.length === 0) return null;
 
-  // Their mentor-enabled published courses.
-  const enrollments = await db.enrollment.findMany({
-    where: { studentId: student.id },
-    select: { course: { select: { id: true, title: true, status: true, mentorEnabled: true } } },
-  });
-  const courses = enrollments
-    .map((e) => e.course)
-    .filter((c) => c.status === 'PUBLISHED' && c.mentorEnabled);
-  if (courses.length === 0) return null;
+  let student: (typeof candidates)[number] | null = null;
+  let courses: Array<{ id: string; title: string }> = [];
+  for (const candidate of candidates) {
+    const enrollments = await db.enrollment.findMany({
+      where: { studentId: candidate.id },
+      select: { course: { select: { id: true, title: true, status: true, mentorEnabled: true } } },
+    });
+    const eligible = enrollments
+      .map((e) => e.course)
+      .filter((c) => c.status === 'PUBLISHED' && c.mentorEnabled);
+    if (eligible.length > 0) {
+      student = candidate;
+      courses = eligible;
+      break;
+    }
+  }
+  if (!student || courses.length === 0) return null;
 
   const firstName = (student.name || student.email).split(/[@ ]/)[0];
   let session = await loadSession(tenantId, student.id);
