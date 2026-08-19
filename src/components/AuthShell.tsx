@@ -3,6 +3,7 @@ import SeatDots from '@/components/ui/SeatDots';
 import TiltCard from '@/components/fx/TiltCard';
 import Aurora from '@/components/fx/Aurora';
 import { he } from '@/lib/he';
+import { BRAND } from '@/lib/brand';
 
 /**
  * Auth layout: top nav + footer on every viewport, split brand panel on
@@ -152,7 +153,7 @@ export default function AuthShell({
       <footer className="border-t border-line bg-card">
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between gap-3">
           <p className="text-sm text-muted">
-            Kursim · {he.platformTagline}
+            {BRAND.name} · {he.platformTagline}
           </p>
           <SeatDots seats={['occupied', 'occupied', 'free']} size="sm" />
         </div>

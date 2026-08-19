@@ -1,5 +1,5 @@
 /**
- * The PLATFORM WhatsApp session — Kursim's own number, paired by the
+ * The PLATFORM WhatsApp session — GeniriSchool's own number, paired by the
  * super-admin, used to talk to sales leads (greeting + scheduling bot).
  *
  * Rides the same Redis contract as tenant sessions (see lib/whatsapp.ts) under

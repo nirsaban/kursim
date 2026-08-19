@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Kursim — a self-hosted, multi-tenant course platform (Hebrew, RTL-only) with device session limiting as its key feature. Full system design: [ARCHITECTURE.md](./ARCHITECTURE.md). Setup/run instructions: [README.md](./README.md).
+GeniriSchool — a self-hosted, multi-tenant course platform (Hebrew, RTL-only) with device session limiting as its key feature. Full system design: [ARCHITECTURE.md](./ARCHITECTURE.md). Setup/run instructions: [README.md](./README.md).
 
 ## Stack
 

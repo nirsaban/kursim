@@ -1,4 +1,4 @@
-# Kursim — AI Course Media (Gemini) + Scroll-Scrubbed Landing Animation
+# GeniriSchool — AI Course Media (Gemini) + Scroll-Scrubbed Landing Animation
 
 Feature: after an owner fills in a course, a **"ייצר מדיה עם AI"** button generates a
 photoreal, topic-tailored **8-second Veo video** (rendered as a 240-frame,

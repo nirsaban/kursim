@@ -1,6 +1,6 @@
-# Kursim — Redesign Brief & Prompts for claude.ai
+# GeniriSchool — Redesign Brief & Prompts for claude.ai
 
-**Goal of this document:** give claude.ai (or any AI design tool) everything it needs to **redesign and improve** the Kursim UI/UX from scratch — *not* to clone the current app. The current design is documented below only as **context and a starting point**. The designer is expected to rethink layout, hierarchy, interaction, and polish, and to propose something better. Keep the **product intent, content, roles, flows, Hebrew language, and RTL direction**; reimagine the **look, feel, structure, and interactions**.
+**Goal of this document:** give claude.ai (or any AI design tool) everything it needs to **redesign and improve** the GeniriSchool UI/UX from scratch — *not* to clone the current app. The current design is documented below only as **context and a starting point**. The designer is expected to rethink layout, hierarchy, interaction, and polish, and to propose something better. Keep the **product intent, content, roles, flows, Hebrew language, and RTL direction**; reimagine the **look, feel, structure, and interactions**.
 
 There are three things to copy-paste:
 - **Part A — Master redesign prompt** (one paste → whole product, improved).
@@ -12,7 +12,7 @@ There are three things to copy-paste:
 ## Part A — MASTER REDESIGN PROMPT (copy this)
 
 ```text
-You are redesigning "Kursim", a multi-tenant online-course platform. Your job is
+You are redesigning "GeniriSchool", a multi-tenant online-course platform. Your job is
 to REIMAGINE and IMPROVE its UI/UX from scratch — do NOT reproduce the existing
 design. I want a fresh, modern, more delightful and more usable product that keeps
 the same purpose, content, roles, flows, Hebrew language and RTL direction, but
@@ -65,7 +65,7 @@ Treat these as goals, and go beyond them:
 
 ═══ SCREENS TO REDESIGN (rethink each; reorganize/merge/split as you see fit) ═══
 PUBLIC:
-  1. Platform marketing home — pitch Kursim itself; feature the device-limit hook.
+  1. Platform marketing home — pitch GeniriSchool itself; feature the device-limit hook.
   2. Login (per-school + platform) — incl. the "device limit reached" blocked state
      (shows the account's active devices) and an "evicted from another device" notice.
   3. Accept-invitation / signup (from a one-time invite link).
@@ -121,7 +121,7 @@ Paste the **SHARED HEADER** once, then append exactly **one SCREEN block**, and 
 
 ```text
 ━━━ SHARED HEADER (paste before every screen) ━━━
-Redesign ONE screen for "Kursim", a Hebrew, right-to-left (RTL) multi-tenant
+Redesign ONE screen for "GeniriSchool", a Hebrew, right-to-left (RTL) multi-tenant
 online-course platform. Reimagine and IMPROVE it — do not copy any existing design.
 Keep: Hebrew UI, full RTL layout (Latin content like emails/URLs/prices/times stays
 LTR), the product intent, and a warm/encouraging/gender-inclusive voice that turns
@@ -129,7 +129,7 @@ calm and factual on errors and the device-limit screens. Deliver a modern, polis
 mobile-first, accessible result with thoughtful micro-interactions, and strong
 information hierarchy. You choose the palette, type, and layout — aim for a
 distinctive premium identity (a warm editorial teal/copper direction with Rubik +
-Heebo is one option, not a requirement). Context: Kursim's signature feature is
+Heebo is one option, not a requirement). Context: GeniriSchool's signature feature is
 device-session limiting — students are capped at N simultaneous devices; extra
 logins are blocked or evict the oldest device in real time. Now redesign this screen:
 ━━━ END HEADER ━━━
@@ -189,7 +189,7 @@ confirmation.
 
 
 ━━━ SCREEN 7 · Platform marketing home (PUBLIC, "/") ━━━
-Redesign the marketing home for Kursim itself (the SaaS product). Pitch the core
+Redesign the marketing home for GeniriSchool itself (the SaaS product). Pitch the core
 promise — "your own digital school, without shared passwords" — and make the
 device-limiting hook tangible (e.g. a live "who's connected now" visual that shows
 a 4th device being blocked). Clear entry points for platform admin, and guidance
@@ -262,7 +262,7 @@ from a school owner's view.
 
 
 ━━━ SCREEN 17 · Component system / UI kit (design once, reuse) ━━━
-Design the foundational design system for Kursim: color and type scales, and every
+Design the foundational design system for GeniriSchool: color and type scales, and every
 shared component in its states — buttons (primary / secondary / subtle / destructive
 / a single high-emphasis conversion button), cards, form fields (default/focus/
 error), badges/tags, modals, data tables, stat cards, empty states, progress

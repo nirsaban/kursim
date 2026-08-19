@@ -23,7 +23,7 @@ export const PART_SIZE = 8 * 1024 * 1024;
 /**
  * Per-lesson ceiling. Unlimited by default — set MEDIA_MAX_UPLOAD_BYTES to put
  * a number back. With no ceiling, a single upload can fill the disk, and this
- * server hosts more than Kursim.
+ * server hosts more than GeniriSchool.
  */
 export function maxUploadBytes(): number {
   const configured = Number(process.env.MEDIA_MAX_UPLOAD_BYTES);

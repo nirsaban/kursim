@@ -4,6 +4,7 @@ import { asSuperAdmin } from '@/lib/tenant/scoped-prisma';
 import SessionWatcher from '@/components/SessionWatcher';
 import Navbar from '@/components/Navbar';
 import { he } from '@/lib/he';
+import { BRAND } from '@/lib/brand';
 
 export default async function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const auth = await getAuth();
@@ -19,7 +20,7 @@ export default async function SuperAdminLayout({ children }: { children: React.R
       <SessionWatcher />
       <Navbar
         tone="ink"
-        brandName="Kursim"
+        brandName={BRAND.name}
         brandHref="/superadmin"
         brandEmoji="🛠️"
         roleLabel={he.superAdmin}

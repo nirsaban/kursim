@@ -1,11 +1,11 @@
-# Kursim — Project Brief
+# GeniriSchool — Project Brief
 
 > Auto-generated investigation brief. Companion to `README.md` and `ARCHITECTURE.md`.
 > Part of the GeniriFlow portfolio. Shared conventions: `../GeniriFlow-Brain/BRAIN.md`.
 
 ## What it is
 
-**Kursim — a multi-tenant course platform.** A secure, self-hosted platform for selling and
+**GeniriSchool — a multi-tenant course platform.** A secure, self-hosted platform for selling and
 delivering online courses, with built-in **device/session limiting (anti-sharing)** and
 role-based access control. Hebrew RTL UI. Status per `ARCHITECTURE.md`: MVP built and
 verified end-to-end.

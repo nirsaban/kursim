@@ -2,7 +2,7 @@ import AuthShell from '@/components/AuthShell';
 import SignupForm from '@/components/SignupForm';
 import { he } from '@/lib/he';
 
-export const metadata = { title: `${he.signupTitle} · Kursim` };
+export const metadata = { title: he.signupTitle };
 
 export default function SignupPage() {
   return (

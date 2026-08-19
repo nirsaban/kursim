@@ -1,4 +1,4 @@
-# Kursim — Multi-Tenant Course Platform
+# GeniriSchool — Multi-Tenant Course Platform
 
 A secure, self-hosted course platform with built-in device session limiting and role-based access control.
 

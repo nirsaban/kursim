@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="GeniriSchool">
+  <defs>
+    <linearGradient id="gsTile" gradientUnits="userSpaceOnUse" x1="256" y1="0" x2="256" y2="512">
+      <stop offset="0" stop-color="#232836"/>
+      <stop offset="1" stop-color="#12151D"/>
+    </linearGradient>
+    <linearGradient id="gsCopper" gradientUnits="userSpaceOnUse" x1="150" y1="150" x2="362" y2="362">
+      <stop offset="0" stop-color="#EA7A52"/>
+      <stop offset="1" stop-color="#C9481F"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#gsTile)"/>
+  <g fill="none" stroke="url(#gsCopper)" stroke-width="44" stroke-linecap="round">
+    <path d="M 316.8 169.2 A 106 106 0 1 0 362 256"/>
+    <path d="M 256 256 L 362 256"/>
+  </g>
+</svg>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { he } from '@/lib/he';
+import { BRAND } from '@/lib/brand';
 import { PLAN_STUDENT_CAP } from '@/lib/billing';
 import { loadPackages } from '@/lib/billing-server';
 import Icon, { type IconName } from '@/components/ui/Icon';
@@ -8,9 +9,10 @@ import { LeadForm } from './LeadForm';
 
 /**
  * The platform's sales page. Marketing-led: the hero sells the outcome
- * (a school that sells for you), the grid shows the whole product, and
- * every road ends at the lead form. Security is one quiet trust section —
- * a reason to believe, not the headline.
+ * (a school that sells for you), the pillars strip and the grid show the
+ * whole product, and every road ends at the lead form. The AI mentor is one
+ * feature among many — it gets a showcase, but only after the product itself.
+ * Security is one quiet trust section — a reason to believe, not the headline.
  */
 export function LandingPage() {
   return (
@@ -18,10 +20,11 @@ export function LandingPage() {
       <Nav />
       <Hero />
       <Stats />
-      <MentorShowcase />
+      <Pillars />
       <Features />
       <How />
       <SaleFlow />
+      <MentorShowcase />
       <Pricing />
       <Trust />
       <Faq />
@@ -43,12 +46,12 @@ function Nav() {
           </span>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm text-muted font-medium">
-          <a href="#mentor" className="inline-flex items-center gap-1.5 hover:text-ink transition-colors">
+          <a href="#features" className="inline-flex items-center gap-1.5 hover:text-ink transition-colors">
             <span className="w-1.5 h-1.5 rounded-full bg-copper-500" aria-hidden />
-            {he.lpNavMentor}
+            {he.lpNavFeatures}
           </a>
-          <a href="#features" className="hover:text-ink transition-colors">{he.lpNavFeatures}</a>
           <a href="#how" className="hover:text-ink transition-colors">{he.lpNavHow}</a>
+          <a href="#mentor" className="hover:text-ink transition-colors">{he.lpNavMentor}</a>
           <a href="#pricing" className="hover:text-ink transition-colors">{he.lpNavPricing}</a>
           <a href="#faq" className="hover:text-ink transition-colors">{he.lpNavFaq}</a>
         </nav>
@@ -69,11 +72,11 @@ function Hero() {
       <div className="max-w-6xl mx-auto px-4 py-16 sm:py-20 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
         <div>
           <a
-            href="#mentor"
+            href="#platform"
             className="group inline-flex items-center gap-2 bg-copper-500/10 border border-copper-300 text-copper-600 text-sm font-semibold rounded-full ps-3 pe-4 py-1.5 mb-5 hover:bg-copper-500/20 transition-colors"
           >
-            <Icon name="sparkles" size={15} />
-            {he.lpHeroMentorPill}
+            <Icon name="bolt" size={15} />
+            {he.lpHeroPill}
             <Icon name="arrowForward" size={13} className="transition-transform group-hover:-translate-x-0.5" />
           </a>
           <p className="kicker mb-3">{he.lpHeroKicker}</p>
@@ -147,8 +150,8 @@ function Hero() {
                 <Icon name="check" size={13} className="text-ok" />
               </div>
               <div className="flex items-center gap-2.5 text-xs font-semibold text-copper-600 bg-copper-500/10 border border-copper-300 rounded-xl px-3.5 py-2.5">
-                <Icon name="sparkles" size={14} />
-                <span className="flex-1 truncate">{he.lpDemoMentor}</span>
+                <Icon name="shield" size={14} />
+                <span className="flex-1 truncate">{he.lpDemoGuard}</span>
               </div>
             </div>
           </div>
@@ -187,6 +190,83 @@ function SectionHead({ eyebrow, title, subtitle }: { eyebrow?: string; title: st
       <h2 className="font-display text-3xl sm:text-4xl font-black leading-tight">{title}</h2>
       {subtitle && <p className="text-muted text-lg mt-4">{subtitle}</p>}
     </div>
+  );
+}
+
+const PILLARS: ReadonlyArray<{
+  icon: IconName;
+  titleKey: keyof typeof he;
+  bodyKey: keyof typeof he;
+  itemKeys: ReadonlyArray<keyof typeof he>;
+}> = [
+  {
+    icon: 'card',
+    titleKey: 'lpPillar1Title',
+    bodyKey: 'lpPillar1Body',
+    itemKeys: ['lpPillar1Item1', 'lpPillar1Item2', 'lpPillar1Item3'],
+  },
+  {
+    icon: 'play',
+    titleKey: 'lpPillar2Title',
+    bodyKey: 'lpPillar2Body',
+    itemKeys: ['lpPillar2Item1', 'lpPillar2Item2', 'lpPillar2Item3'],
+  },
+  {
+    icon: 'flame',
+    titleKey: 'lpPillar3Title',
+    bodyKey: 'lpPillar3Body',
+    itemKeys: ['lpPillar3Item1', 'lpPillar3Item2', 'lpPillar3Item3'],
+  },
+  {
+    icon: 'chart',
+    titleKey: 'lpPillar4Title',
+    bodyKey: 'lpPillar4Body',
+    itemKeys: ['lpPillar4Item1', 'lpPillar4Item2', 'lpPillar4Item3'],
+  },
+];
+
+/**
+ * The product in one screen: the four systems the platform actually is.
+ * Dark full-bleed, directly under the stats bar — the whole offering lands
+ * before any single feature, the mentor included, gets its own pitch.
+ */
+function Pillars() {
+  return (
+    <section id="platform" className="bg-ink text-paper fx-grain scroll-mt-16">
+      <div className="max-w-6xl mx-auto px-4 py-20 sm:py-24">
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-copper-400 mb-3">
+            {he.lpPillarsEyebrow}
+          </p>
+          <h2 className="font-display text-3xl sm:text-4xl font-black leading-tight">{he.lpPillarsTitle}</h2>
+          <p className="text-paper/60 text-lg mt-4">{he.lpPillarsSubtitle}</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          {PILLARS.map((p, i) => (
+            <div key={p.titleKey} className="border border-paper/15 rounded-xl2 p-6 flex flex-col">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="w-10 h-10 rounded-xl bg-paper/10 grid place-items-center">
+                  <Icon name={p.icon} size={18} />
+                </span>
+                <h3 className="font-display font-black text-xl">{he[p.titleKey] as string}</h3>
+                <span className="ms-auto font-display font-black text-2xl text-paper/15 tabular-nums" aria-hidden>
+                  {i + 1}
+                </span>
+              </div>
+              <p className="text-paper/60 text-sm leading-relaxed">{he[p.bodyKey] as string}</p>
+              <ul className="mt-4 pt-4 border-t border-paper/15 space-y-2 text-sm text-paper/85">
+                {p.itemKeys.map((k) => (
+                  <li key={k} className="flex items-start gap-2">
+                    <Icon name="check" size={14} className="text-ok mt-1 shrink-0" />
+                    <span className="leading-snug">{he[k] as string}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -287,11 +367,14 @@ const FEATURES: ReadonlyArray<{ icon: IconName; titleKey: keyof typeof he; bodyK
   { icon: 'users', titleKey: 'lpFeatStudentsTitle', bodyKey: 'lpFeatStudentsBody' },
   { icon: 'clock', titleKey: 'lpFeatAutomationTitle', bodyKey: 'lpFeatAutomationBody' },
   { icon: 'palette', titleKey: 'lpFeatBrandTitle', bodyKey: 'lpFeatBrandBody' },
+  { icon: 'globe', titleKey: 'lpFeatHomepageTitle', bodyKey: 'lpFeatHomepageBody' },
+  { icon: 'pin', titleKey: 'lpFeatLinksTitle', bodyKey: 'lpFeatLinksBody' },
   { icon: 'book', titleKey: 'lpFeatCommunityTitle', bodyKey: 'lpFeatCommunityBody' },
   { icon: 'award', titleKey: 'lpFeatGamifyTitle', bodyKey: 'lpFeatGamifyBody' },
   { icon: 'ticket', titleKey: 'lpFeatAffiliatesTitle', bodyKey: 'lpFeatAffiliatesBody' },
   { icon: 'bolt', titleKey: 'lpFeatApiTitle', bodyKey: 'lpFeatApiBody' },
   { icon: 'chart', titleKey: 'lpFeatAnalyticsTitle', bodyKey: 'lpFeatAnalyticsBody' },
+  { icon: 'sparkles', titleKey: 'lpFeatMentorTitle', bodyKey: 'lpFeatMentorBody' },
 ];
 
 function Features() {
@@ -312,6 +395,7 @@ function Features() {
           </div>
         ))}
       </div>
+      <p className="text-center text-sm text-muted mt-10">{he.lpFeaturesNote}</p>
     </section>
   );
 }
@@ -514,12 +598,12 @@ function Footer() {
   return (
     <footer className="border-t border-line py-8">
       <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p className="text-sm text-muted">Kursim · {he.platformTagline}</p>
+        <p className="text-sm text-muted">{BRAND.name} · {he.platformTagline}</p>
         <div className="flex items-center gap-5 text-xs text-muted">
           <Link href="/superadmin/login" className="hover:text-ink transition-colors">
             {he.platformCtaAdmin}
           </Link>
-          <span>© {new Date().getFullYear()} Kursim · {he.platformFooterRights}</span>
+          <span>© {new Date().getFullYear()} {BRAND.name} · {he.platformFooterRights}</span>
         </div>
       </div>
     </footer>

@@ -13,7 +13,7 @@ import SocialLinks from '@/components/landing/SocialLinks';
 import { he } from '@/lib/he';
 import type { LandingProps } from '@/components/landing/landing-types';
 
-/** Kursim's original landing template — dark hero fading to the course's soft accent tint. */
+/** GeniriSchool's original landing template — dark hero fading to the course's soft accent tint. */
 export default function ClassicLanding({
   slug,
   tenantName,

@@ -134,7 +134,7 @@ export interface LandingDraftInputs {
 
 export async function generateLandingDraft(inputs: LandingDraftInputs): Promise<LandingAiDraft> {
   const { answers } = inputs;
-  const system = `You are a senior conversion copywriter writing content for a course-landing-page builder (Kursim). ${GOAL_HINT[answers.goal]} ${TONE_HINT[answers.tone]}
+  const system = `You are a senior conversion copywriter writing content for a course-landing-page builder (GeniriSchool). ${GOAL_HINT[answers.goal]} ${TONE_HINT[answers.tone]}
 
 ${GUARDRAILS}
 
@@ -162,7 +162,7 @@ export interface HomepageDraftInputs {
 
 export async function generateHomepageDraft(inputs: HomepageDraftInputs): Promise<HomepageAiDraft> {
   const { answers } = inputs;
-  const system = `You are a senior copywriter writing the welcome content for a logged-in-student home page on a course platform (Kursim). This is NOT a sales page — the student already enrolled. ${TONE_HINT[answers.tone]}
+  const system = `You are a senior copywriter writing the welcome content for a logged-in-student home page on a course platform (GeniriSchool). This is NOT a sales page — the student already enrolled. ${TONE_HINT[answers.tone]}
 
 ${GUARDRAILS}
 

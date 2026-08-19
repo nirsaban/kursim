@@ -16,9 +16,19 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const tenant = await getTenantBySlug(slug);
   if (!tenant) return {};
   const lt = parseLinktree(tenant.linktree);
+  const title = lt.headline || tenant.name;
+  const description = lt.bio || undefined;
   return {
-    title: lt.headline || tenant.name,
-    description: lt.bio || undefined,
+    title,
+    description,
+    openGraph: {
+      type: 'website',
+      title,
+      description,
+      siteName: tenant.name,
+      locale: 'he_IL',
+    },
+    twitter: { card: 'summary_large_image', title, description },
   };
 }
 

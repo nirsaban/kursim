@@ -48,39 +48,47 @@ enum MediaProvider {
   LOCAL
 }
 
+enum TranscriptStatus {
+  NONE
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
 model Tenant {
-  id             String         @id @default(uuid()) @db.Uuid
-  slug           String         @unique
-  name           String
-  status         TenantStatus   @default(ACTIVE)
+  id                String         @id @default(uuid()) @db.Uuid
+  slug              String         @unique
+  name              String
+  status            TenantStatus   @default(ACTIVE)
   /// Billing package: FREE | STARTER | GROWTH | UNLIMITED (see lib/billing.ts).
   /// FREE builds courses but can't invite students or publish landing pages.
-  plan            String    @default("FREE")
-  planActivatedAt DateTime?
+  plan              String         @default("FREE")
+  planActivatedAt   DateTime?
   /// Monthly AI-mentor spend ceiling for this school, in US cents ($10 default).
   /// When the month's Gemini cost reaches it, the mentor pauses and the owner
   /// is offered a top-up. Super-admin edits it on the Costs page.
-  mentorBudgetCents Int      @default(1000)
-  sessionLimit   Int            @default(3)
-  evictionPolicy EvictionPolicy @default(BLOCK)
+  mentorBudgetCents Int            @default(1000)
+  sessionLimit      Int            @default(3)
+  evictionPolicy    EvictionPolicy @default(BLOCK)
   /// Owner-customizable student-home content (validated by homepageSchema).
-  homepage       Json?
+  homepage          Json?
   /// Owner branding: logo (small data URL), accent color, applied across the
   /// student UI + login (validated by brandingSchema).
-  branding       Json?
+  branding          Json?
   /// Academy terms gate: when enabled, students must accept before entering
   /// (validated by termsSchema). Bumping `version` re-prompts everyone.
-  terms          Json?
+  terms             Json?
   /// School-wide social channels (WhatsApp number, Instagram, …) shown on
   /// course landing pages and the LinkTree page (validated by socialsSchema).
-  socials        Json?
+  socials           Json?
   /// The school's public link-in-bio page at /t/{slug}/links (validated by
   /// linktreeSchema): links, theme, publish flag. Logo comes from `branding`.
-  linktree       Json?
+  linktree          Json?
   /// Secret embedded in the Grow payment-webhook URL to authenticate callbacks.
-  webhookSecret  String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  webhookSecret     String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   users            User[]
   courses          Course[]
@@ -99,24 +107,24 @@ model Tenant {
 }
 
 model User {
-  id                 String     @id @default(uuid()) @db.Uuid
-  tenantId           String?    @db.Uuid
-  email              String
-  name               String?
-  passwordHash       String
-  role               UserRole
-  status             UserStatus @default(ACTIVE)
-  mustChangePassword Boolean    @default(false)
+  id                   String     @id @default(uuid()) @db.Uuid
+  tenantId             String?    @db.Uuid
+  email                String
+  name                 String?
+  passwordHash         String
+  role                 UserRole
+  status               UserStatus @default(ACTIVE)
+  mustChangePassword   Boolean    @default(false)
   /// WhatsApp phone (normalized 972…) — how the AI mentor recognizes the
   /// student when they message the school's number. Filled from purchases.
   phone                String?
   /// When the user accepted the tenant's terms, and which version. Null (or a
   /// stale version) with the gate enabled blocks the student UI until accepted.
   acceptedTermsAt      DateTime?
-  acceptedTermsVersion Int       @default(0)
-  lastLoginAt        DateTime?
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  acceptedTermsVersion Int        @default(0)
+  lastLoginAt          DateTime?
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
 
   tenant           Tenant?            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   enrollments      Enrollment[]
@@ -284,17 +292,25 @@ model Module {
 }
 
 model Lesson {
-  id            String        @id @default(uuid()) @db.Uuid
-  tenantId      String        @db.Uuid
-  moduleId      String        @db.Uuid
-  title         String
-  notes         String?       @db.Text
+  id               String           @id @default(uuid()) @db.Uuid
+  tenantId         String           @db.Uuid
+  moduleId         String           @db.Uuid
+  title            String
+  notes            String?          @db.Text
   /// Auto-generated transcript of the lesson video — mentor knowledge source.
-  transcript    String?       @db.Text
-  videoPublicId String?
-  videoProvider MediaProvider @default(CLOUDINARY)
-  durationSec   Int?
-  sortOrder     Int           @default(0)
+  transcript       String?          @db.Text
+  /// Transcription lifecycle. Kept separate from `transcript` so "never ran"
+  /// and "ran and produced nothing" stay distinguishable.
+  transcriptStatus TranscriptStatus @default(NONE)
+  /// BCP-47 tag of the transcribed speech ("he"). Null until one completes.
+  transcriptLang   String?
+  /// Last failure as a stable error code — never a signed URL or a key.
+  transcriptError  String?
+  transcribedAt    DateTime?
+  videoPublicId    String?
+  videoProvider    MediaProvider    @default(CLOUDINARY)
+  durationSec      Int?
+  sortOrder        Int              @default(0)
 
   tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)

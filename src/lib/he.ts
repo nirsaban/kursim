@@ -1,5 +1,5 @@
 export const he = {
-  appName: 'קורסים',
+  appName: 'GeniriSchool',
   admin: 'ניהול',
   superAdmin: 'ניהול מערכת',
   platformTagline: 'המקום שבו הידע שלכם הופך לעסק',
@@ -49,9 +49,9 @@ export const he = {
   // plan webhook (package payments via Grow, incl. standing-order cycles)
   notifPlanActivatedTitle: 'חבילת {plan} הופעלה 🎉',
   notifPlanActivatedBody: 'התשלום התקבל והחבילה פעילה. אפשר לצרף תלמידים ולפרסם דפי מכירה.',
-  mailPlanActivatedSubject: 'החבילה שלכם בקורסים הופעלה — {plan}',
+  mailPlanActivatedSubject: 'החבילה שלכם ב-GeniriSchool הופעלה — {plan}',
   mailPlanActivatedBody:
-    'שלום,\n\nהתשלום התקבל וחבילת {plan} של בית הספר "{school}" פעילה.\nמכאן אפשר לצרף תלמידים, לפרסם דפי מכירה ולהתחיל למכור.\n\nפרטי החבילה: {link}\n\nצוות קורסים',
+    'שלום,\n\nהתשלום התקבל וחבילת {plan} של בית הספר "{school}" פעילה.\nמכאן אפשר לצרף תלמידים, לפרסם דפי מכירה ולהתחיל למכור.\n\nפרטי החבילה: {link}\n\nצוות GeniriSchool',
   planWebhookAdminOk: '💰 תשלום חבילה: {school} — {plan} · {amount}₪ · תשלום מס׳ {count}',
   planWebhookAdminUnmatched:
     '⚠️ תשלום חבילה שלא זוהה: {email} · {amount}₪ — טפלו ידנית בעמוד החבילות',
@@ -85,7 +85,7 @@ export const he = {
   backToCourses: 'חזרה לקורסים',
   myCourses: 'הקורסים שלי',
   navMain: 'ראשי',
-  logoAria: 'לוגו קורסים',
+  logoAria: 'לוגו GeniriSchool',
 
   // common
   save: 'שמירה',
@@ -319,7 +319,7 @@ export const he = {
   emojiTitle: 'האייקון של הקורס',
   layoutTitle: 'סגנון דף הנחיתה',
   layoutClassic: 'קלאסי',
-  layoutClassicHint: 'הסגנון המקורי של Kursim — עדין ורב-שימושי',
+  layoutClassicHint: 'הסגנון המקורי של GeniriSchool — עדין ורב-שימושי',
   layoutCoralHota: 'קורל הוטה',
   layoutCoralHotaHint: 'סגנון בוטיק חם: קרם ושחור, כותרת בכתב־יד וכפתורים עגולים',
   whatsIncludedTitle: 'מה כלול בקורס',
@@ -727,7 +727,7 @@ export const he = {
   adminItemSettingsDesc: 'הגדרות כלליות של בית הספר.',
 
   studentPhoneLabel: 'וואטסאפ (לא חובה)',
-  studentPhoneHint: 'עם מספר — המנטור החכם יזהה את התלמיד כשיכתוב לוואטסאפ של בית הספר.',
+  studentPhoneHint: 'עם מספר — מנטור ג׳ניריסקול יזהה את התלמיד כשיכתוב לוואטסאפ של בית הספר.',
 
   // AI mentor (WhatsApp, per school)
   mentorGreeting: 'היי {name} 👋 כאן המנטור של בית הספר — אני עונה על שאלות מתוך הקורסים שלך.\n\nעל איזה קורס נדבר?',
@@ -739,13 +739,13 @@ export const he = {
   mentorFooter: '— המנטור · "תפריט" להחלפת קורס',
 
   mentorBudgetStudentMsg: 'המנטור הגיע למכסת השימוש החודשית של בית הספר. בינתיים אפשר לשאול את המרצה דרך עמוד השיעור — או לבקש מבית הספר להרחיב את המכסה.',
-  mentorBudgetNotifyTitle: 'תקציב המנטור לחודש נוצל',
-  mentorBudgetNotifyBody: 'המנטור החכם הגיע לתקרת השימוש החודשית והושהה עד תחילת החודש הבא. רוצים שהוא ימשיך לענות לתלמידים כבר עכשיו? אפשר להרחיב את המכסה:',
+  mentorBudgetNotifyTitle: 'תקציב מנטור ג׳ניריסקול לחודש נוצל',
+  mentorBudgetNotifyBody: 'מנטור ג׳ניריסקול הגיע לתקרת השימוש החודשית והושהה עד תחילת החודש הבא. רוצים שהוא ימשיך לענות לתלמידים כבר עכשיו? אפשר להרחיב את המכסה:',
 
   // superadmin — mentor costs panel
   saCostsNav: 'עלויות',
-  saCostsTitle: 'עלויות ותקציבי מנטור',
-  saCostsSubtitle: 'כמה עולה המנטור החכם החודש, לכל בית ספר — והתקרה שמגינה עליכם.',
+  saCostsTitle: 'עלויות ותקציבי מנטור ג׳ניריסקול',
+  saCostsSubtitle: 'כמה עולה מנטור ג׳ניריסקול החודש, לכל בית ספר — והתקרה שמגינה עליכם.',
   saCostsTotal: 'עלות החודש (כל בתי הספר)',
   saCostsMessages: 'תשובות מנטור החודש',
   saCostsOverBudget: 'בתי ספר שמיצו תקציב',
@@ -762,11 +762,11 @@ export const he = {
 
   // platform lead bot (WhatsApp scheduling)
   leadBotGreeting:
-    'היי {name}, כאן Kursim 👋\nתודה שפניתם אלינו! נשמח לקבוע שיחת היכרות קצרה ולהראות לכם איך מקימים בית ספר דיגיטלי שמוכר.\n\nמתי נוח לכם?',
+    'היי {name}, כאן GeniriSchool 👋\nתודה שפניתם אלינו! נשמח לקבוע שיחת היכרות קצרה ולהראות לכם איך מקימים בית ספר דיגיטלי שמוכר.\n\nמתי נוח לכם?',
   leadBotPickHint: 'פשוט השיבו עם המספר של המועד שמתאים לכם. אפשר גם לכתוב "נציג" ונחזור אליכם אישית.',
   leadBotConfirmed: 'מעולה, קבענו! נדבר ב{slot}. נשלח תזכורת לפני, ואם צריך לשנות — כתבו "שינוי".',
   leadBotCalcomGreeting:
-    'היי {name}, כאן Kursim 👋\nתודה שפניתם אלינו! נשמח לקבוע שיחת היכרות קצרה ולהראות לכם איך מקימים בית ספר דיגיטלי שמוכר.\n\nבוחרים זמן שנוח לכם ביומן, כאן:\n{url}\n\nצריכים עזרה? כתבו "נציג" ונחזור אליכם אישית.',
+    'היי {name}, כאן GeniriSchool 👋\nתודה שפניתם אלינו! נשמח לקבוע שיחת היכרות קצרה ולהראות לכם איך מקימים בית ספר דיגיטלי שמוכר.\n\nבוחרים זמן שנוח לכם ביומן, כאן:\n{url}\n\nצריכים עזרה? כתבו "נציג" ונחזור אליכם אישית.',
   leadBotAlreadyScheduled: 'הפגישה שלנו קבועה ל{slot}. לשינוי המועד כתבו "שינוי", ולכל דבר אחר — "נציג".',
   leadBotHuman: 'אין בעיה — נציג אנושי יחזור אליכם בהקדם. תודה על הסבלנות!',
   leadBotAdminAlert: 'נקבעה פגישה חדשה!\nליד: {name}\nטלפון: {phone}\nמועד: {slot}',
@@ -851,8 +851,8 @@ export const he = {
   planUnlimited: 'ללא תקרה',
   planFreeDesc: 'בונים את הקורס, מעלים שיעורים ומכינים דף מכירה — בלי תשלום ובלי הגבלת זמן.',
   planStarterDesc: 'לקורס הראשון עם קהל אמיתי — כל היכולות, עד 50 תלמידים.',
-  planGrowthDesc: 'לבית ספר שמתרחב — כל היכולות כולל מנטור ה־AI, עד 500 תלמידים.',
-  planUnlimitedDesc: 'בלי תקרת תלמידים ובלי הפתעות — כולל מנטור ה־AI, למותגים שרצים קדימה.',
+  planGrowthDesc: 'לבית ספר שמתרחב — כל היכולות כולל מנטור ג׳ניריסקול, עד 500 תלמידים.',
+  planUnlimitedDesc: 'בלי תקרת תלמידים ובלי הפתעות — כולל מנטור ג׳ניריסקול, למותגים שרצים קדימה.',
   planPerMonth: 'לחודש',
   planUpTo: 'עד',
   planStudentsCap: 'תלמידים',
@@ -885,11 +885,11 @@ export const he = {
 
   // platform marketing homepage (/) — sales-led v2
   lpNavFeatures: 'מה יש בפנים',
-  lpNavMentor: 'מנטור AI',
+  lpNavMentor: 'מנטור ג׳ניריסקול',
   lpNavHow: 'איך זה עובד',
   lpNavFaq: 'שאלות',
   lpNavCta: 'דברו איתנו',
-  lpHeroMentorPill: 'חדש: מנטור AI שעונה לתלמידים שלכם בוואטסאפ',
+  lpHeroPill: 'קורסים · דף מכירה · סליקה · וואטסאפ · אבטחה — מערכת אחת',
   lpHeroKicker: 'המקום שבו הידע שלכם הופך לעסק',
   lpHeroTitle1: 'הידע שלכם שווה כסף.',
   lpHeroTitle2: 'תנו לו מערכת שמוכרת אותו.',
@@ -911,11 +911,37 @@ export const he = {
   lpStat4Label: 'בית הספר מוכר גם כשאתם ישנים',
 
   lpFeaturesTitle: 'כל העסק שלכם. מערכת אחת.',
+  lpFeaturesNote: 'וכל יכולת כאן היא חלק מהמערכת — לא תוסף בתשלום נפרד.',
   lpFeaturesSubtitle: 'בלי לתפור חמישה כלים אחד לשני — הכול כבר מחובר ועובד יחד.',
+
+  // the four core systems (pillars strip)
+  lpPillarsEyebrow: 'המערכת',
+  lpPillarsTitle: 'ארבע מערכות שעובדות יחד',
+  lpPillarsSubtitle: 'מכירה, למידה, התמדה וניהול — כל אחת שלמה בפני עצמה, וכולן חולקות את אותם תלמידים ואותם נתונים.',
+  lpPillar1Title: 'מוכרים',
+  lpPillar1Body: 'דף מכירה לכל קורס, סליקה ישראלית וערוצי הפצה — הרכישה נסגרת אצלכם, בלי אתר חיצוני.',
+  lpPillar1Item1: 'דף נחיתה ממותג לכל קורס',
+  lpPillar1Item2: 'סליקת Hyp / Grow עם פתיחה אוטומטית',
+  lpPillar1Item3: 'שותפים, קופונים וקודי גישה',
+  lpPillar2Title: 'מלמדים',
+  lpPillar2Body: 'שיעורי וידאו מאובטחים במודולים, חומרי עזר והערות אישיות — וקהילה שצמודה לשיעור עצמו.',
+  lpPillar2Item1: 'נגן מאובטח וחומרי עזר',
+  lpPillar2Item2: 'הערות וסימניות אישיות',
+  lpPillar2Item3: 'שאלות על שיעור ודיוני קהילה',
+  lpPillar3Title: 'מחזירים',
+  lpPillar3Body: 'רצף למידה, הישגים, לוח מובילים ותעודת סיום — ותזכורת אוטומטית למי שנעלם באמצע.',
+  lpPillar3Item1: 'רצף למידה, הישגים ולוח מובילים',
+  lpPillar3Item2: 'תעודת סיום להורדה',
+  lpPillar3Item3: 'תזכורות והודעות לכל התלמידים',
+  lpPillar4Title: 'מנהלים',
+  lpPillar4Body: 'תלמידים, מכירות, חיבורים פעילים ומיתוג — הכול מלוח אחד, ו־API לכל מה שנשאר בחוץ.',
+  lpPillar4Item1: 'אנליטיקות התקדמות ומכירות',
+  lpPillar4Item2: 'ניהול חיבורים פעילים בזמן אמת',
+  lpPillar4Item3: 'API ל־Make ול־Zapier',
 
   // AI mentor showcase section
   lpMentorBadge: 'חדש',
-  lpMentorTitle1: 'מנטור AI אישי לכל תלמיד.',
+  lpMentorTitle1: 'מנטור ג׳ניריסקול — עוזר אישי לכל תלמיד.',
   lpMentorTitle2: 'בוואטסאפ שלהם.',
   lpMentorSubtitle:
     'הדבר הכי קרוב לשכפל את עצמכם: עוזר הוראה שלמד את כל הקורסים שלכם ועונה לתלמידים בשמכם — בכל שעה, בעברית.',
@@ -932,7 +958,7 @@ export const he = {
   lpMentorPoint4Body:
     'מחברים את הוואטסאפ של בית הספר פעם אחת — ומאותו רגע לכל תלמיד יש מנטור אישי זמין 24/7.',
   lpMentorPlanNote: 'כלול במסלולי צמיחה וללא תקרה',
-  lpMentorCta: 'פותחים בית ספר עם מנטור',
+  lpMentorCta: 'פותחים בית ספר עם מנטור ג׳ניריסקול',
   lpMentorChatTitle: 'המנטור של בית הספר',
   lpMentorChatStatus: 'מחובר · עונה עכשיו',
   lpMentorChatQ1: 'לא הבנתי את החלק של התמחור בשיעור 3 😅',
@@ -948,7 +974,7 @@ export const he = {
   lpFeatPayTitle: 'סליקה ישראלית מקצה לקצה',
   lpFeatPayBody: 'חיבור ל־Hyp ו־Grow: הלקוח משלם, החשבון נוצר, הקורס נפתח והקבלה נשלחת — בלי מגע יד.',
   lpFeatWhatsappTitle: 'וואטסאפ, לא רק מייל',
-  lpFeatWhatsappBody: 'פרטי הכניסה והעדכונים מגיעים ישר לוואטסאפ של הלקוח — לערוץ שבאמת נפתח.',
+  lpFeatWhatsappBody: 'פרטי כניסה, עדכונים והודעות לכל התלמידים מגיעים ישר לוואטסאפ — לערוץ שבאמת נפתח.',
   lpFeatStudentsTitle: 'ניהול תלמידים בקלות',
   lpFeatStudentsBody: 'הזמנות, ייבוא מ־CSV, איפוס סיסמאות ומעקב התקדמות אישי — הכול בלוח אחד.',
   lpFeatAutomationTitle: 'אוטומציות שמחזירות תלמידים',
@@ -965,6 +991,12 @@ export const he = {
   lpFeatApiBody: 'API עם מחולל קוד מוכן ל־Make ו־Zapier — כל דף תשלום חיצוני יכול לרשום לקוחות אוטומטית.',
   lpFeatAnalyticsTitle: 'רואים מה באמת קורה',
   lpFeatAnalyticsBody: 'התקדמות, השלמות, פעילות ומכירות — מספרים שעוזרים להחליט מה לשפר ומתי לדחוף.',
+  lpFeatHomepageTitle: 'עמוד בית משלכם לתלמידים',
+  lpFeatHomepageBody: 'הודעת פתיחה, עדכונים והבלטת קורסים — עורכים את עמוד הבית של בית הספר בלי שורת קוד.',
+  lpFeatLinksTitle: 'עמוד לינקים ממותג',
+  lpFeatLinksBody: 'דף link-in-bio לבית הספר עם הלוגו, הקורסים והרשתות שלכם — קישור אחד לביו באינסטגרם.',
+  lpFeatMentorTitle: 'מנטור ג׳ניריסקול בוואטסאפ',
+  lpFeatMentorBody: 'תלמיד רשום שואל בוואטסאפ ומקבל תשובה מתוך התוכן שלכם בלבד, עם הפניה לשיעור הנכון.',
 
   lpHowTitle: 'משלוש החלטות למכונת מכירה',
   lpHowSubtitle: 'בלי מפתחים, בלי בונה אתרים, בלי כאב ראש.',
@@ -1003,7 +1035,7 @@ export const he = {
   lpFaq4A: 'הכול אוטומטי: חשבון נוצר, הקורס נפתח, ופרטי הכניסה נשלחים בוואטסאפ ובמייל — בלי המתנה ובלי טיפול ידני.',
   lpFaq5Q: 'ואיך מונעים העברת סיסמאות?',
   lpFaq5A: 'כל חשבון מוגבל למספר מסכים פתוחים בו־זמנית. מכשיר חורג נחסם אוטומטית, ואתם רואים בזמן אמת מי מחובר.',
-  lpFaq6Q: 'איך עובד מנטור ה־AI בוואטסאפ?',
+  lpFaq6Q: 'איך עובד מנטור ג׳ניריסקול בוואטסאפ?',
   lpFaq6A:
     'מחברים את הוואטסאפ של בית הספר בסריקת QR — ומרגע זה תלמיד ששולח שאלה מקבל תשובה מתוך תוכן הקורס בלבד, עם הפניה לשיעור המתאים. המנטור מזהה תלמידים רשומים לפי מספר הטלפון ולא עונה לאף אחד אחר.',
 
@@ -1015,7 +1047,7 @@ export const he = {
   lpDemoStatRevenue: 'הכנסות החודש',
   lpDemoStatCompletion: 'אחוז השלמה',
   lpDemoContinue: 'ממשיכים ללמוד',
-  lpDemoMentor: 'מנטור ה־AI ענה היום ל־14 שאלות תלמידים',
+  lpDemoGuard: 'מכשיר רביעי ניסה להיכנס עם אותה סיסמה — ונחסם',
 
   // platform marketing homepage (/)
   platformHeroTitle1: 'בית ספר דיגיטלי משלכם —',
@@ -1094,11 +1126,11 @@ export const he = {
   platformLeadFormErrorBody: 'משהו השתבש בשליחה — נסו שוב או כתבו לנו ישירות.',
 
   // page metadata
-  metaTitle: 'Kursim — פלטפורמת הקורסים שלכם',
+  metaTitle: 'GeniriSchool — פלטפורמת הקורסים שלכם',
   metaDescription: 'פותחים בית ספר דיגיטלי משלכם, מוכרים קורסים, ושומרים על התוכן עם מכסת מכשירים חכמה',
 
   // landing footer
-  landingBuiltWith: 'נבנה עם Kursim',
+  landingBuiltWith: 'נבנה עם GeniriSchool',
 
   // ── payments (Grow webhook → auto-provision + WhatsApp) ──
   payments: 'מכירות ותשלומים',
@@ -1236,7 +1268,7 @@ export const he = {
   waTestHint: 'שלחו לעצמכם הודעת בדיקה כדי לוודא שהחיבור עובד',
   waTestPhoneLabel: 'הטלפון שלכם',
   waTestSend: 'שליחת הודעת בדיקה',
-  waTestMessage: 'זו הודעת בדיקה מ-Kursim ✅ אם קיבלתם אותה — החיבור עובד מצוין!',
+  waTestMessage: 'זו הודעת בדיקה מ-GeniriSchool ✅ אם קיבלתם אותה — החיבור עובד מצוין!',
   waTestSent: 'נשלח! בדקו את הוואטסאפ 📱',
   waTestQueued: 'בתור — ממתין לחיבור',
   waTestFailed: 'השליחה נכשלה — בדקו את הטלפון',

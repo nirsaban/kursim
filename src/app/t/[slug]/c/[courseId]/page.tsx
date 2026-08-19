@@ -27,9 +27,22 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const data = await loadLanding(slug, courseId);
   if (!data) return {};
   const m = parseMarketing(data.course.marketing);
+  const title = `${m.headline || data.course.title} · ${data.tenant.name}`;
+  const description = m.subheadline || data.course.description || undefined;
+  // og:* is set explicitly so the shared preview shows the course and school
+  // without the platform suffix the document <title> template appends. The
+  // image itself comes from opengraph-image.tsx in this segment.
   return {
-    title: `${m.headline || data.course.title} · ${data.tenant.name}`,
-    description: m.subheadline || data.course.description || undefined,
+    title,
+    description,
+    openGraph: {
+      type: 'website',
+      title,
+      description,
+      siteName: data.tenant.name,
+      locale: 'he_IL',
+    },
+    twitter: { card: 'summary_large_image', title, description },
   };
 }
 

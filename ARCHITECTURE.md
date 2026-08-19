@@ -1,4 +1,4 @@
-# Kursim — Multi-Tenant Course Platform: Architecture
+# GeniriSchool — Multi-Tenant Course Platform: Architecture
 
 > Status: **IMPLEMENTED** — MVP built and verified end-to-end (see README for run instructions).
 
