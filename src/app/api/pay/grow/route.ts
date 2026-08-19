@@ -6,19 +6,8 @@ import { hashPassword } from '@/lib/auth/password';
 import { sendWhatsappText } from '@/lib/whatsapp';
 import { sendMail, isRealEmail } from '@/lib/email';
 import { notify } from '@/lib/notify';
-import { getRedis } from '@/lib/redis';
+import { captureRawCallback, parseGrowBody, paidSignal } from '@/lib/pay/grow-callback';
 import { he } from '@/lib/he';
-
-/** Durable diagnostic ring buffer of the last raw callbacks (read via redis: pay:grow:log). */
-async function captureRawCallback(entry: Record<string, unknown>): Promise<void> {
-  try {
-    const r = getRedis();
-    await r.lpush('pay:grow:log', JSON.stringify(entry));
-    await r.ltrim('pay:grow:log', 0, 49);
-  } catch {
-    /* diagnostics must never affect the response */
-  }
-}
 
 // Node runtime: needs crypto + argon2 (not edge-compatible).
 export const runtime = 'nodejs';
@@ -30,92 +19,6 @@ function tempPassword(): string {
   let out = '';
   for (let i = 0; i < 10; i++) out += alphabet[bytes[i] % alphabet.length];
   return out;
-}
-
-/**
- * Some Grow payment pages nest every field under a `data` wrapper — form-encoded
- * as `data[statusCode]=2`, or JSON as `{"data":{...}}` — while others post the
- * same fields flat. Lift the wrapper so both shapes read identically downstream.
- * Deeper nesting (e.g. `data[productData][0][name]`) is not a field we consume
- * and is left untouched.
- */
-function unwrapData(obj: Record<string, unknown>): Record<string, string> {
-  const out: Record<string, string> = {};
-  const put = (k: string, v: unknown) => {
-    if (v === null || typeof v === 'object') return;
-    out[k] = String(v);
-  };
-  for (const [k, v] of Object.entries(obj)) {
-    const nested = /^data\[([^[\]]+)\]$/.exec(k);
-    if (nested) {
-      put(nested[1], v);
-    } else if (k === 'data' && v && typeof v === 'object' && !Array.isArray(v)) {
-      for (const [ik, iv] of Object.entries(v as Record<string, unknown>)) put(ik, iv);
-    } else {
-      put(k, v);
-    }
-  }
-  return out;
-}
-
-/**
- * Line items. A payment link that sells two courses posts two of these, as
- * `data[productData][0][...]` and `data[productData][1][...]` (or a JSON array).
- * `unwrapData` deliberately skips them, so pull them out separately.
- */
-function extractProducts(obj: Record<string, unknown>): Array<Record<string, string>> {
-  const byIndex = new Map<number, Record<string, string>>();
-  const put = (i: number, k: string, v: unknown) => {
-    if (v === null || typeof v === 'object') return;
-    const row = byIndex.get(i) ?? {};
-    row[k] = String(v);
-    byIndex.set(i, row);
-  };
-
-  // Form-encoded: data[productData][0][name] — or the same without the wrapper.
-  for (const [k, v] of Object.entries(obj)) {
-    const m = /^(?:data\[productData\]|productData)\[(\d+)\]\[([^[\]]+)\]$/.exec(k);
-    if (m) put(Number(m[1]), m[2], v);
-  }
-
-  // JSON: { productData: [...] } or { data: { productData: [...] } }.
-  const wrapped = obj.data;
-  const arrays = [
-    Array.isArray(obj.productData) ? obj.productData : null,
-    wrapped && typeof wrapped === 'object' && Array.isArray((wrapped as Record<string, unknown>).productData)
-      ? ((wrapped as Record<string, unknown>).productData as unknown[])
-      : null,
-  ].filter(Boolean) as unknown[][];
-  for (const arr of arrays) {
-    arr.forEach((row, i) => {
-      if (row && typeof row === 'object') {
-        for (const [k, v] of Object.entries(row as Record<string, unknown>)) put(1000 + i, k, v);
-      }
-    });
-  }
-
-  return [...byIndex.entries()].sort((a, b) => a[0] - b[0]).map(([, row]) => row);
-}
-
-/** Grow may POST JSON or form-encoded, flat or wrapped in `data`. Parse from the
- *  already-read raw text, trying JSON first then form, regardless of the
- *  declared content-type. */
-function parseGrowBody(raw: string, ct: string): { fields: Record<string, string>; products: Array<Record<string, string>> } {
-  const asForm = (s: string): Record<string, unknown> => {
-    const obj: Record<string, unknown> = {};
-    for (const [k, v] of new URLSearchParams(s)) obj[k] = v;
-    return obj;
-  };
-  const tryJson = (s: string): Record<string, unknown> | null => {
-    try {
-      const j = JSON.parse(s);
-      return j && typeof j === 'object' ? (j as Record<string, unknown>) : null;
-    } catch {
-      return null;
-    }
-  };
-  const obj = (ct.includes('application/json') ? tryJson(raw) : null) ?? tryJson(raw) ?? asForm(raw);
-  return { fields: unwrapData(obj), products: extractProducts(obj) };
 }
 
 /**
@@ -142,7 +45,7 @@ export async function POST(req: Request) {
   // Grow sends even when the parser doesn't recognise it as a completed payment.
   const contentType = req.headers.get('content-type') ?? '';
   const rawBody = await req.text().catch(() => '');
-  await captureRawCallback({
+  await captureRawCallback('pay:grow:log', {
     at: Date.now(),
     ip: req.headers.get('x-forwarded-for') ?? '',
     t: slug,
@@ -158,17 +61,8 @@ export async function POST(req: Request) {
   }
 
   const { fields: body, products } = parseGrowBody(rawBody, contentType);
-  const statusCode = String(body.statusCode ?? '');
-  const status = String(body.status ?? '');
-  // Grow's Payment-Links webhook fires ONLY on a successful charge and signals it
-  // with a reference number (asmachta) — there is no statusCode. Older/other Grow
-  // formats use statusCode "2" / status "שולם". Accept any of these as paid.
-  const asmachta = String(body.asmachta || '').trim();
-  const transactionCode = String(body.transactionCode || '').trim();
-  const paid = statusCode === '2' || status === 'שולם' || Boolean(asmachta || transactionCode);
+  const { paid, transactionId } = paidSignal(body);
   if (!paid) return NextResponse.json({ ignored: true }, { status: 200 });
-
-  const transactionId = (asmachta || transactionCode || String(body.transactionId || '')).trim();
   if (!transactionId) return NextResponse.json({ error: 'no_transaction' }, { status: 200 });
 
   const payerPhone = String(body.payerPhone || '').trim();

@@ -95,6 +95,7 @@ model Tenant {
   courseMedia      CourseMedia[]
   learningActivity LearningActivity[]
   authTokens       AuthToken[]
+  planPayments     PlanPayment[]
 }
 
 model User {
@@ -624,6 +625,28 @@ model Lead {
   updatedAt     DateTime  @updatedAt
 
   @@index([phone])
+  @@index([createdAt])
+}
+
+/// Platform-level table like Lead: no RLS. One row per Grow package payment
+/// (first charge and every standing-order cycle). transactionId's unique
+/// constraint is the webhook's idempotency guard; tenantId/plan stay null when
+/// the payer email couldn't be matched to exactly one school owner — those
+/// rows are resolved by hand from the super-admin packages page.
+model PlanPayment {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenantId      String?  @db.Uuid
+  /// Detected package (STARTER/GROWTH/UNLIMITED); null = needs manual handling.
+  plan          String?
+  amount        String   @default("")
+  payerEmail    String   @default("")
+  payerName     String   @default("")
+  transactionId String   @unique
+  createdAt     DateTime @default(now())
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
   @@index([createdAt])
 }
 

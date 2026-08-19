@@ -7,7 +7,8 @@ export type NotificationType =
   | 'community_reply'
   | 'review'
   | 'certificate'
-  | 'enroll';
+  | 'enroll'
+  | 'plan';
 
 interface NotifyInput {
   userId: string;

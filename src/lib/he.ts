@@ -46,6 +46,16 @@ export const he = {
   forgotSentTitle: 'הקישור בדרך אליכם',
   forgotSentBody:
     'שלחנו לאימייל קישור לבחירת סיסמה חדשה. הקישור בתוקף לשעה. שווה להציץ גם בתיקיית הספאם.',
+  // plan webhook (package payments via Grow, incl. standing-order cycles)
+  notifPlanActivatedTitle: 'חבילת {plan} הופעלה 🎉',
+  notifPlanActivatedBody: 'התשלום התקבל והחבילה פעילה. אפשר לצרף תלמידים ולפרסם דפי מכירה.',
+  mailPlanActivatedSubject: 'החבילה שלכם בקורסים הופעלה — {plan}',
+  mailPlanActivatedBody:
+    'שלום,\n\nהתשלום התקבל וחבילת {plan} של בית הספר "{school}" פעילה.\nמכאן אפשר לצרף תלמידים, לפרסם דפי מכירה ולהתחיל למכור.\n\nפרטי החבילה: {link}\n\nצוות קורסים',
+  planWebhookAdminOk: '💰 תשלום חבילה: {school} — {plan} · {amount}₪ · תשלום מס׳ {count}',
+  planWebhookAdminUnmatched:
+    '⚠️ תשלום חבילה שלא זוהה: {email} · {amount}₪ — טפלו ידנית בעמוד החבילות',
+
   forgotNotFoundTitle: 'האימייל לא נמצא בבית הספר הזה',
   forgotNotFoundBody:
     'לא מצאנו חשבון עם הכתובת הזו כאן. בדקו שאין טעות הקלדה — או שאולי נרשמתם עם אימייל אחר. אם אתם בטוחים בכתובת, פנו למנהל בית הספר.',
@@ -770,7 +780,24 @@ export const he = {
   saPackageLink: 'קישור תשלום (Grow)',
   saPackageLinkHint: 'ריק = יוצג "דברו איתנו להפעלה" במקום כפתור רכישה.',
   saPackagesInvalid: 'השמירה נכשלה — ודאו שהקישורים תקינים (כתובת מלאה עם https).',
-  saPackagesFlowNote: 'זרימת הפעלה: לקוח משלם בקישור Grow ← אתם מקבלים התראה מ-Grow ← מעניקים לו את החבילה בעמוד בתי הספר.',
+  saPackagesFlowNote:
+    'זרימת הפעלה: לקוח משלם בקישור Grow ← ה-webhook מזהה את החבילה לפי הסכום ואת בית הספר לפי אימייל הבעלים ← החבילה מופעלת אוטומטית. תשלום שלא זוהה מופיע בטבלה למטה לטיפול ידני (הענקה בעמוד בתי הספר).',
+  saWebhookTitle: 'Webhook לתשלומי חבילות',
+  saWebhookHint:
+    'מדביקים את הכתובת הזו כ-server callback בכל עמוד תשלום של חבילה ב-Grow — כתובת אחת לכל החבילות, כולל כל חיוב של הוראת קבע.',
+  saWebhookMissing:
+    'לא הוגדר PLAN_WEBHOOK_SECRET בשרת — הוסיפו את המשתנה כדי להפעיל את ה-webhook (ראו .env.example).',
+  saWebhookCopy: 'העתקת כתובת',
+  saWebhookCopied: 'הועתק ✓',
+  saPlanPaymentsTitle: 'תשלומי חבילות שהתקבלו',
+  saPlanPaymentsEmpty: 'עוד לא התקבלו תשלומים דרך ה-webhook.',
+  saPlanPaymentsSchool: 'בית ספר',
+  saPlanPaymentsPlan: 'חבילה',
+  saPlanPaymentsAmount: 'סכום',
+  saPlanPaymentsPayer: 'משלם',
+  saPlanPaymentsCount: 'תשלום מס׳',
+  saPlanPaymentsWhen: 'מתי',
+  saPlanPaymentsUnmatched: 'לא זוהה — טיפול ידני',
 
   // superadmin — leads panel
   saLeadsTitle: 'לידים ופגישות',
