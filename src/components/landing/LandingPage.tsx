@@ -18,6 +18,7 @@ export function LandingPage() {
       <Nav />
       <Hero />
       <Stats />
+      <MentorShowcase />
       <Features />
       <How />
       <SaleFlow />
@@ -42,6 +43,10 @@ function Nav() {
           </span>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm text-muted font-medium">
+          <a href="#mentor" className="inline-flex items-center gap-1.5 hover:text-ink transition-colors">
+            <span className="w-1.5 h-1.5 rounded-full bg-copper-500" aria-hidden />
+            {he.lpNavMentor}
+          </a>
           <a href="#features" className="hover:text-ink transition-colors">{he.lpNavFeatures}</a>
           <a href="#how" className="hover:text-ink transition-colors">{he.lpNavHow}</a>
           <a href="#pricing" className="hover:text-ink transition-colors">{he.lpNavPricing}</a>
@@ -63,6 +68,14 @@ function Hero() {
     <section className="flex-1 flex items-center overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 py-16 sm:py-20 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
         <div>
+          <a
+            href="#mentor"
+            className="group inline-flex items-center gap-2 bg-copper-500/10 border border-copper-300 text-copper-600 text-sm font-semibold rounded-full ps-3 pe-4 py-1.5 mb-5 hover:bg-copper-500/20 transition-colors"
+          >
+            <Icon name="sparkles" size={15} />
+            {he.lpHeroMentorPill}
+            <Icon name="arrowForward" size={13} className="transition-transform group-hover:-translate-x-0.5" />
+          </a>
           <p className="kicker mb-3">{he.lpHeroKicker}</p>
           <h1 className="font-display text-4xl sm:text-5xl font-black leading-[1.12]">
             {he.lpHeroTitle1}
@@ -133,6 +146,10 @@ function Hero() {
                 <span className="flex-1 truncate">{he.lpFlowStep3}</span>
                 <Icon name="check" size={13} className="text-ok" />
               </div>
+              <div className="flex items-center gap-2.5 text-xs font-semibold text-copper-600 bg-copper-500/10 border border-copper-300 rounded-xl px-3.5 py-2.5">
+                <Icon name="sparkles" size={14} />
+                <span className="flex-1 truncate">{he.lpDemoMentor}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -173,6 +190,95 @@ function SectionHead({ eyebrow, title, subtitle }: { eyebrow?: string; title: st
   );
 }
 
+const MENTOR_POINTS = [
+  { icon: 'book', titleKey: 'lpMentorPoint1Title', bodyKey: 'lpMentorPoint1Body' },
+  { icon: 'play', titleKey: 'lpMentorPoint2Title', bodyKey: 'lpMentorPoint2Body' },
+  { icon: 'shield', titleKey: 'lpMentorPoint3Title', bodyKey: 'lpMentorPoint3Body' },
+  { icon: 'bolt', titleKey: 'lpMentorPoint4Title', bodyKey: 'lpMentorPoint4Body' },
+] as const;
+
+/**
+ * The headline feature. A dark full-bleed section right under the stats bar:
+ * WhatsApp-style chat demo on one side, the four selling points on the other.
+ */
+function MentorShowcase() {
+  return (
+    <section id="mentor" className="bg-ink text-paper fx-grain scroll-mt-16">
+      <div className="max-w-6xl mx-auto px-4 py-20 sm:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div>
+            <p className="inline-flex items-center gap-2 bg-copper-500 text-card text-xs font-bold rounded-full px-3 py-1 mb-5">
+              <Icon name="sparkles" size={13} />
+              {he.lpMentorBadge}
+            </p>
+            <h2 className="font-display text-3xl sm:text-4xl font-black leading-tight">
+              {he.lpMentorTitle1}
+              <br />
+              <span className="text-copper-400">{he.lpMentorTitle2}</span>
+            </h2>
+            <p className="text-paper/70 text-lg mt-4 leading-relaxed">{he.lpMentorSubtitle}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 mt-8">
+              {MENTOR_POINTS.map((p) => (
+                <div key={p.titleKey}>
+                  <div className="flex items-center gap-2.5 mb-1.5">
+                    <span className="w-7 h-7 shrink-0 rounded-lg bg-paper/10 grid place-items-center">
+                      <Icon name={p.icon} size={14} />
+                    </span>
+                    <h3 className="font-display font-bold">{he[p.titleKey]}</h3>
+                  </div>
+                  <p className="text-paper/60 text-sm leading-relaxed">{he[p.bodyKey]}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-9">
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center bg-copper-500 hover:bg-copper-600 text-card font-bold rounded-xl px-6 min-h-[48px] shadow-cta transition-[background-color,transform] duration-150 active:scale-[0.98]"
+              >
+                {he.lpMentorCta}
+              </Link>
+              <span className="text-sm text-paper/50">{he.lpMentorPlanNote}</span>
+            </div>
+          </div>
+
+          {/* WhatsApp-style conversation demo */}
+          <div aria-hidden>
+            <div className="bg-card text-ink rounded-[1.5rem] shadow-lift overflow-hidden max-w-md mx-auto">
+              <div className="bg-ink-surface text-paper px-5 py-3.5 flex items-center gap-3">
+                <span className="w-9 h-9 rounded-full bg-copper-500 grid place-items-center text-card">
+                  <Icon name="sparkles" size={16} />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm truncate">{he.lpMentorChatTitle}</p>
+                  <p className="text-xs text-paper/60 inline-flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-live animate-pulse-live" />
+                    {he.lpMentorChatStatus}
+                  </p>
+                </div>
+              </div>
+              <div className="p-4 space-y-3 bg-paper/60">
+                <p className="bg-ok-soft text-ink text-sm leading-relaxed rounded-2xl rounded-es-md px-4 py-2.5 max-w-[85%] ms-auto">
+                  {he.lpMentorChatQ1}
+                </p>
+                <p className="bg-card border border-line text-sm leading-relaxed rounded-2xl rounded-ss-md px-4 py-2.5 max-w-[90%] shadow-card">
+                  {he.lpMentorChatA1}
+                </p>
+                <p className="bg-ok-soft text-ink text-sm leading-relaxed rounded-2xl rounded-es-md px-4 py-2.5 max-w-[85%] ms-auto">
+                  {he.lpMentorChatQ2}
+                </p>
+                <p className="bg-card border border-line text-sm leading-relaxed rounded-2xl rounded-ss-md px-4 py-2.5 max-w-[90%] shadow-card">
+                  {he.lpMentorChatA2}
+                </p>
+                <p className="text-center text-[11px] text-muted pt-1">{he.lpMentorChatFooter}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 const FEATURES: ReadonlyArray<{ icon: IconName; titleKey: keyof typeof he; bodyKey: keyof typeof he }> = [
   { icon: 'video', titleKey: 'lpFeatVideoTitle', bodyKey: 'lpFeatVideoBody' },
   { icon: 'trendingUp', titleKey: 'lpFeatLandingTitle', bodyKey: 'lpFeatLandingBody' },
@@ -193,25 +299,6 @@ function Features() {
     <section id="features" className="max-w-6xl mx-auto px-4 py-20 sm:py-24 scroll-mt-16">
       <SectionHead eyebrow={he.lpNavFeatures} title={he.lpFeaturesTitle} subtitle={he.lpFeaturesSubtitle} />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-        <div className="sm:col-span-2 lg:col-span-3 relative bg-ink text-paper rounded-xl2 shadow-lift p-5 sm:p-6 fx-grain">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-            <span className="w-12 h-12 shrink-0 rounded-xl bg-copper-500 text-card grid place-items-center">
-              <Icon name="sparkles" size={22} />
-            </span>
-            <div className="flex-1">
-              <div className="flex items-center gap-2.5 mb-1.5">
-                <h3 className="font-display font-bold text-xl">{he.lpFeatMentorTitle}</h3>
-                <span className="bg-copper-500 text-card text-[11px] font-bold rounded-full px-2 py-0.5">
-                  {he.lpFeatMentorBadge}
-                </span>
-              </div>
-              <p className="text-paper/70 text-sm leading-relaxed max-w-2xl">{he.lpFeatMentorBody}</p>
-            </div>
-            <span className="shrink-0 text-xs font-semibold text-paper/50 border border-paper/20 rounded-full px-3 py-1.5 self-start sm:self-center">
-              {he.lpFeatMentorPlanNote}
-            </span>
-          </div>
-        </div>
         {FEATURES.map((f) => (
           <div
             key={f.titleKey}

@@ -855,9 +855,11 @@ export const he = {
 
   // platform marketing homepage (/) — sales-led v2
   lpNavFeatures: 'מה יש בפנים',
+  lpNavMentor: 'מנטור AI',
   lpNavHow: 'איך זה עובד',
   lpNavFaq: 'שאלות',
   lpNavCta: 'דברו איתנו',
+  lpHeroMentorPill: 'חדש: מנטור AI שעונה לתלמידים שלכם בוואטסאפ',
   lpHeroKicker: 'המקום שבו הידע שלכם הופך לעסק',
   lpHeroTitle1: 'הידע שלכם שווה כסף.',
   lpHeroTitle2: 'תנו לו מערכת שמוכרת אותו.',
@@ -880,11 +882,35 @@ export const he = {
 
   lpFeaturesTitle: 'כל העסק שלכם. מערכת אחת.',
   lpFeaturesSubtitle: 'בלי לתפור חמישה כלים אחד לשני — הכול כבר מחובר ועובד יחד.',
-  lpFeatMentorBadge: 'חדש',
-  lpFeatMentorTitle: 'מנטור AI אישי בוואטסאפ',
-  lpFeatMentorBody:
-    'תלמיד שואל בוואטסאפ — ומקבל תשובה מדויקת מתוך תוכן הקורס שלכם, עם הפניה לשיעור הרלוונטי. עונה 24/7, רק לתלמידים רשומים, על המספר של בית הספר.',
-  lpFeatMentorPlanNote: 'במסלול צמיחה ומעלה',
+
+  // AI mentor showcase section
+  lpMentorBadge: 'חדש',
+  lpMentorTitle1: 'מנטור AI אישי לכל תלמיד.',
+  lpMentorTitle2: 'בוואטסאפ שלהם.',
+  lpMentorSubtitle:
+    'הדבר הכי קרוב לשכפל את עצמכם: עוזר הוראה שלמד את כל הקורסים שלכם ועונה לתלמידים בשמכם — בכל שעה, בעברית.',
+  lpMentorPoint1Title: 'עונה רק מתוך התוכן שלכם',
+  lpMentorPoint1Body:
+    'המנטור מוגבל לחומרי הקורס — התיאור, השיעורים וההערות. בלי המצאות ובלי ידע חיצוני שלא אישרתם.',
+  lpMentorPoint2Title: 'כל תשובה מחזירה לשיעור',
+  lpMentorPoint2Body:
+    'המנטור מציין באיזה שיעור נמצא ההסבר המלא — שאלה הופכת לעוד צפייה בקורס, לא לעוד פנייה אליכם.',
+  lpMentorPoint3Title: 'מדבר רק עם תלמידים רשומים',
+  lpMentorPoint3Body:
+    'זיהוי לפי מספר הטלפון של התלמיד. לכל מספר אחר המנטור שותק — אפשר לחבר גם מספר אישי בראש שקט.',
+  lpMentorPoint4Title: 'קם בסריקת QR אחת',
+  lpMentorPoint4Body:
+    'מחברים את הוואטסאפ של בית הספר פעם אחת — ומאותו רגע לכל תלמיד יש מנטור אישי זמין 24/7.',
+  lpMentorPlanNote: 'כלול במסלולי צמיחה וללא תקרה',
+  lpMentorCta: 'פותחים בית ספר עם מנטור',
+  lpMentorChatTitle: 'המנטור של בית הספר',
+  lpMentorChatStatus: 'מחובר · עונה עכשיו',
+  lpMentorChatQ1: 'לא הבנתי את החלק של התמחור בשיעור 3 😅',
+  lpMentorChatA1:
+    'שאלה מצוינת! בשיעור 3, "בונים הצעת מחיר", מוסבר שמתחילים מהערך ללקוח ולא מהעלות שלכם: קובעים מחיר לפי התוצאה שהקורס נותן. ההסבר המלא נמצא בשיעור 3, החל מהדגמת המחשבון.',
+  lpMentorChatQ2: 'ואיפה יש דוגמה מלאה?',
+  lpMentorChatA2: 'בשיעור 4, "תמחור בפועל", יש דוגמה מלאה עם מספרים אמיתיים. שווה צפייה 👌',
+  lpMentorChatFooter: '— המנטור · זמין לכל תלמיד רשום',
   lpFeatVideoTitle: 'וידאו מאובטח, בלי מגבלות',
   lpFeatVideoBody: 'העלאת שיעורים בכל גודל, נגן מותאם, קבצי עזר לכל שיעור — והתוכן חסום למי שלא שילם.',
   lpFeatLandingTitle: 'דפי מכירה שממירים',
@@ -959,6 +985,7 @@ export const he = {
   lpDemoStatRevenue: 'הכנסות החודש',
   lpDemoStatCompletion: 'אחוז השלמה',
   lpDemoContinue: 'ממשיכים ללמוד',
+  lpDemoMentor: 'מנטור ה־AI ענה היום ל־14 שאלות תלמידים',
 
   // platform marketing homepage (/)
   platformHeroTitle1: 'בית ספר דיגיטלי משלכם —',
