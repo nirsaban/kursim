@@ -7,27 +7,32 @@ import { Field, Input } from '@/components/ui/Field';
 import Button from '@/components/ui/Button';
 
 /**
- * Step 1 of password recovery. The endpoint answers identically whether or not
- * the address has an account, so this screen shows the same confirmation
- * either way — by design, not by oversight.
+ * Step 1 of password recovery. An address with no account in this school gets
+ * told so (`found: false`) — email is unique per school, and people routinely
+ * try the school they don't have an account in.
  */
 export default function ForgotForm({ tenantSlug }: { tenantSlug: string }) {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function submit() {
     setBusy(true);
     setError(null);
+    setNotFound(false);
     try {
       const res = await fetch('/api/auth/forgot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, tenantSlug }),
       });
-      if (res.ok) setSent(true);
-      else setError(he.error);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.found === false) setNotFound(true);
+        else setSent(true);
+      } else setError(he.error);
     } catch {
       setError(he.error);
     } finally {
@@ -73,6 +78,12 @@ export default function ForgotForm({ tenantSlug }: { tenantSlug: string }) {
           autoComplete="email"
         />
       </Field>
+      {notFound && (
+        <div className="rounded-xl2 border border-danger-line bg-danger-soft px-5 py-4">
+          <p className="font-display font-black text-danger text-sm">{he.forgotNotFoundTitle}</p>
+          <p className="text-sm text-danger/90 mt-1 leading-relaxed">{he.forgotNotFoundBody}</p>
+        </div>
+      )}
       {error && (
         <div className="rounded-xl2 border border-danger-line bg-danger-soft px-5 py-4">
           <p className="text-sm text-danger font-medium">{error}</p>

@@ -14,9 +14,13 @@ export const runtime = 'nodejs';
 /**
  * Self-serve password reset, step 1 of 2.
  *
- * Every path answers an identical 200 — unknown email, suspended account,
- * rate-limited, mail outage — so the endpoint can't be used to enumerate which
- * addresses have accounts here.
+ * An unknown email answers `found: false` so the form can say "no account
+ * with this address in this school" — a product decision that trades away
+ * strict anti-enumeration for less user confusion (email is per-school here,
+ * and people routinely try the wrong school). Probing stays bounded by the
+ * per-IP and per-email rate limits, which answer a generic success so the
+ * limiter itself can't be used as an oracle. Mail outages also answer
+ * success: the address was real, retrying won't help the visitor.
  *
  * The link is delivered to the account's *stored* email only. It is never sent
  * to a phone or address supplied at checkout: those fields come from the Grow
@@ -29,23 +33,23 @@ export async function POST(req: Request) {
   const { email, tenantSlug } = parsed.data;
   const normalizedEmail = email.trim().toLowerCase();
 
-  // The single response every branch below returns.
-  const silent = () => NextResponse.json({ ok: true });
+  const ok = () => NextResponse.json({ ok: true, found: true });
+  const notFound = () => NextResponse.json({ ok: true, found: false });
 
   const [byIp, byEmail] = await Promise.all([
     rateLimit('forgot-ip', clientIp(req), FORGOT_LIMIT),
     rateLimit('forgot-email', `${tenantSlug}:${normalizedEmail}`, FORGOT_LIMIT),
   ]);
-  if (!byIp.allowed || !byEmail.allowed) return silent();
+  if (!byIp.allowed || !byEmail.allowed) return ok();
 
   const tenant = await getTenantBySlug(tenantSlug);
-  if (!tenant || tenant.status !== 'ACTIVE') return silent();
+  if (!tenant || tenant.status !== 'ACTIVE') return notFound();
 
   const db = forTenant(tenant.id);
   const user = await db.user.findFirst({ where: { email: normalizedEmail } });
   // Synthesised @kursim.local logins (Apple Pay buyers with no email) have no
   // real inbox to send to — they recover through the school owner instead.
-  if (!user || user.status !== 'ACTIVE' || !isRealEmail(user.email)) return silent();
+  if (!user || user.status !== 'ACTIVE' || !isRealEmail(user.email)) return notFound();
 
   // One live reset link at a time: requesting a new one retires the old.
   await db.authToken.updateMany({
@@ -65,11 +69,14 @@ export async function POST(req: Request) {
   });
 
   const link = `${process.env.APP_URL ?? ''}/t/${tenant.slug}/reset/${token}`;
-  await sendMail({
+  const mail = await sendMail({
     to: user.email,
     subject: he.mailResetSubject,
     text: he.mailResetBody.replace('{url}', link).replace('{support}', he.supportPhone),
   });
+  // Server-side only — makes an SMTP outage debuggable without weakening
+  // what the visitor can observe.
+  if (!mail.ok) console.warn(`[forgot] reset mail failed (${tenant.slug}): ${mail.error}`);
 
-  return silent();
+  return ok();
 }
