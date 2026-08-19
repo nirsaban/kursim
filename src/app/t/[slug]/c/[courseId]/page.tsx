@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { getAuth } from '@/lib/auth/guards';
 import { parseMarketing, saleActive } from '@/lib/validation/marketing';
+import { parseSocials } from '@/lib/validation/links';
 import { resolveOffer } from '@/lib/pay/offer';
 import { LANDING_THEMES } from '@/lib/landing-themes';
 import { formatAgorot } from '@/lib/money';
@@ -235,6 +236,7 @@ export default async function CourseLandingPage({ params, searchParams }: Params
     salePartnerCoverUrl,
     saleHref,
     saleExternalProps,
+    socials: parseSocials(tenant.socials),
   };
 
   if (m.layout === 'coralHota') {

@@ -6,6 +6,7 @@ import SaleCountdown from '@/components/landing/SaleCountdown';
 import StickyCta from '@/components/landing/StickyCta';
 import ScrollProgress from '@/components/landing/ScrollProgress';
 import SectionHeading from '@/components/landing/SectionHeading';
+import SocialLinks from '@/components/landing/SocialLinks';
 import { he } from '@/lib/he';
 import type { LandingProps } from '@/components/landing/landing-types';
 import { BENEFIT_ICONS, IconClock, IconLayers, IconPlay, IconStar } from './icons';
@@ -51,6 +52,7 @@ export default function CoralHotaLanding({
   salePartnerCoverUrl,
   saleHref,
   saleExternalProps,
+  socials,
 }: LandingProps) {
   const introImage = heroMedia ?? gallery[0] ?? null;
   const curriculumImage = gallery[0] ?? heroMedia ?? null;
@@ -769,6 +771,12 @@ export default function CoralHotaLanding({
               <span className="font-extrabold">{tenantName}</span>
             </div>
             <p className="text-[#160303]/60 mt-3">{he.landingBuiltWith}</p>
+            <SocialLinks
+              socials={socials}
+              className="!justify-start mt-4"
+              buttonClassName="border-black/15 hover:border-black/40 text-[#160303]/60 hover:text-[#160303]"
+              size={16}
+            />
           </div>
           <div>
             <p className="font-bold mb-2.5">{he.footerQuickLinks}</p>

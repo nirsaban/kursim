@@ -1,5 +1,6 @@
 import type { CourseMarketing } from '@/lib/validation/marketing';
 import type { LandingTheme } from '@/lib/landing-themes';
+import type { Socials } from '@/lib/validation/links';
 
 export interface LandingModule {
   id: string;
@@ -70,4 +71,6 @@ export interface LandingProps {
   salePartnerCoverUrl: string | null;
   saleHref: string;
   saleExternalProps: { target?: '_blank'; rel?: 'noopener noreferrer' };
+  /** School-wide social channels, rendered in the footer. */
+  socials: Socials;
 }

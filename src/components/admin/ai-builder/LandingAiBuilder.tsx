@@ -7,6 +7,7 @@ import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { LANDING_THEMES } from '@/lib/landing-themes';
 import type { CourseMarketing } from '@/lib/validation/marketing';
+import { parseSocials } from '@/lib/validation/links';
 import type { LandingProps } from '@/components/landing/landing-types';
 import ClassicLanding from '@/components/landing/ClassicLanding';
 import CoralHotaLanding from '@/components/landing/coralhota/CoralHotaLanding';
@@ -38,6 +39,7 @@ function buildPreviewProps(m: CourseMarketing, tenantSlug: string, courseTitle: 
     m,
     theme,
     previewMode: true,
+    socials: parseSocials(null),
     // Copy-only preview: no course row here, so price wording is whatever the
     // owner typed and the padlock follows the legacy link.
     paid: Boolean(m.paymentLink),

@@ -9,6 +9,7 @@ import ScrollProgress from '@/components/landing/ScrollProgress';
 import TiltCard from '@/components/fx/TiltCard';
 import ResultsGallery from '@/components/landing/ResultsGallery';
 import SectionHeading from '@/components/landing/SectionHeading';
+import SocialLinks from '@/components/landing/SocialLinks';
 import { he } from '@/lib/he';
 import type { LandingProps } from '@/components/landing/landing-types';
 
@@ -46,6 +47,7 @@ export default function ClassicLanding({
   salePartnerCoverUrl,
   saleHref,
   saleExternalProps,
+  socials,
 }: LandingProps) {
   const storySections = m.story.filter((s) => s.body.trim() || s.title.trim());
   // The tail of the headline gets the accent treatment. Two words when the
@@ -861,7 +863,8 @@ export default function ClassicLanding({
       </section>
 
       {/* extra bottom padding keeps the fixed conversion bar from covering the footer */}
-      <footer className="pt-6 pb-24 border-t border-line bg-card">
+      <footer className="pt-8 pb-24 border-t border-line bg-card">
+        <SocialLinks socials={socials} className="mb-5" />
         <p className="text-center text-sm text-muted">
           {tenantName} · {he.landingBuiltWith}
         </p>

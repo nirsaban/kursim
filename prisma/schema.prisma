@@ -71,6 +71,12 @@ model Tenant {
   /// Academy terms gate: when enabled, students must accept before entering
   /// (validated by termsSchema). Bumping `version` re-prompts everyone.
   terms          Json?
+  /// School-wide social channels (WhatsApp number, Instagram, …) shown on
+  /// course landing pages and the LinkTree page (validated by socialsSchema).
+  socials        Json?
+  /// The school's public link-in-bio page at /t/{slug}/links (validated by
+  /// linktreeSchema): links, theme, publish flag. Logo comes from `branding`.
+  linktree       Json?
   /// Secret embedded in the Grow payment-webhook URL to authenticate callbacks.
   webhookSecret  String?
   createdAt      DateTime       @default(now())
