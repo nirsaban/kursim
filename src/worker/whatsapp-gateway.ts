@@ -141,10 +141,40 @@ async function startSocket(tenantId: string): Promise<void> {
     for (const m of messages) {
       try {
         const jid = m.key.remoteJid ?? '';
-        if (m.key.fromMe || !jid.endsWith('@s.whatsapp.net')) continue;
-        const text = m.message?.conversation ?? m.message?.extendedTextMessage?.text ?? '';
-        if (!text.trim()) continue;
-        const phone = jid.split('@')[0];
+        if (m.key.fromMe) continue;
+        // Direct chats arrive as @s.whatsapp.net, or — increasingly — as @lid
+        // (WhatsApp's privacy addressing). Groups/newsletters are ignored.
+        const isLid = jid.endsWith('@lid');
+        if (!jid.endsWith('@s.whatsapp.net') && !isLid) continue;
+        // Disappearing-messages chats wrap the payload in an ephemeral container.
+        const inner =
+          m.message?.ephemeralMessage?.message ?? m.message?.viewOnceMessage?.message ?? m.message;
+        const text = inner?.conversation ?? inner?.extendedTextMessage?.text ?? '';
+        if (!text.trim()) {
+          console.log(
+            `[wa:${tenantId}] inbound ${jid} skipped: no text (${Object.keys(m.message ?? {}).join(',') || 'empty'})`,
+          );
+          continue;
+        }
+        // A LID hides the sender's number; newer protocol versions carry the
+        // real one in an alt field. Without it we can't identify the student.
+        const altKey = m.key as {
+          senderPn?: string;
+          participantPn?: string;
+          remoteJidAlt?: string;
+          participantAlt?: string;
+        };
+        const pnJid = isLid
+          ? (altKey.senderPn ?? altKey.remoteJidAlt ?? altKey.participantPn ?? altKey.participantAlt ?? '')
+          : jid;
+        const phone = pnJid.split('@')[0];
+        if (!phone) {
+          console.log(
+            `[wa:${tenantId}] inbound ${jid} skipped: lid without phone (key=${JSON.stringify(m.key)})`,
+          );
+          continue;
+        }
+        console.log(`[wa:${tenantId}] inbound from ${phone}${isLid ? ` (${jid})` : ''} len=${text.length}`);
 
         if (tenantId === PLATFORM_WA_ID) {
           const reply = await handleLeadMessage(phone, text, m.pushName ?? undefined);
@@ -161,6 +191,7 @@ async function startSocket(tenantId: string): Promise<void> {
           }
         } else {
           const reply = await handleMentorMessage(tenantId, phone, text);
+          console.log(`[wa:${tenantId}] mentor ${reply ? 'replied' : 'silent'} for ${phone}`);
           if (reply) await sock.sendMessage(jid, { text: reply });
         }
       } catch (e) {
