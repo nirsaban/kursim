@@ -45,8 +45,8 @@ retrieval — is a separate, later step; see "Knowledge chunks" below.)
 `NONE → PENDING → PROCESSING → COMPLETED | FAILED`.
 
 - `PROCESSING` is a DB compare-and-set lock — a duplicate job exits instead of
-  paying Gemini twice; the queue also dedupes by jobId (`lesson:{id}` /
-  `attachment:{id}`).
+  paying Gemini twice; the queue also dedupes by jobId (`lesson_{id}` /
+  `attachment_{id}` — BullMQ rejects `:` in a custom jobId).
 - `COMPLETED` is never redone unless the request carries `force` (a new video
   upload forces automatically; an unchanged one never re-spends).
 - Transient errors (429/5xx/network) retry 3× with exponential backoff
@@ -84,8 +84,9 @@ chunked + embedded, never a half-built one.
   trailing context carried into the next chunk. Attachments are chunked by
   paragraph, same size limit, appended after the video's chunks.
 - **Embeddings** (`src/lib/ai/embeddings.ts`): `GEMINI_EMBEDDING_MODEL`
-  (default `text-embedding-004`, 768 dims — matches the `vector(768)` column;
-  changing the model needs a new migration, never a silent dimension change).
+  (default `gemini-embedding-001`, truncated to 768 dims via
+  `output_dimensionality` to match the `vector(768)` column; changing the
+  model/dimension needs a new migration, never a silent change).
 - **Storage/activation** (`src/lib/knowledge/chunk-repository.ts`): the only
   file with raw pgvector SQL. Inserts every chunk + embedding and flips the
   version `ACTIVE` (superseding the old one) in one transaction.
@@ -105,7 +106,7 @@ TRANSCRIPTION_ENABLED=true            # off switch; on whenever GEMINI_API_KEY i
 GEMINI_TRANSCRIPTION_MODEL=gemini-2.5-flash
 TRANSCRIPTION_CONCURRENCY=2           # parallel jobs in the worker (shared by transcription + indexing)
 TRANSCRIPTION_MAX_ATTEMPTS=3
-GEMINI_EMBEDDING_MODEL=text-embedding-004
+GEMINI_EMBEDDING_MODEL=gemini-embedding-001
 KNOWLEDGE_CHUNK_SIZE=1200
 KNOWLEDGE_CHUNK_OVERLAP=150
 RAG_TOP_K=6

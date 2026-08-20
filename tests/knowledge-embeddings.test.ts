@@ -14,7 +14,7 @@ const okVector = () => Array.from({ length: 768 }, () => 0.1);
 
 beforeEach(() => {
   process.env.GEMINI_API_KEY = 'test-key';
-  process.env.GEMINI_EMBEDDING_MODEL = 'text-embedding-004';
+  process.env.GEMINI_EMBEDDING_MODEL = 'gemini-embedding-001';
   vi.resetModules();
 });
 

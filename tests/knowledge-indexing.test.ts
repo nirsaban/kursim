@@ -19,7 +19,7 @@ const { embedBatch, persistChunksAndActivate, deleteChunksForVersion } = vi.hois
 
 vi.mock('@/lib/ai/embeddings', () => ({
   getEmbeddingProvider: () => ({ embedBatch, embed: vi.fn() }),
-  embeddingConfig: () => ({ model: 'text-embedding-004' }),
+  embeddingConfig: () => ({ model: 'gemini-embedding-001' }),
   EMBEDDING_DIM: 768,
 }));
 
