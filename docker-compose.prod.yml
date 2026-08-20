@@ -70,6 +70,11 @@ services:
       REDIS_URL: redis://redis:6379
       FFMPEG_PATH: /usr/bin/ffmpeg
     entrypoint: ["node", "--import", "tsx", "src/worker/course-media-worker.ts"]
+    # Same volume as `app` — LOCAL-provider lesson videos otherwise don't exist
+    # from the worker's point of view: normalize/transcription jobs were failing
+    # with LESSON_VIDEO_NOT_FOUND while the video sat untouched in the app's copy.
+    volumes:
+      - mediadata:/app/media
     networks: [internal]
     depends_on:
       postgres:
