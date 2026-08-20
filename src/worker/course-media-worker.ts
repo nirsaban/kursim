@@ -9,6 +9,8 @@ import { Worker } from 'bullmq';
 import { COURSE_MEDIA_QUEUE, getQueueConnection } from '@/lib/ai/queue';
 import { runCourseMediaJob, type CourseMediaJob } from '@/lib/ai/pipeline';
 import { TRANSCRIPTION_QUEUE, type TranscriptionJob } from '@/lib/transcription/queue';
+import { NORMALIZE_QUEUE } from '@/lib/media-store/normalize-queue';
+import { runNormalizeJob, type NormalizeJob } from '@/lib/media-store/normalize';
 import { runTranscriptionJob } from '@/lib/transcription/service';
 import { startWhatsappGateway } from './whatsapp-gateway';
 
@@ -53,5 +55,22 @@ const transcriptionWorker = new Worker<TranscriptionJob>(
 transcriptionWorker.on('failed', (job, err) => {
   console.error(`[transcription] FAILED ${job?.data.kind}=${job?.data.id}: ${err.message}`);
 });
+
+// LOCAL lesson videos are normalized to streamable H.264 MP4 before anything
+// else touches them. concurrency 1: one x264 encode already saturates a core,
+// and this box hosts more than us.
+const normalizeWorker = new Worker<NormalizeJob>(
+  NORMALIZE_QUEUE,
+  async (job) => {
+    await runNormalizeJob(job.data);
+  },
+  { connection: getQueueConnection(), concurrency: 1 },
+);
+
+normalizeWorker.on('failed', (job, err) => {
+  console.error(`[normalize] FAILED lesson=${job?.data.lessonId}: ${err.message}`);
+});
+
+console.log('[normalize] worker ready, waiting for jobs…');
 
 console.log('[transcription] worker ready, waiting for jobs…');

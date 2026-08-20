@@ -8,6 +8,7 @@ import { destroyPublicIds } from '@/lib/cloudinary/cleanup';
 import { keyBelongsToCourse } from '@/lib/media-store/paths';
 import { deleteMediaKeys } from '@/lib/media-store/store';
 import { requestLessonTranscription } from '@/lib/transcription/service';
+import { enqueueNormalize } from '@/lib/media-store/normalize-queue';
 
 type Params = { params: Promise<{ lessonId: string }> };
 
@@ -54,10 +55,19 @@ export async function POST(req: Request, { params }: Params) {
   if (previous && previous !== parsed.data.publicId) {
     destroyVideo(previous, previousProvider);
   }
-  // New video, new speech: (re-)transcribe in the worker. Enqueue-only, so the
-  // upload response never waits on Gemini; failure here must not fail the save.
-  requestLessonTranscription(auth.tenantId!, lesson.id, { force: true }).catch((e) =>
-    console.error(`[transcription] enqueue failed lesson=${lesson.id}: ${e?.message ?? e}`),
+  // New video, new pipeline run — enqueue-only, so the upload response never
+  // waits on ffmpeg or Gemini; failure here must not fail the save.
+  // LOCAL files are camera originals (iPhone HEVC .mov with moov-at-end —
+  // unplayable in Chrome/Firefox, unstreamable everywhere): normalize to
+  // faststart H.264 MP4 first; the normalize job chains transcription itself
+  // once the audio is final. Cloudinary transcodes on its side — straight to
+  // transcription.
+  const followUp =
+    parsed.data.provider === 'LOCAL'
+      ? enqueueNormalize({ tenantId: auth.tenantId!, lessonId: lesson.id, key: parsed.data.publicId })
+      : requestLessonTranscription(auth.tenantId!, lesson.id, { force: true });
+  followUp.catch((e) =>
+    console.error(`[media] post-attach enqueue failed lesson=${lesson.id}: ${e?.message ?? e}`),
   );
   return NextResponse.json({ lesson: updated });
 }
