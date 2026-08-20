@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { requireAuth, forbidden } from '@/lib/auth/guards';
 import { apiError, parseBody } from '@/lib/api';
 import { progressSchema } from '@/lib/validation/schemas';
@@ -48,11 +49,29 @@ export async function POST(req: Request) {
     lastPositionSec,
     ...(completed ? { completedAt: new Date() } : {}),
   };
-  const progress = existing
-    ? await db.progress.update({ where: { id: existing.id }, data })
-    : await db.progress.create({
+  let progress;
+  if (existing) {
+    progress = await db.progress.update({ where: { id: existing.id }, data });
+  } else {
+    try {
+      progress = await db.progress.create({
         data: { tenantId: auth.tenantId!, studentId: auth.userId, lessonId, ...data },
       });
+    } catch (e) {
+      // Two first-saves raced (heartbeat + pause land together): the row
+      // appeared between our find and create. The loser updates it instead
+      // of 500ing — same @@unique([studentId, lessonId]) row either way.
+      const isDup =
+        e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002';
+      if (!isDup) throw e;
+      const row = await db.progress.findFirst({
+        where: { studentId: auth.userId, lessonId },
+        select: { id: true },
+      });
+      if (!row) throw e;
+      progress = await db.progress.update({ where: { id: row.id }, data });
+    }
+  }
 
   // Mark today (Asia/Jerusalem) as an active learning day — powers streaks.
   // Never let this write fail the progress save (e.g. concurrent-heartbeat race).

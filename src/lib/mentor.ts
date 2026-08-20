@@ -317,6 +317,11 @@ export async function handleMentorMessage(
   phone: string,
   text: string,
 ): Promise<string | null> {
+  // Platform kill switch: MENTOR_ENABLED=false silences the mentor entirely —
+  // no menus, no fallback replies. Silence (not an apology message) is right
+  // here: the school's number is often the owner's personal one.
+  if (process.env.MENTOR_ENABLED === 'false') return null;
+
   const trimmed = text.trim();
   if (!trimmed) return null;
 
