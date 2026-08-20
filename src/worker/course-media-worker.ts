@@ -8,6 +8,8 @@
 import { Worker } from 'bullmq';
 import { COURSE_MEDIA_QUEUE, getQueueConnection } from '@/lib/ai/queue';
 import { runCourseMediaJob, type CourseMediaJob } from '@/lib/ai/pipeline';
+import { TRANSCRIPTION_QUEUE, type TranscriptionJob } from '@/lib/transcription/queue';
+import { runTranscriptionJob } from '@/lib/transcription/service';
 import { startWhatsappGateway } from './whatsapp-gateway';
 
 // WhatsApp gateway (platform login-delivery number). Isolated: its own failures
@@ -32,3 +34,24 @@ worker.on('failed', (job, err) => {
 });
 
 console.log('[course-media] worker ready, waiting for jobs…');
+
+// Lesson/attachment transcription (Gemini STT + doc reading). Cheap enough to
+// run a couple in parallel; keep it modest so a big backfill can't hammer
+// Gemini rate limits or saturate the box ffmpeg-ing several videos at once.
+const transcriptionWorker = new Worker<TranscriptionJob>(
+  TRANSCRIPTION_QUEUE,
+  async (job) => {
+    console.log(`[transcription] start ${job.data.kind}=${job.data.id} attempt=${job.attemptsMade + 1}`);
+    await runTranscriptionJob(job.data);
+  },
+  {
+    connection: getQueueConnection(),
+    concurrency: Number(process.env.TRANSCRIPTION_CONCURRENCY) || 2,
+  },
+);
+
+transcriptionWorker.on('failed', (job, err) => {
+  console.error(`[transcription] FAILED ${job?.data.kind}=${job?.data.id}: ${err.message}`);
+});
+
+console.log('[transcription] worker ready, waiting for jobs…');

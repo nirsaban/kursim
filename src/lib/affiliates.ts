@@ -1,6 +1,6 @@
-import { createHash, randomBytes } from 'crypto';
-import { getRedis } from '@/lib/redis';
+import { randomBytes } from 'crypto';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
+import { isNewVisitor } from '@/lib/analytics/page-views';
 
 /** Unique visitors needed to earn one coin (tunable via env). */
 export function visitsPerCoin(): number {
@@ -33,13 +33,9 @@ export async function trackAffiliateVisit(
   const link = await db.affiliateLink.findFirst({ where: { code, courseId } });
   if (!link) return;
 
-  const visitorHash = createHash('sha256').update(`${ip}|${ua}`).digest('hex');
-  const key = `aff:visitors:${link.id}`;
-  const isNew = await getRedis().sadd(key, visitorHash);
-  if (isNew === 1) {
-    await db.affiliateLink.update({
-      where: { id: link.id },
-      data: { visits: { increment: 1 } },
-    });
-  }
+  if (!(await isNewVisitor('aff:visitors', link.id, ip, ua))) return;
+  await db.affiliateLink.update({
+    where: { id: link.id },
+    data: { visits: { increment: 1 } },
+  });
 }

@@ -39,3 +39,4 @@ Production runs on VPS `root@72.62.154.127` (Debian 13) at `https://kursim.milte
 - New env vars must be added to the server's `/root/kursim/.env` by hand (document them in `.env.example`).
 - Postgres/Redis data live in named volumes (`pgdata`, `redisdata`) — `up --build` preserves them. Never run `docker compose down -v` on the server.
 - TLS is terminated by yogev-nginx (certbot webroot at `/root/miluim/certbot/`); the app publishes no ports and is reachable only over the shared proxy network.
+- One-time: the first deploy after the postgres image moved to `pgvector/pgvector:pg16` (course knowledge pipeline) swaps musl→glibc under the *existing* `pgdata` volume. Right after that deploy, run `ssh root@72.62.154.127 'docker exec kursim-postgres-1 reindexdb -U postgres -a'` once (collation ordering can otherwise silently break existing text indexes). Not needed on later deploys.

@@ -729,6 +729,17 @@ export const he = {
   studentPhoneLabel: 'וואטסאפ (לא חובה)',
   studentPhoneHint: 'עם מספר — מנטור ג׳ניריסקול יזהה את התלמיד כשיכתוב לוואטסאפ של בית הספר.',
 
+  // lesson transcription (Gemini → mentor brain)
+  transcriptionSync: 'סנכרון תמלולים',
+  transcriptionSyncHint: 'ממלא תמלול לכל שיעור וקובץ שעדיין חסר לו — כך המנטור עונה גם מתוך מה שנאמר בווידאו',
+  transcriptionSyncing: 'מסנכרן…',
+  transcriptionSyncDone: 'נוספו לתור: {lessons} שיעורים ו-{files} קבצים',
+  transcriptionSyncNone: 'הכול מתומלל — אין מה לסנכרן',
+  transcriptStatusPending: 'ממתין לתמלול',
+  transcriptStatusProcessing: 'מתמלל עכשיו…',
+  transcriptStatusCompleted: 'תומלל',
+  transcriptStatusFailed: 'התמלול נכשל — סנכרון ינסה שוב',
+
   // AI mentor (WhatsApp, per school)
   mentorGreeting: 'היי {name} 👋 כאן המנטור של בית הספר — אני עונה על שאלות מתוך הקורסים שלך.\n\nעל איזה קורס נדבר?',
   mentorPickHint: 'השיבו עם מספר הקורס. בכל שלב אפשר לכתוב "תפריט" כדי להחליף קורס.',
@@ -737,6 +748,8 @@ export const he = {
   mentorCapReached: 'שאלתם המון היום — וזה נהדר! נמשיך מחר, ובינתיים אפשר לחזור לשיעורים או לשאול את המרצה דרך עמוד השיעור.',
   mentorUnavailable: 'המנטור נח כרגע. נסו שוב עוד רגע, או שאלו את המרצה דרך עמוד השיעור.',
   mentorFooter: '— המנטור · "תפריט" להחלפת קורס',
+  // {ts} already includes its own " — mm:ss" separator when present (empty string otherwise)
+  mentorSourceLine: 'מקור: {lesson}{ts}',
 
   mentorBudgetStudentMsg: 'המנטור הגיע למכסת השימוש החודשית של בית הספר. בינתיים אפשר לשאול את המרצה דרך עמוד השיעור — או לבקש מבית הספר להרחיב את המכסה.',
   mentorBudgetNotifyTitle: 'תקציב מנטור ג׳ניריסקול לחודש נוצל',
@@ -1155,6 +1168,11 @@ export const he = {
   saleDelivered: 'נשלח בוואטסאפ',
   saleNewAccount: 'חשבון חדש',
   noSalesYet: 'עוד אין רכישות — ברגע שמישהו ישלם, זה יופיע כאן',
+  abandonedCheckouts: 'לקוחות שעזבו לפני תשלום',
+  abandonedCheckoutsHint: 'התחילו בתשלום ומסרו פרטים, אבל לא הגיעו לסליקה בפועל — אפשר לחזור אליהם.',
+  noAbandonedCheckouts: 'אין לקוחות שעזבו בזמן האחרון',
+  abandonedCheckoutsCaveat:
+    'ייתכן שחלק מהם בכל זאת שילמו אך האישור לא הגיע אלינו — מומלץ לבדוק לפני פנייה.',
   saleNotifyTitle: 'מכירה חדשה',
   bundleTitle: 'קישור תשלום אחד לכמה קורסים',
   bundleHint:
@@ -1418,6 +1436,8 @@ export const he = {
   totalLearningMinutes: 'דקות למידה בסך הכול',
   completionByCourse: 'השלמה לפי קורס',
   certificatesIssued: 'תעודות שהונפקו',
+  linktreeViews: 'צפיות בעמוד הלינקטרי',
+  landingViews: 'צפיות בעמוד',
   analyticsNoData: 'עוד אין מספיק נתונים להצגה',
 
   // super-admin platform stats

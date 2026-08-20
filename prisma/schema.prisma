@@ -56,6 +56,26 @@ enum TranscriptStatus {
   FAILED
 }
 
+/// Lifecycle of one lesson's semantic knowledge (chunks + embeddings), kept
+/// separate from TranscriptStatus: this stage only starts once a transcript
+/// and/or attachment text already exists. Only one version per lesson may be
+/// ACTIVE (enforced by a partial unique index in the migration) — the mentor's
+/// RAG retrieval only ever reads ACTIVE chunks.
+enum KnowledgeVersionStatus {
+  PENDING
+  CHUNKING
+  EMBEDDING
+  ACTIVATING
+  ACTIVE
+  SUPERSEDED
+  FAILED
+}
+
+enum KnowledgeChunkSource {
+  VIDEO
+  ATTACHMENT
+}
+
 model Tenant {
   id                String         @id @default(uuid()) @db.Uuid
   slug              String         @unique
@@ -85,6 +105,9 @@ model Tenant {
   /// The school's public link-in-bio page at /t/{slug}/links (validated by
   /// linktreeSchema): links, theme, publish flag. Logo comes from `branding`.
   linktree          Json?
+  /// Unique-visitor count for the linktree page (IP+UA deduped in Redis, same
+  /// scheme as AffiliateLink.visits). Tenant has no RLS, so this is a plain column.
+  linktreeViews     Int            @default(0)
   /// Secret embedded in the Grow payment-webhook URL to authenticate callbacks.
   webhookSecret     String?
   createdAt         DateTime       @default(now())
@@ -104,6 +127,11 @@ model Tenant {
   learningActivity LearningActivity[]
   authTokens       AuthToken[]
   planPayments     PlanPayment[]
+  transcripts        Transcript[]
+  transcriptSegments TranscriptSegment[]
+  chapters           Chapter[]
+  knowledgeVersions  KnowledgeVersion[]
+  knowledgeChunks    KnowledgeChunk[]
 }
 
 model User {
@@ -192,6 +220,9 @@ model Course {
   /// Owner toggle for the WhatsApp AI mentor on this course (plan-gated too).
   mentorEnabled    Boolean      @default(true)
   landingPublished Boolean      @default(false)
+  /// Unique-visitor count for the public landing page — every visit, not just
+  /// affiliate ?ref= ones (those still separately count on AffiliateLink.visits).
+  landingViews     Int          @default(0)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 
@@ -201,6 +232,8 @@ model Course {
   reviews        CourseReview[]
   affiliateLinks AffiliateLink[]
   media          CourseMedia?
+  knowledgeVersions KnowledgeVersion[]
+  knowledgeChunks   KnowledgeChunk[]
 
   @@unique([tenantId, catalogNumber])
 }
@@ -316,18 +349,153 @@ model Lesson {
   module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   attachments Attachment[]
   progress    Progress[]
+  structuredTranscript Transcript?
+  chapters          Chapter[]
+  knowledgeVersions KnowledgeVersion[]
+  knowledgeChunks   KnowledgeChunk[]
 }
 
 model Attachment {
-  id       String         @id @default(uuid()) @db.Uuid
-  tenantId String         @db.Uuid
-  lessonId String         @db.Uuid
-  publicId String
-  filename String
-  kind     AttachmentKind @default(OTHER)
+  id            String           @id @default(uuid()) @db.Uuid
+  tenantId      String           @db.Uuid
+  lessonId      String           @db.Uuid
+  publicId      String
+  filename      String
+  kind          AttachmentKind   @default(OTHER)
+  /// Text content Gemini read out of the file (PDF text, image OCR) — a
+  /// mentor knowledge source, same lifecycle contract as Lesson.transcript.
+  extractedText String?          @db.Text
+  textStatus    TranscriptStatus @default(NONE)
+  textError     String?
+  extractedAt   DateTime?
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+/// Canonical structured transcript of one lesson's video — one row per lesson,
+/// overwritten in place on reprocess (mirrors the existing Lesson.transcript
+/// contract). `text` is the segments joined, kept for backward-compat display
+/// and as the mentor's whole-course fallback brain.
+model Transcript {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid
+  lessonId        String   @unique @db.Uuid
+  language        String
+  text            String   @db.Text
+  durationSec     Int?
+  provider        String   @default("gemini")
+  model           String
+  /// Which LESSON_VIDEO_ANALYSIS_PROMPT_V* produced this — lets a future prompt
+  /// change trigger deliberate reprocessing instead of silently mixing outputs.
+  promptVersion   String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant   Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lesson   Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  segments TranscriptSegment[]
+  chapters Chapter[]
+}
+
+model TranscriptSegment {
+  id           String @id @default(uuid()) @db.Uuid
+  tenantId     String @db.Uuid
+  transcriptId String @db.Uuid
+  sequence     Int
+  startSeconds Float
+  endSeconds   Float
+  text         String @db.Text
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  transcript Transcript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+
+  @@index([transcriptId, sequence])
+}
+
+/// Auto-detected chapter within one lesson's transcript.
+model Chapter {
+  id           String @id @default(uuid()) @db.Uuid
+  tenantId     String @db.Uuid
+  transcriptId String @db.Uuid
+  lessonId     String @db.Uuid
+  title        String
+  summary      String @default("") @db.Text
+  startSeconds Float
+  endSeconds   Float
+  sequence     Int
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  transcript Transcript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+  lesson     Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([transcriptId, sequence])
+}
+
+/// One (re)indexing run of a lesson's knowledge (chunks + embeddings).
+/// Append-only history; atomically activated so the mentor never mixes chunks
+/// from two generations. Only one row per lessonId may have status ACTIVE —
+/// enforced by a partial unique index created by hand in the migration SQL
+/// (Prisma cannot express a partial unique constraint).
+model KnowledgeVersion {
+  id              String                 @id @default(uuid()) @db.Uuid
+  tenantId        String                 @db.Uuid
+  courseId        String                 @db.Uuid
+  lessonId        String                 @db.Uuid
+  status          KnowledgeVersionStatus @default(PENDING)
+  /// Bump when the chunking/indexing logic changes materially.
+  processingVersion Int                  @default(1)
+  promptVersion   String?
+  embeddingModel  String?
+  embeddingDim    Int?
+  /// Stable error code only — never a raw message with a signed URL.
+  error           String?
+  createdAt       DateTime               @default(now())
+  activatedAt     DateTime?
+  supersededAt    DateTime?
+
+  tenant Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  course Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson Lesson          @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  chunks KnowledgeChunk[]
+
+  @@index([lessonId])
+  @@index([tenantId, courseId, status])
+}
+
+/// The retrievable unit for RAG. Snapshots its own content + timestamps, so a
+/// superseded version's chunks stay valid even after the source Transcript /
+/// Attachment.extractedText is later overwritten. The `embedding` column is a
+/// pgvector `vector(768)` — Prisma has no native type for it, so it is
+/// declared Unsupported and every read/write goes through raw parametrized
+/// SQL in src/lib/knowledge/chunk-repository.ts (the one place that touches
+/// this column directly).
+model KnowledgeChunk {
+  id                 String               @id @default(uuid()) @db.Uuid
+  tenantId           String               @db.Uuid
+  courseId           String               @db.Uuid
+  lessonId           String               @db.Uuid
+  knowledgeVersionId String               @db.Uuid
+  sourceType         KnowledgeChunkSource
+  attachmentId       String?              @db.Uuid
+  content            String               @db.Text
+  sequence           Int
+  startSeconds       Float?
+  endSeconds         Float?
+  metadata           Json?
+  embeddingModel     String
+  /// vector(768) — see model doc comment. Never read/written via the Prisma
+  /// client; raw SQL only.
+  embedding          Unsupported("vector(768)")?
+  createdAt          DateTime             @default(now())
+
+  tenant           Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  course           Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson           Lesson           @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  knowledgeVersion KnowledgeVersion @relation(fields: [knowledgeVersionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, courseId])
+  @@index([knowledgeVersionId])
 }
 
 model Progress {

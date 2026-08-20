@@ -31,6 +31,11 @@ const TENANT_MODELS = new Set([
   'AutomationSend',
   'ApiKey',
   'MentorUsage',
+  'Transcript',
+  'TranscriptSegment',
+  'Chapter',
+  'KnowledgeVersion',
+  'KnowledgeChunk',
 ]);
 
 const WHERE_OPS = new Set([
@@ -108,3 +113,22 @@ export function asSuperAdmin() {
 
 export type TenantClient = ReturnType<typeof forTenant>;
 export type SuperClient = ReturnType<typeof asSuperAdmin>;
+
+/**
+ * Interactive transaction for the handful of call sites that need raw SQL
+ * (pgvector — Prisma has no client API for the `vector` type/operators).
+ * Sets app.tenant_id first, same as forTenant()'s per-call transaction, then
+ * hands back a tx handle so multiple raw statements can share one atomic
+ * transaction. tenantId must always be bound as a query parameter inside
+ * `fn`, never string-concatenated — this only adds the RLS belt to that
+ * explicit-filter suspenders, it is not a substitute for it.
+ */
+export async function runInTenantTransaction<T>(
+  tenantId: string,
+  fn: (tx: Omit<typeof prisma, '$transaction' | '$connect' | '$disconnect' | '$on' | '$use' | '$extends'>) => Promise<T>,
+): Promise<T> {
+  return prisma.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT set_config('app.tenant_id', ${tenantId}, TRUE), set_config('app.is_super', 'false', TRUE)`;
+    return fn(tx);
+  });
+}

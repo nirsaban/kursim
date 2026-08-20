@@ -3,6 +3,7 @@ import { requireAuth } from '@/lib/auth/guards';
 import { apiError, parseBody } from '@/lib/api';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { publicIdBelongsToCourse } from '@/lib/cloudinary/sign-upload';
+import { requestAttachmentExtraction } from '@/lib/transcription/service';
 import { z } from 'zod';
 
 type Params = { params: Promise<{ lessonId: string }> };
@@ -40,5 +41,10 @@ export async function POST(req: Request, { params }: Params) {
       kind: parsed.data.kind,
     },
   });
+  // Readable files (PDF, image, text) get their content extracted for the
+  // mentor brain. Enqueue-only; unsupported kinds are skipped inside.
+  requestAttachmentExtraction(auth.tenantId!, attachment.id).catch((e) =>
+    console.error(`[transcription] enqueue failed attachment=${attachment.id}: ${e?.message ?? e}`),
+  );
   return NextResponse.json({ attachment }, { status: 201 });
 }

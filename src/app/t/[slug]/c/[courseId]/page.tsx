@@ -13,6 +13,7 @@ import ClassicLanding from '@/components/landing/ClassicLanding';
 import CoralHotaLanding from '@/components/landing/coralhota/CoralHotaLanding';
 import type { LandingProps } from '@/components/landing/landing-types';
 import { trackAffiliateVisit } from '@/lib/affiliates';
+import { trackCourseLandingView } from '@/lib/analytics/page-views';
 import { headers } from 'next/headers';
 import { he } from '@/lib/he';
 import { loadLanding } from './data';
@@ -64,11 +65,14 @@ export default async function CourseLandingPage({ params, searchParams }: Params
       ? 'mobile'
       : 'desktop';
 
-  // Affiliate visit: ?ref={code} — count unique visitors per share link.
+  // Landing page + (if arriving via a share link) affiliate visit tracking.
+  // Gated on landingPublished so staff previewing an unpublished page never
+  // inflates either counter.
   const { ref } = await searchParams;
-  if (ref && course.landingPublished) {
+  if (course.landingPublished) {
     const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-    await trackAffiliateVisit(tenant.id, courseId, ref, ip, ua).catch(() => {});
+    await trackCourseLandingView(tenant.id, courseId, ip, ua).catch(() => {});
+    if (ref) await trackAffiliateVisit(tenant.id, courseId, ref, ip, ua).catch(() => {});
   }
 
   // Unpublished pages are visible only to the tenant's staff as a preview.

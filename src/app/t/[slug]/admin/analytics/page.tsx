@@ -58,6 +58,7 @@ export default async function AnalyticsPage({
       select: {
         id: true,
         title: true,
+        landingViews: true,
         modules: { select: { lessons: { select: { id: true, durationSec: true } } } },
       },
     }),
@@ -108,7 +109,7 @@ export default async function AnalyticsPage({
     }
     const enrolledCount = enrolled.size;
     const pct = enrolledCount > 0 ? Math.round((finishers / enrolledCount) * 100) : 0;
-    return { id: c.id, title: c.title, enrolled: enrolledCount, pct };
+    return { id: c.id, title: c.title, views: c.landingViews, enrolled: enrolledCount, pct };
   });
 
   const hasData =
@@ -130,6 +131,7 @@ export default async function AnalyticsPage({
             <StatCard label={he.analyticsLessonsCompleted} value={lessonsCompleted} />
             <StatCard label={he.totalLearningMinutes} value={totalLearningMinutes} />
             <StatCard label={he.certificatesIssued} value={certificatesIssued} />
+            <StatCard label={he.linktreeViews} value={tenant.linktreeViews} />
           </div>
 
           <div className="flex items-baseline gap-3 mb-4">
@@ -143,6 +145,7 @@ export default async function AnalyticsPage({
                 <thead>
                   <tr>
                     <Th>{he.courses}</Th>
+                    <Th>{he.landingViews}</Th>
                     <Th>{he.enrollments}</Th>
                     <Th className="w-1/3">{he.avgCompletion}</Th>
                   </tr>
@@ -151,6 +154,7 @@ export default async function AnalyticsPage({
                   {completionByCourse.map((c) => (
                     <tr key={c.id} className="hover:bg-paper/60 transition-colors">
                       <Td className="font-semibold">{c.title}</Td>
+                      <Td className="tabular-nums">{c.views}</Td>
                       <Td className="tabular-nums">{c.enrolled}</Td>
                       <Td>
                         <div className="flex items-center gap-3">

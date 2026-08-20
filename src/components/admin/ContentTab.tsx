@@ -21,7 +21,25 @@ interface Lesson {
   notes: string | null;
   videoPublicId: string | null;
   durationSec: number | null;
+  transcriptStatus?: 'NONE' | 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
   attachments: Attachment[];
+}
+
+/** Tiny colored dot on the lesson icon reporting where its transcript stands. */
+function TranscriptDot({ status }: { status?: Lesson['transcriptStatus'] }) {
+  if (!status || status === 'NONE') return null;
+  const looks = {
+    PENDING: { cls: 'bg-warn', label: he.transcriptStatusPending },
+    PROCESSING: { cls: 'bg-coin animate-pulse', label: he.transcriptStatusProcessing },
+    COMPLETED: { cls: 'bg-live', label: he.transcriptStatusCompleted },
+    FAILED: { cls: 'bg-danger', label: he.transcriptStatusFailed },
+  }[status];
+  return (
+    <span
+      className={cn('absolute -top-0.5 -end-0.5 w-2.5 h-2.5 rounded-full border border-card', looks.cls)}
+      title={looks.label}
+    />
+  );
 }
 interface Module {
   id: string;
@@ -47,6 +65,8 @@ export default function ContentTab({
   reload: () => void;
 }) {
   const [newModule, setNewModule] = useState('');
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
   const [openLesson, setOpenLesson] = useState<string | null>(null);
   const [savedKey, setSavedKey] = useState<string | null>(null);
   const [dripOpenIds, setDripOpenIds] = useState<Set<string>>(
@@ -157,6 +177,30 @@ export default function ContentTab({
     });
   }
 
+  async function syncTranscriptions() {
+    setSyncing(true);
+    setSyncMsg(null);
+    try {
+      const res = await apiFetch(`/api/courses/${courseId}/transcriptions`, {
+        method: 'POST',
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) return;
+      const data = (await res.json()) as { lessonsQueued: number; attachmentsQueued: number };
+      const total = data.lessonsQueued + data.attachmentsQueued;
+      setSyncMsg(
+        total === 0
+          ? he.transcriptionSyncNone
+          : he.transcriptionSyncDone
+              .replace('{lessons}', String(data.lessonsQueued))
+              .replace('{files}', String(data.attachmentsQueued)),
+      );
+      reload();
+    } finally {
+      setSyncing(false);
+    }
+  }
+
   function toggleBulk(id: string) {
     setBulkOpenIds((prev) => {
       const next = new Set(prev);
@@ -170,6 +214,18 @@ export default function ContentTab({
     <div className="space-y-5">
       {course.modules.length === 0 && (
         <EmptyState icon="📦" title={he.noModules} hint={he.modulesEmptyHint} />
+      )}
+
+      {course.modules.some((m) => m.lessons.length > 0) && (
+        <div className="flex items-center flex-wrap gap-3 bg-card border border-line rounded-xl2 shadow-card px-5 py-3.5">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm text-muted">{he.transcriptionSyncHint}</p>
+          </div>
+          {syncMsg && <span className="text-xs font-medium text-ok">{syncMsg}</span>}
+          <Button variant="secondary" size="sm" onClick={syncTranscriptions} disabled={syncing}>
+            {syncing ? he.transcriptionSyncing : he.transcriptionSync}
+          </Button>
+        </div>
       )}
 
       {course.modules.map((mod, mi) => (
@@ -276,10 +332,11 @@ export default function ContentTab({
                     </button>
                   </div>
                   <span
-                    className="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-sm shrink-0"
+                    className="relative w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-sm shrink-0"
                     aria-hidden
                   >
                     {lesson.videoPublicId ? '🎬' : '📄'}
+                    <TranscriptDot status={lesson.transcriptStatus} />
                   </span>
                   <button
                     className="text-start flex-1 min-w-0 font-medium hover:text-brand-700 transition-colors"

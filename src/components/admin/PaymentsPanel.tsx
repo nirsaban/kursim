@@ -32,18 +32,29 @@ export interface PurchaseRow {
   canResend: boolean;
   createdAt: string;
 }
+export interface AbandonedCheckoutRow {
+  id: string;
+  buyerName: string;
+  buyerEmail: string;
+  buyerPhone: string;
+  courseTitle: string;
+  amount: string;
+  createdAt: string;
+}
 
 export default function PaymentsPanel({
   courses,
   whatsappOn,
   hypOn,
   purchases,
+  abandoned,
 }: {
   courses: PaymentCourse[];
   whatsappOn: boolean;
   /** Whether Hyp credentials are configured platform-side. */
   hypOn: boolean;
   purchases: PurchaseRow[];
+  abandoned: AbandonedCheckoutRow[];
 }) {
   return (
     <div className="space-y-6">
@@ -146,6 +157,47 @@ export default function PaymentsPanel({
               </tbody>
             </Table>
           </TableWrap>
+        )}
+      </div>
+
+      {/* Started checkout, never paid, no callback at all — worth a follow-up */}
+      <div>
+        <h2 className="font-display text-xl font-bold mb-1">{he.abandonedCheckouts}</h2>
+        <p className="text-sm text-muted mb-3">{he.abandonedCheckoutsHint}</p>
+        {abandoned.length === 0 ? (
+          <EmptyState icon="👋" title={he.noAbandonedCheckouts} />
+        ) : (
+          <>
+            <TableWrap>
+              <Table>
+                <thead>
+                  <tr>
+                    <Th>{he.salePayer}</Th>
+                    <Th>{he.saleCourseCol}</Th>
+                    <Th>{he.saleAmount}</Th>
+                    <Th>{he.announcementDate}</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {abandoned.map((a) => (
+                    <tr key={a.id}>
+                      <Td>
+                        <span className="font-semibold">{a.buyerName || a.buyerEmail.split('@')[0]}</span>
+                        <span className="block text-xs text-muted" dir="ltr">
+                          {a.buyerEmail}
+                          {a.buyerPhone && ` · ${a.buyerPhone}`}
+                        </span>
+                      </Td>
+                      <Td>{a.courseTitle}</Td>
+                      <Td dir="ltr">{a.amount}</Td>
+                      <Td className="text-xs text-muted">{relativeHe(new Date(a.createdAt).getTime())}</Td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </TableWrap>
+            <p className="text-xs text-muted mt-2">{he.abandonedCheckoutsCaveat}</p>
+          </>
         )}
       </div>
     </div>

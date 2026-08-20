@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import { getTenantBySlug } from '@/lib/tenant/resolve';
 import { getAuth } from '@/lib/auth/guards';
 import { parseLinktree, parseSocials, type LinktreeButtonStyle } from '@/lib/validation/links';
 import { parseBranding } from '@/lib/validation/branding';
 import { LANDING_THEMES } from '@/lib/landing-themes';
+import { trackLinktreeView } from '@/lib/analytics/page-views';
 import SocialLinks from '@/components/landing/SocialLinks';
 import { he } from '@/lib/he';
 
@@ -52,6 +54,14 @@ export default async function LinktreePage({ params }: Params) {
       auth && auth.tenantId === tenant.id && (auth.role === 'OWNER' || auth.role === 'INSTRUCTOR');
     if (!isStaff) notFound();
     previewMode = true;
+  }
+
+  // Gated on published so a staff preview never inflates the counter.
+  if (!previewMode) {
+    const h = await headers();
+    const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+    const ua = h.get('user-agent') ?? '';
+    await trackLinktreeView(tenant.id, ip, ua).catch(() => {});
   }
 
   const socials = parseSocials(tenant.socials);

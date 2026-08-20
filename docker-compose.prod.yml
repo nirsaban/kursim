@@ -1,6 +1,12 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    # pgvector/pgvector:pg16 = Postgres 16 + the pgvector extension, required
+    # for KnowledgeChunk.embedding. NOTE: this is a Debian/glibc image, while
+    # postgres:16-alpine is musl — on this EXISTING production volume, run
+    # `docker exec kursim-postgres reindexdb -U postgres -a` once right after
+    # the first deploy with this image (glibc/musl collation ordering differs
+    # and can otherwise silently break existing text indexes).
+    image: pgvector/pgvector:pg16
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres

@@ -31,6 +31,7 @@ Auth is hand-rolled by design (`jose` JWT + `@node-rs/argon2`) — **do not intr
 - `src/middleware.ts` — JWT verify + Redis session liveness + tenant resolve (403 on JWT-tenant vs URL-slug mismatch)
 - `src/app/t/[slug]/` — student UI (player has SSE eviction listener + 30s heartbeat); `t/[slug]/admin/` — owner panel; `superadmin/` — platform admin; `api/` — route handlers
 - `src/app/t/[slug]/c/[courseId]` — public course landing pages (no login; affiliate `?ref=` tracking)
+- `src/lib/transcription/` — Gemini lesson-video transcription + attachment text extraction feeding the mentor brain (see [TRANSCRIPTION.md](./TRANSCRIPTION.md))
 - `src/lib/auth/` — jwt, password, guards · `src/lib/session-registry/` — create/validate/evict/list, BLOCK/EVICT_OLDEST policy · `src/lib/tenant/` — scoped prisma + resolve · `src/lib/cloudinary/` — upload/delivery signing
 - `src/components/ui/` — shared primitives (Button, Card, Field, Badge, Modal, Table, StatCard, EmptyState, ProgressBar, PageHeader); `src/lib/landing-themes.ts` — the five landing accent themes
 - `tests/` — auth, session-limiter, tenant-isolation suites; security-critical changes need matching tests

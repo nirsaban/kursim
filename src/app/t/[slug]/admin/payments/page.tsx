@@ -7,7 +7,11 @@ import { getWhatsappState } from '@/lib/whatsapp';
 import { hypCredentials } from '@/lib/hyp/client';
 import { formatAgorot } from '@/lib/money';
 import PageHeader from '@/components/ui/PageHeader';
-import PaymentsPanel, { PaymentCourse, PurchaseRow } from '@/components/admin/PaymentsPanel';
+import PaymentsPanel, {
+  PaymentCourse,
+  PurchaseRow,
+  AbandonedCheckoutRow,
+} from '@/components/admin/PaymentsPanel';
 import { he } from '@/lib/he';
 
 export default async function PaymentsPage({
@@ -70,6 +74,28 @@ export default async function PaymentsPage({
 
   const wa = await getWhatsappState(tenant.id);
 
+  // "Left before paying": a checkout that was started (Hyp sign call went out,
+  // buyer details captured) but never got a completion callback at all — not
+  // a card decline (that's FAILED), a true walk-away. The 30-minute floor
+  // excludes buyers who are simply mid-checkout right now.
+  const allCourseTitles = new Map(
+    (await db.course.findMany({ select: { id: true, title: true } })).map((c) => [c.id, c.title]),
+  );
+  const rawAbandoned = await db.paymentOrder.findMany({
+    where: { status: 'PENDING', createdAt: { lt: new Date(Date.now() - 30 * 60 * 1000) } },
+    orderBy: { createdAt: 'desc' },
+    take: 50,
+  });
+  const abandoned: AbandonedCheckoutRow[] = rawAbandoned.map((o) => ({
+    id: o.id,
+    buyerName: o.buyerName,
+    buyerEmail: o.buyerEmail,
+    buyerPhone: o.buyerPhone,
+    courseTitle: o.courseIds.map((id) => allCourseTitles.get(id)).filter(Boolean).join(' + ') || '',
+    amount: formatAgorot(o.amountAgorot),
+    createdAt: o.createdAt.toISOString(),
+  }));
+
   return (
     <div>
       <PageHeader title={he.payments} subtitle={he.paymentsSubtitle} />
@@ -78,6 +104,7 @@ export default async function PaymentsPage({
         whatsappOn={wa.connected}
         hypOn={Boolean(hypCredentials())}
         purchases={purchases}
+        abandoned={abandoned}
       />
     </div>
   );

@@ -7,6 +7,7 @@ import { publicIdBelongsToCourse } from '@/lib/cloudinary/sign-upload';
 import { destroyPublicIds } from '@/lib/cloudinary/cleanup';
 import { keyBelongsToCourse } from '@/lib/media-store/paths';
 import { deleteMediaKeys } from '@/lib/media-store/store';
+import { requestLessonTranscription } from '@/lib/transcription/service';
 
 type Params = { params: Promise<{ lessonId: string }> };
 
@@ -53,6 +54,11 @@ export async function POST(req: Request, { params }: Params) {
   if (previous && previous !== parsed.data.publicId) {
     destroyVideo(previous, previousProvider);
   }
+  // New video, new speech: (re-)transcribe in the worker. Enqueue-only, so the
+  // upload response never waits on Gemini; failure here must not fail the save.
+  requestLessonTranscription(auth.tenantId!, lesson.id, { force: true }).catch((e) =>
+    console.error(`[transcription] enqueue failed lesson=${lesson.id}: ${e?.message ?? e}`),
+  );
   return NextResponse.json({ lesson: updated });
 }
 
@@ -67,7 +73,17 @@ export async function DELETE(req: Request, { params }: Params) {
 
   await db.lesson.update({
     where: { id: lesson.id },
-    data: { videoPublicId: null, videoProvider: 'CLOUDINARY', durationSec: null },
+    data: {
+      videoPublicId: null,
+      videoProvider: 'CLOUDINARY',
+      durationSec: null,
+      // The transcript narrates this video — it goes when the video goes.
+      transcript: null,
+      transcriptStatus: 'NONE',
+      transcriptLang: null,
+      transcriptError: null,
+      transcribedAt: null,
+    },
   });
   if (lesson.videoPublicId) {
     destroyVideo(lesson.videoPublicId, lesson.videoProvider);

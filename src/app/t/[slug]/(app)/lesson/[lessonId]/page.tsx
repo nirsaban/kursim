@@ -11,10 +11,16 @@ import { he } from '@/lib/he';
 
 export default async function LessonPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string; lessonId: string }>;
+  searchParams: Promise<{ t?: string }>;
 }) {
   const { slug, lessonId } = await params;
+  const { t } = await searchParams;
+  // A deep link (e.g. from the mentor's cited timestamp) always wins over the
+  // saved resume position — that's the point of following the link.
+  const deepLinkSec = t !== undefined && /^\d+$/.test(t) ? Number(t) : null;
   const auth = await getAuth();
   if (!auth) redirect(`/t/${slug}/login`);
 
@@ -149,7 +155,7 @@ export default async function LessonPage({
 
       <LessonPlayer
         lessonId={lesson.id}
-        initialPositionSec={progress?.lastPositionSec ?? 0}
+        initialPositionSec={deepLinkSec ?? progress?.lastPositionSec ?? 0}
         isStudent={isStudent}
       />
 
