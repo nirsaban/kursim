@@ -7,6 +7,7 @@ import { getWhatsappState } from '@/lib/whatsapp';
 import { hypCredentials } from '@/lib/hyp/client';
 import { formatAgorot } from '@/lib/money';
 import PageHeader from '@/components/ui/PageHeader';
+import StatCard from '@/components/ui/StatCard';
 import PaymentsPanel, {
   PaymentCourse,
   PurchaseRow,
@@ -55,6 +56,41 @@ export default async function PaymentsPage({
     orderBy: { createdAt: 'desc' },
     take: 50,
   });
+
+  // ── revenue stats — over ALL purchases, not just the 50 shown ──
+  // Gateways report the sum as a free-form shekel string ("299" / "299.00"),
+  // so parse defensively and sum in agorot; an unparsable amount counts the
+  // purchase but adds ₪0 rather than poisoning the total.
+  const allPurchases = await db.purchase.findMany({
+    select: { amount: true, isNewUser: true, createdAt: true },
+  });
+  const toAgorot = (raw: string): number => {
+    const cleaned = raw.replace(/[^\d.,]/g, '').replace(',', '.');
+    const n = Number.parseFloat(cleaned);
+    return Number.isFinite(n) && n > 0 ? Math.round(n * 100) : 0;
+  };
+  const monthKey = (d: Date) =>
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Jerusalem',
+      year: 'numeric',
+      month: '2-digit',
+    }).format(d);
+  const thisMonth = monthKey(new Date());
+  let totalAgorot = 0;
+  let monthAgorot = 0;
+  let monthCount = 0;
+  let newStudents = 0;
+  for (const p of allPurchases) {
+    const agorot = toAgorot(p.amount);
+    totalAgorot += agorot;
+    if (p.isNewUser) newStudents++;
+    if (monthKey(p.createdAt) === thisMonth) {
+      monthAgorot += agorot;
+      monthCount++;
+    }
+  }
+  const purchaseCount = allPurchases.length;
+  const avgAgorot = purchaseCount > 0 ? Math.round(totalAgorot / purchaseCount) : 0;
   const purchases: PurchaseRow[] = rawPurchases.map((p) => ({
     id: p.id,
     payerName: p.payerName,
@@ -99,6 +135,23 @@ export default async function PaymentsPage({
   return (
     <div>
       <PageHeader title={he.payments} subtitle={he.paymentsSubtitle} />
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <StatCard
+          label={he.paymentsStatTotal}
+          value={formatAgorot(totalAgorot)}
+          sub={he.paymentsStatTotalSub}
+          accent
+        />
+        <StatCard label={he.paymentsStatMonth} value={formatAgorot(monthAgorot)} />
+        <StatCard
+          label={he.paymentsStatCount}
+          value={purchaseCount}
+          sub={he.paymentsStatCountSub.replace('{n}', String(monthCount))}
+        />
+        <StatCard label={he.paymentsStatAvg} value={formatAgorot(avgAgorot)} sub={`${he.paymentsStatNewStudents}: ${newStudents}`} />
+      </div>
+
       <PaymentsPanel
         courses={courses}
         whatsappOn={wa.connected}

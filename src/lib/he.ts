@@ -1148,6 +1148,15 @@ export const he = {
   // ── payments (Grow webhook → auto-provision + WhatsApp) ──
   payments: 'מכירות ותשלומים',
   paymentsSubtitle: 'כל רכישה פותחת חשבון לתלמיד, רושמת אותו לקורס ושולחת לו את פרטי הכניסה בוואטסאפ ובמייל',
+  // payments stats row
+  paymentsStatTotal: 'סה״כ הכנסות',
+  paymentsStatTotalSub: 'מכל הרכישות שנקלטו',
+  paymentsStatMonth: 'הכנסות החודש',
+  paymentsStatCount: 'רכישות',
+  paymentsStatCountSub: '{n} החודש',
+  paymentsStatAvg: 'ממוצע לרכישה',
+  paymentsStatNewStudents: 'תלמידים חדשים',
+
   paymentsHowTitle: 'איך מחברים',
   paymentsHowStep1: 'מעתיקים את כתובת ה-Webhook של הקורס',
   paymentsHowStep2: 'ב-Grow, בדף התשלום של הקורס, מדביקים אותה בשדה ה-Webhook / קריאה חוזרת לשרת',
