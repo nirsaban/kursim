@@ -8,6 +8,7 @@ import { sendMail, isRealEmail } from '@/lib/email';
 import { notify } from '@/lib/notify';
 import { captureRawCallback, parseGrowBody, paidSignal } from '@/lib/pay/grow-callback';
 import { he } from '@/lib/he';
+import { buildSupportLines } from '@/lib/pay/provision';
 
 // Node runtime: needs crypto + argon2 (not edge-compatible).
 export const runtime = 'nodejs';
@@ -189,7 +190,7 @@ export async function POST(req: Request) {
     : isNew
       ? he.waWelcomeNew
       : he.waWelcomeExisting;
-  const supportLine = he.supportLine.replace('{phone}', he.supportPhone);
+  const supportLine = await buildSupportLines(tenant.id);
   const message = `${waTemplate
     .replace('{name}', name)
     .replace('{course}', titles[0])

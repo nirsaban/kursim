@@ -6,6 +6,8 @@ import { sendMail, isRealEmail } from '@/lib/email';
 import { notify } from '@/lib/notify';
 import { fireWelcomeAutomations } from '@/lib/automations';
 import { he } from '@/lib/he';
+import { prisma } from '@/lib/tenant/prisma';
+import { parseSocials, waDigits } from '@/lib/validation/links';
 
 /**
  * Turning a settled payment into course access.
@@ -20,6 +22,24 @@ import { he } from '@/lib/he';
  * Grow infers it from product catalog numbers on the callback, Hyp reads it
  * off the PaymentOrder we created before redirecting.
  */
+
+/**
+ * The support footer of the welcome message: technical support is the
+ * platform's number; course-content questions go to the school's own WhatsApp
+ * (Settings → socials). The content line is dropped when the school has none.
+ */
+export async function buildSupportLines(tenantId: string): Promise<string> {
+  const tech = he.supportTechLine.replace('{phone}', he.supportPhone);
+  let schoolWa: string | null = null;
+  try {
+    const t = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { socials: true } });
+    const digits = waDigits(parseSocials(t?.socials).whatsapp);
+    if (digits) schoolWa = `https://wa.me/${digits}`;
+  } catch {
+    // best-effort — a socials read failure must never block provisioning
+  }
+  return schoolWa ? `${tech}\n${he.supportContentLine.replace('{phone}', schoolWa)}` : tech;
+}
 
 /** Readable 10-char temp password (no ambiguous characters). */
 function tempPassword(): string {
@@ -150,7 +170,7 @@ export async function provisionPurchase(
     : isNew
       ? he.waWelcomeNew
       : he.waWelcomeExisting;
-  const supportLine = he.supportLine.replace('{phone}', he.supportPhone);
+  const supportLine = await buildSupportLines(tenantId);
   const message = `${waTemplate
     .replace('{name}', name)
     .replace('{course}', titles[0])

@@ -75,6 +75,9 @@ export const he = {
   supportPhone: '053-289-8849',
   supportPhoneIntl: '972532898849',
   supportLine: 'צריכים עזרה? אנחנו כאן בוואטסאפ: {phone}',
+  /** post-purchase message: platform tech support vs. the school's own content support */
+  supportTechLine: 'תמיכה טכנית (כניסה, נגן, מכשירים) בוואטסאפ: {phone}',
+  supportContentLine: 'שאלות על תוכן הקורס — לוואטסאפ של בית הספר: {phone}',
 
   // nav
   dashboard: 'לוח הבקרה',
