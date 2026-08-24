@@ -5,14 +5,12 @@ import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/client/api';
 import { he } from '@/lib/he';
 import { collectionContentSchema, type CollectionContent, type CollectionInput } from '@/lib/validation/collection';
-import { LANDING_THEMES } from '@/lib/landing-themes';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
-import { Field, Input, Textarea } from '@/components/ui/Field';
+import { Field, Input } from '@/components/ui/Field';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import SaveBar from '@/components/admin/SaveBar';
 import PaywallModal, { type PaywallInfo } from '@/components/admin/PaywallModal';
-import { AccentPicker, EmojiPicker } from '@/components/admin/MarketingFields';
 
 type CourseOpt = { id: string; title: string; priceAgorot: number | null; landingPublished: boolean };
 
@@ -73,7 +71,12 @@ export default function CollectionEditor({
     }
     setBusy(true);
     setError(null);
-    const body: CollectionInput = { title: title || he.collectionsTitle, courseIds, content };
+    const primaryCourseId = courseIds.includes(content.primaryCourseId) ? content.primaryCourseId : courseIds[0];
+    const body: CollectionInput = {
+      title: title || he.collectionsTitle,
+      courseIds,
+      content: { ...content, primaryCourseId },
+    };
     const r = await apiFetch(id ? `/api/collections/${id}` : '/api/collections', {
       method: id ? 'PUT' : 'POST',
       body: JSON.stringify(body),
@@ -112,7 +115,6 @@ export default function CollectionEditor({
 
   const path = id ? `/t/${slug}/collection/${id}` : null;
   const url = path && typeof window !== 'undefined' ? `${window.location.origin}${path}` : path;
-  const theme = LANDING_THEMES[content.accent];
 
   return (
     <div className="space-y-6">
@@ -194,6 +196,18 @@ export default function CollectionEditor({
                     </span>
                   )}
                   <span className="font-medium">{c.title}</span>
+                  {idx >= 0 && (
+                    <label className="ms-auto flex items-center gap-1.5 text-xs text-muted cursor-pointer">
+                      <input
+                        type="radio"
+                        name="primary"
+                        checked={(content.primaryCourseId || courseIds[0]) === c.id}
+                        onChange={() => patch({ primaryCourseId: c.id })}
+                        className="accent-copper-500"
+                      />
+                      {he.collectionFrontBadge}
+                    </label>
+                  )}
                   {!(c.priceAgorot && c.priceAgorot > 0) && (
                     <span className="text-xs text-muted">· {he.collectionCourseUnpriced}</span>
                   )}
@@ -204,7 +218,10 @@ export default function CollectionEditor({
               );
             })}
           </div>
-          <label className="flex items-start gap-2.5 text-sm cursor-pointer border-t border-line pt-4">
+          <p className="text-xs text-muted border-t border-line pt-4">
+            <span className="font-semibold text-ink">{he.collectionFrontCourse}:</span> {he.collectionFrontCourseHint}
+          </p>
+          <label className="flex items-start gap-2.5 text-sm cursor-pointer">
             <input
               type="checkbox"
               checked={content.crossAddons}
@@ -232,21 +249,9 @@ export default function CollectionEditor({
           <Field label={he.collectionSubheadline}>
             <Input value={content.subheadline} onChange={(e) => patch({ subheadline: e.target.value })} />
           </Field>
-          <Field label={he.collectionIntro}>
-            <Textarea rows={4} value={content.intro} onChange={(e) => patch({ intro: e.target.value })} />
-          </Field>
           <Field label={he.collectionCtaText}>
             <Input value={content.ctaText} placeholder={he.payNow} onChange={(e) => patch({ ctaText: e.target.value })} />
           </Field>
-        </CardBody>
-      </Card>
-
-      <Card>
-        <CardHeader title={`${he.accentTitle} · ${he.emojiTitle}`} />
-        <CardBody className="space-y-5">
-          <AccentPicker value={content.accent} onChange={(accent) => patch({ accent })} />
-          <EmojiPicker value={content.emoji} onChange={(emoji) => patch({ emoji })} />
-          <div className="h-2 rounded-full" style={{ background: theme.main }} />
         </CardBody>
       </Card>
 

@@ -9,6 +9,7 @@ import ScrollProgress from '@/components/landing/ScrollProgress';
 import TiltCard from '@/components/fx/TiltCard';
 import ResultsGallery from '@/components/landing/ResultsGallery';
 import SectionHeading from '@/components/landing/SectionHeading';
+import CollectionCourses from '@/components/landing/CollectionCourses';
 import SocialLinks from '@/components/landing/SocialLinks';
 import { he } from '@/lib/he';
 import type { LandingProps } from '@/components/landing/landing-types';
@@ -18,6 +19,7 @@ export default function ClassicLanding({
   slug,
   tenantName,
   sessionLimit,
+  collection,
   modules,
   m,
   theme,
@@ -98,6 +100,11 @@ export default function ClassicLanding({
             <span className="font-bold truncate">{tenantName}</span>
           </div>
           <nav className="hidden sm:flex items-center gap-5 text-sm font-medium text-muted">
+            {collection && (
+              <a href="#courses" className="font-bold" style={{ color: theme.main }}>
+                {he.collectionNavCourses}
+              </a>
+            )}
             {lessonCount > 0 && (
               <a href="#curriculum" className="hover:text-ink">
                 {he.curriculum}
@@ -345,6 +352,9 @@ export default function ClassicLanding({
           <span className="animate-bounce-soft text-muted text-lg">↓</span>
         </div>
       </section>
+
+      {/* Combined page: the course picker, right under the hero */}
+      {collection && <CollectionCourses collection={collection} theme={theme} variant="classic" />}
 
       {/* Outcomes marquee — the exclusive brand band */}
       <Marquee items={m.outcomes.length > 0 ? m.outcomes : m.audience} accent={theme.main} />

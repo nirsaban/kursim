@@ -39,10 +39,16 @@ export async function PUT(req: Request, { params }: Params) {
   const owned = await db.course.findMany({ where: { id: { in: ids } }, select: { id: true } });
   if (owned.length !== ids.length) return apiError(400, 'course_not_found');
   if (ids.length < 2) return apiError(400, 'min_two_courses');
+  const content = {
+    ...parsed.data.content,
+    primaryCourseId: ids.includes(parsed.data.content.primaryCourseId)
+      ? parsed.data.content.primaryCourseId
+      : ids[0],
+  };
 
   await db.courseCollection.update({
     where: { id: collectionId },
-    data: { title: parsed.data.title, courseIds: ids, content: parsed.data.content },
+    data: { title: parsed.data.title, courseIds: ids, content },
   });
   if (parsed.data.content.crossAddons) await syncCrossAddons(db, ids);
   return NextResponse.json({ ok: true });

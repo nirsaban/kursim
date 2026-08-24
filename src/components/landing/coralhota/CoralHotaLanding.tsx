@@ -1,4 +1,5 @@
 import Reveal from '@/components/landing/Reveal';
+import CollectionCourses from '@/components/landing/CollectionCourses';
 import BeforeAfterSlider from '@/components/landing/BeforeAfterSlider';
 import CourseRevealSequence from '@/components/landing/CourseRevealSequence';
 import CountUp from '@/components/landing/CountUp';
@@ -25,6 +26,7 @@ export default function CoralHotaLanding({
   slug,
   tenantName,
   sessionLimit,
+  collection,
   modules,
   m,
   theme,
@@ -118,6 +120,7 @@ export default function CoralHotaLanding({
         externalProps={externalProps}
         navLinks={(
           [
+            Boolean(collection) && { href: '#courses', label: he.collectionNavCourses },
             lessonCount > 0 && { href: '#curriculum', label: he.curriculum },
             results.length > 0 && { href: '#results', label: he.resultsNav },
             m.testimonials.length > 0 && { href: '#testimonials', label: he.testimonialsTitle },
@@ -260,6 +263,9 @@ export default function CoralHotaLanding({
           </div>
         </section>
       )}
+
+      {/* Combined page: the course picker */}
+      {collection && <CollectionCourses collection={collection} theme={theme} variant="coral" />}
 
       {/* Story — the owner's long-form copy, each part as its own titled section */}
       {storySections.length > 0 && (

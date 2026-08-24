@@ -1,19 +1,17 @@
 import { z } from 'zod';
-import { LANDING_ACCENTS } from '@/lib/validation/marketing';
 
 /**
- * Content of a combined landing page (CourseCollection.content). Deliberately
- * compact: a hero + one card per course. No story/benefits sections — the
- * page's job is to make "this school sells several courses" obvious and route
- * each buyer to the right course's own checkout.
+ * Content of a combined landing page (CourseCollection.content). The page is
+ * the front course's own landing page (same layout/theme/copy) minus the
+ * story + benefits sections, with a course picker so buyers see every course
+ * and go to that course's own checkout.
  */
 export const collectionContentSchema = z.object({
   headline: z.string().max(120).default(''),
   subheadline: z.string().max(300).default(''),
-  intro: z.string().max(1500).default(''),
   ctaText: z.string().max(60).default(''),
-  accent: z.enum(LANDING_ACCENTS).default('petrol'),
-  emoji: z.string().max(8).default('🎓'),
+  /** Whose landing page (design + copy) the combined page is built from. Must be one of courseIds; defaults to the first. */
+  primaryCourseId: z.string().uuid().or(z.literal('')).default(''),
   /**
    * When on, every priced course in the collection offers the other priced
    * collection courses as opt-in add-ons at its checkout (written into each

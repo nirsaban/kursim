@@ -34,6 +34,33 @@ export interface LandingSalePartner {
   landingPublished: boolean;
 }
 
+export interface LandingCollectionCourse {
+  id: string;
+  title: string;
+  description: string;
+  emoji: string;
+  coverUrl: string | null;
+  outcomes: string[];
+  lessonCount: number;
+  totalHours: number | null;
+  priceLabel: string;
+  strikeLabel: string | null;
+  /** null → nothing to link to (unpriced and unpublished) */
+  ctaHref: string | null;
+  ctaText: string;
+  detailsHref: string | null;
+  addons: Array<{ id: string; title: string; priceLabel: string; href: string }>;
+  /** The course whose content the page is built from. */
+  isFront: boolean;
+}
+
+/** Combined landing page: the course picker rendered near the top of the page. */
+export interface LandingCollection {
+  title: string;
+  subtitle: string;
+  courses: LandingCollectionCourse[];
+}
+
 /** Everything a landing template needs to render — shared across all templates. */
 export interface LandingProps {
   slug: string;
@@ -73,4 +100,6 @@ export interface LandingProps {
   saleExternalProps: { target?: '_blank'; rel?: 'noopener noreferrer' };
   /** School-wide social channels, rendered in the footer. */
   socials: Socials;
+  /** Set on combined (multi-course) pages — templates render the course picker at #courses. */
+  collection: LandingCollection | null;
 }

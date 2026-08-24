@@ -35,6 +35,7 @@ function buildPreviewProps(m: CourseMarketing, tenantSlug: string, courseTitle: 
     slug: tenantSlug,
     tenantName: tenantSlug,
     sessionLimit: 3,
+    collection: null,
     modules: [],
     m,
     theme,

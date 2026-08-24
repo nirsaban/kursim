@@ -27,13 +27,19 @@ export async function POST(req: Request) {
   const owned = await db.course.findMany({ where: { id: { in: ids } }, select: { id: true } });
   if (owned.length !== ids.length) return apiError(400, 'course_not_found');
   if (ids.length < 2) return apiError(400, 'min_two_courses');
+  const content = {
+    ...parsed.data.content,
+    primaryCourseId: ids.includes(parsed.data.content.primaryCourseId)
+      ? parsed.data.content.primaryCourseId
+      : ids[0],
+  };
 
   const created = await db.courseCollection.create({
     data: {
       tenantId: auth.tenantId!,
       title: parsed.data.title,
       courseIds: ids,
-      content: parsed.data.content,
+      content,
     },
     select: { id: true },
   });
