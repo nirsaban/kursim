@@ -123,6 +123,7 @@ model Tenant {
   progress         Progress[]
   reviews          CourseReview[]
   affiliateLinks   AffiliateLink[]
+  courseCollections CourseCollection[]
   courseMedia      CourseMedia[]
   learningActivity LearningActivity[]
   authTokens       AuthToken[]
@@ -288,6 +289,27 @@ model CourseReview {
   student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([courseId, studentId])
+}
+
+/// A combined landing page promoting two or more courses side by side. Each
+/// course keeps its own checkout/payment link — the collection only presents
+/// them together (content is validated by collectionContentSchema).
+model CourseCollection {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  title     String
+  /// Ordered course ids shown on the page. Validated against the tenant on write.
+  courseIds String[] @db.Uuid
+  content   Json?
+  published Boolean  @default(false)
+  /// Unique visitors (same IP+UA dedup as Course.landingViews).
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
 }
 
 model AffiliateLink {

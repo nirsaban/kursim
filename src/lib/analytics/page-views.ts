@@ -47,6 +47,20 @@ export async function trackCourseCheckoutView(
   });
 }
 
+/** Unique visitor to a combined (multi-course) landing page. */
+export async function trackCollectionView(
+  tenantId: string,
+  collectionId: string,
+  ip: string,
+  ua: string,
+): Promise<void> {
+  if (!(await isNewVisitor('collection:visitors', collectionId, ip, ua))) return;
+  await forTenant(tenantId).courseCollection.update({
+    where: { id: collectionId },
+    data: { views: { increment: 1 } },
+  });
+}
+
 /** Unique visitor to the tenant's public linktree page. Tenant has no RLS — see resolve.ts. */
 export async function trackLinktreeView(tenantId: string, ip: string, ua: string): Promise<void> {
   if (!(await isNewVisitor('linktree:visitors', tenantId, ip, ua))) return;

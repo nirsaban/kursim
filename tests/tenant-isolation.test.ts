@@ -77,6 +77,18 @@ describe('tenant scoping injection (layer 1)', () => {
     expect(args.where).toEqual({ AND: [{ tenantId: TENANT }, { studentId: 's1' }] });
   });
 
+  it('scopes CourseCollection (combined landing pages) on read and create', () => {
+    const read = injectTenant('CourseCollection', 'findMany', { where: { published: true } }, TENANT);
+    expect(read.where).toEqual({ AND: [{ tenantId: TENANT }, { published: true }] });
+    const created = injectTenant(
+      'CourseCollection',
+      'create',
+      { data: { tenantId: 'tenant-b', title: 'x', courseIds: [] } },
+      TENANT,
+    );
+    expect(created.data.tenantId).toBe(TENANT);
+  });
+
   it('leaves non-tenant models (Tenant) untouched', () => {
     const original = { where: { slug: 'demo' } };
     const args = injectTenant('Tenant', 'findMany', original, TENANT);

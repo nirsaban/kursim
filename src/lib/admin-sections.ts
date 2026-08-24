@@ -114,6 +114,13 @@ export const ADMIN_SECTIONS: AdminSection[] = [
         href: (slug) => `/t/${slug}/admin/reminders`,
       },
       {
+        key: 'collections',
+        icon: '🧩',
+        label: he.collectionsTitle,
+        description: he.collectionsDesc,
+        href: (slug) => `/t/${slug}/admin/collections`,
+      },
+      {
         key: 'links',
         icon: '🔗',
         label: he.linksTitle,

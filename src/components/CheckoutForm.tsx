@@ -23,16 +23,18 @@ export default function CheckoutForm({
   courseId,
   accent,
   offer,
+  initialAddons = [],
 }: {
   slug: string;
   courseId: string;
   accent: string;
   offer: CourseOffer;
+  initialAddons?: string[];
 }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [picked, setPicked] = useState<string[]>([]);
+  const [picked, setPicked] = useState<string[]>(initialAddons);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
