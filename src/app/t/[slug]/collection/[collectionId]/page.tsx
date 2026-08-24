@@ -119,7 +119,7 @@ export default async function CollectionPage({ params }: Params) {
     const addable = (offer?.addons ?? []).filter((a) => siblingIds.has(a.id));
     cards.push({
       id: course.id,
-      title: m.headline || course.title,
+      title: course.title,
       description: m.subheadline || course.description || '',
       emoji: m.emoji,
       coverUrl:
