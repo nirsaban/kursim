@@ -22,12 +22,21 @@ export async function middleware(req: NextRequest) {
   const isInvitePage = slug !== null && rest.startsWith('/invite');
   // Public course landing pages: /t/{slug}/c/{courseId}
   const isLandingPage = slug !== null && rest.startsWith('/c/');
+  // Public combined (multi-course) landing pages: /t/{slug}/collection/{id}
+  const isCollectionPage = slug !== null && rest.startsWith('/collection/');
   // Public LinkTree page: /t/{slug}/links (page 404s unless published)
   const isLinksPage = slug !== null && rest === '/links';
   // Password recovery: reachable precisely because the visitor can't log in.
   const isRecoveryPage =
     slug !== null && (rest === '/forgot' || rest.startsWith('/forgot/') || rest.startsWith('/reset/'));
-  if (isLoginPage || isInvitePage || isLandingPage || isLinksPage || isRecoveryPage)
+  if (
+    isLoginPage ||
+    isInvitePage ||
+    isLandingPage ||
+    isCollectionPage ||
+    isLinksPage ||
+    isRecoveryPage
+  )
     return NextResponse.next();
 
   const token = req.cookies.get(ACCESS_COOKIE)?.value;
