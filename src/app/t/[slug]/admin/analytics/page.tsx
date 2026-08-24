@@ -38,6 +38,8 @@ export default async function AnalyticsPage({
     courses,
     enrollments,
     allCompletedProgress,
+    paymentOrders,
+    purchases,
   ] = await Promise.all([
     db.user.count({ where: { role: 'STUDENT' } }),
     db.enrollment.count(),
@@ -59,6 +61,7 @@ export default async function AnalyticsPage({
         id: true,
         title: true,
         landingViews: true,
+        checkoutViews: true,
         modules: { select: { lessons: { select: { id: true, durationSec: true } } } },
       },
     }),
@@ -67,7 +70,37 @@ export default async function AnalyticsPage({
       where: { completedAt: { not: null } },
       select: { studentId: true, lessonId: true },
     }),
+    db.paymentOrder.findMany({ select: { courseIds: true } }),
+    db.purchase.findMany({ select: { courseId: true } }),
   ]);
+
+  // Sales funnel per course. "Started" = a PaymentOrder was created (buyer
+  // details submitted, sent to Hyp); "paid" = a Purchase landed (any gateway).
+  // Both keyed on the primary course.
+  const startedByCourse = new Map<string, number>();
+  for (const o of paymentOrders) {
+    const id = o.courseIds[0];
+    if (id) startedByCourse.set(id, (startedByCourse.get(id) ?? 0) + 1);
+  }
+  const paidByCourse = new Map<string, number>();
+  for (const p of purchases) paidByCourse.set(p.courseId, (paidByCourse.get(p.courseId) ?? 0) + 1);
+  const pct = (a: number, b: number) => (b > 0 ? Math.round((a / b) * 100) : 0);
+  const funnel = courses
+    .map((c) => {
+      const started = startedByCourse.get(c.id) ?? 0;
+      const paid = paidByCourse.get(c.id) ?? 0;
+      return {
+        id: c.id,
+        title: c.title,
+        landing: c.landingViews,
+        checkout: c.checkoutViews,
+        started,
+        paid,
+        dropCheckout: Math.max(0, c.checkoutViews - started),
+        conversion: pct(paid, c.landingViews),
+      };
+    })
+    .filter((f) => f.landing + f.checkout + f.started + f.paid > 0);
 
   const activeStudents7 = new Set(activity7.map((a) => a.studentId)).size;
   const activeStudents30 = new Set(activity30.map((a) => a.studentId)).size;
@@ -132,6 +165,63 @@ export default async function AnalyticsPage({
             <StatCard label={he.totalLearningMinutes} value={totalLearningMinutes} />
             <StatCard label={he.certificatesIssued} value={certificatesIssued} />
             <StatCard label={he.linktreeViews} value={tenant.linktreeViews} />
+          </div>
+
+          <div className="mb-8">
+            <div className="flex items-baseline gap-3 mb-1">
+              <h2 className="font-display text-xl font-bold">{he.salesFunnel}</h2>
+            </div>
+            <p className="text-muted text-sm mb-4">{he.salesFunnelHint}</p>
+            {funnel.length === 0 ? (
+              <EmptyState icon="🛒" title={he.analyticsNoData} />
+            ) : (
+              <TableWrap>
+                <Table>
+                  <thead>
+                    <tr>
+                      <Th>{he.courses}</Th>
+                      <Th>{he.funnelLanding}</Th>
+                      <Th>{he.funnelCheckout}</Th>
+                      <Th>{he.funnelStarted}</Th>
+                      <Th>{he.funnelPaid}</Th>
+                      <Th>{he.funnelDropCheckout}</Th>
+                      <Th className="w-1/4">{he.funnelConversion}</Th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {funnel.map((f) => (
+                      <tr key={f.id} className="hover:bg-paper/60 transition-colors">
+                        <Td className="font-semibold">{f.title}</Td>
+                        <Td className="tabular-nums">{f.landing}</Td>
+                        <Td className="tabular-nums">
+                          {f.checkout}
+                          <span className="text-muted text-xs ms-1">({pct(f.checkout, f.landing)}%)</span>
+                        </Td>
+                        <Td className="tabular-nums">
+                          {f.started}
+                          <span className="text-muted text-xs ms-1">({pct(f.started, f.checkout)}%)</span>
+                        </Td>
+                        <Td className="tabular-nums">
+                          {f.paid}
+                          <span className="text-muted text-xs ms-1">({pct(f.paid, f.started)}%)</span>
+                        </Td>
+                        <Td className="tabular-nums">{f.dropCheckout}</Td>
+                        <Td>
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1">
+                              <ProgressBar value={f.conversion} tone="brand" />
+                            </div>
+                            <span className="text-xs font-semibold tabular-nums w-9 text-end">
+                              {f.conversion}%
+                            </span>
+                          </div>
+                        </Td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </TableWrap>
+            )}
           </div>
 
           <div className="flex items-baseline gap-3 mb-4">

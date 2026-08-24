@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
+import { trackCourseCheckoutView } from '@/lib/analytics/page-views';
 import { getTenantBySlug } from '@/lib/tenant/resolve';
 import { forTenant } from '@/lib/tenant/scoped-prisma';
 import { parseMarketing } from '@/lib/validation/marketing';
@@ -35,6 +37,11 @@ export default async function CheckoutPage({ params }: Params) {
   // what the payment page will charge.
   const offer = await resolveOffer(db, course);
   if (!offer) notFound();
+
+  // Funnel step 2 (landing -> checkout). Unique per IP+UA, best-effort.
+  const h = await headers();
+  const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  await trackCourseCheckoutView(tenant.id, courseId, ip, h.get('user-agent') ?? '').catch(() => {});
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-paper">

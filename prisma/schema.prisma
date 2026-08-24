@@ -223,6 +223,8 @@ model Course {
   /// Unique-visitor count for the public landing page — every visit, not just
   /// affiliate ?ref= ones (those still separately count on AffiliateLink.visits).
   landingViews     Int          @default(0)
+  /// Unique visitors to the course's checkout (pre-payment) page.
+  checkoutViews    Int          @default(0)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 

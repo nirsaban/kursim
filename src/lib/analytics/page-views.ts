@@ -33,6 +33,20 @@ export async function trackCourseLandingView(
   });
 }
 
+/** Unique visitor to one course's checkout page — the "intent" step of the sales funnel. */
+export async function trackCourseCheckoutView(
+  tenantId: string,
+  courseId: string,
+  ip: string,
+  ua: string,
+): Promise<void> {
+  if (!(await isNewVisitor('checkout:visitors', courseId, ip, ua))) return;
+  await forTenant(tenantId).course.update({
+    where: { id: courseId },
+    data: { checkoutViews: { increment: 1 } },
+  });
+}
+
 /** Unique visitor to the tenant's public linktree page. Tenant has no RLS — see resolve.ts. */
 export async function trackLinktreeView(tenantId: string, ip: string, ua: string): Promise<void> {
   if (!(await isNewVisitor('linktree:visitors', tenantId, ip, ua))) return;
