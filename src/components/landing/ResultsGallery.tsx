@@ -34,7 +34,7 @@ function Arrow({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={`absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 text-black shadow-md grid place-items-center hover:bg-white hover:scale-105 transition-all ${
+      className={`absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 text-black shadow-md grid place-items-center hover:bg-white transition-colors ${
         side === 'start' ? 'start-1' : 'end-1'
       }`}
     >
@@ -115,14 +115,14 @@ export default function ResultsGallery({
                 src={item.url}
                 alt={item.caption || he.resultsTitle}
                 loading="lazy"
-                className="w-full aspect-[3/4] object-contain bg-black/[0.04] transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                className="w-full aspect-[3/4] object-contain bg-black/[0.04]"
               />
               <span
                 className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 aria-hidden
               />
               {item.caption && (
-                <span className="pointer-events-none absolute inset-x-0 bottom-0 p-3 text-start text-sm font-medium text-white translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <span className="pointer-events-none absolute inset-x-0 bottom-0 p-3 text-start text-sm font-medium text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                   {item.caption}
                 </span>
               )}

@@ -53,8 +53,8 @@ export default function ResetForm({
   if (done) {
     return (
       <div className="space-y-4">
-        <div className="rounded-xl2 border border-line bg-paper px-5 py-4">
-          <p className="font-display font-black text-ink">{he.resetDoneTitle}</p>
+        <div className="rounded-xl2 border border-line bg-brand-50 px-5 py-4">
+          <p className="font-display font-bold text-ink">{he.resetDoneTitle}</p>
           <p className="text-sm text-muted mt-1 leading-relaxed">{he.resetDoneBody}</p>
         </div>
         <Button size="lg" className="w-full" onClick={() => router.push(`/t/${tenantSlug}/login`)}>

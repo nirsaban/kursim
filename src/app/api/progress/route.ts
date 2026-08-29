@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     where: { studentId: auth.userId, lessonId },
   });
   const data = {
-    lastPositionSec,
+    ...(lastPositionSec !== undefined ? { lastPositionSec } : {}),
     ...(completed ? { completedAt: new Date() } : {}),
   };
   let progress;

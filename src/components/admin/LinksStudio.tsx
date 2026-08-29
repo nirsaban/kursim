@@ -192,7 +192,7 @@ export default function LinksStudio({ slug }: { slug: string }) {
         <CardBody className="space-y-5">
           {/* Business logo (shared with the branding page) */}
           <div className="flex items-center gap-4">
-            <span className="w-20 h-20 rounded-full border border-line bg-paper grid place-items-center overflow-hidden shrink-0">
+            <span className="w-20 h-20 rounded-full border border-line bg-brand-50 grid place-items-center overflow-hidden shrink-0">
               {branding.logo ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={branding.logo} alt="" className="max-w-[80%] max-h-[80%] object-contain" />
@@ -238,7 +238,7 @@ export default function LinksStudio({ slug }: { slug: string }) {
           </div>
 
           {/* Publish + public URL */}
-          <div className="flex flex-wrap items-center gap-3 bg-paper/70 border border-line rounded-xl px-4 py-3">
+          <div className="flex flex-wrap items-center gap-3 bg-brand-50 border border-line rounded-xl px-4 py-3">
             <button
               type="button"
               role="switch"
@@ -313,8 +313,8 @@ export default function LinksStudio({ slug }: { slug: string }) {
                     aria-pressed={active}
                     onClick={() => setLinktree({ ...linktree, accent: key })}
                     className={cn(
-                      'w-9 h-9 rounded-full border-2 transition-transform',
-                      active ? 'border-ink scale-110' : 'border-transparent hover:scale-105',
+                      'w-9 h-9 rounded-full border-2 transition-colors',
+                      active ? 'border-ink' : 'border-transparent hover:border-brand-300',
                     )}
                     style={{ background: `linear-gradient(135deg, ${t.deep}, ${t.main})` }}
                   />
@@ -349,7 +349,7 @@ export default function LinksStudio({ slug }: { slug: string }) {
             <p className="text-sm font-medium text-ink mb-1">{he.linktreeLinksTitle}</p>
             <p className="text-xs text-muted mb-3">{he.linktreeLinksHint}</p>
             {linktree.links.length === 0 && (
-              <p className="text-sm text-muted bg-paper/70 border border-line rounded-xl px-4 py-3">
+              <p className="text-sm text-muted bg-brand-50 border border-line rounded-xl px-4 py-3">
                 {he.linktreeNoLinks}
               </p>
             )}

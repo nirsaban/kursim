@@ -216,7 +216,7 @@ export default function StudentsManager() {
             </thead>
             <tbody>
               {students.map((s) => (
-                <tr key={s.id} className="hover:bg-paper/60 transition-colors">
+                <tr key={s.id} className="hover:bg-brand-50 transition-colors">
                   <Td>{s.name?.trim() || <span className="text-muted">—</span>}</Td>
                   <Td dir="ltr">{s.email}</Td>
                   <Td>

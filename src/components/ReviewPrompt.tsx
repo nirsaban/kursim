@@ -58,8 +58,8 @@ export default function ReviewPrompt({ courseId }: { courseId: string }) {
                 onMouseEnter={() => setHover(star)}
                 onMouseLeave={() => setHover(0)}
                 className={cn(
-                  'text-3xl transition-transform hover:scale-110',
-                  star <= (hover || rating) ? 'text-warn' : 'text-line',
+                  'text-3xl transition-colors',
+                  star <= (hover || rating) ? 'text-coin' : 'text-line',
                 )}
               >
                 ★

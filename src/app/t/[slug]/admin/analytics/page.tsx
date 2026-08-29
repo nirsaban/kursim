@@ -190,7 +190,7 @@ export default async function AnalyticsPage({
                   </thead>
                   <tbody>
                     {funnel.map((f) => (
-                      <tr key={f.id} className="hover:bg-paper/60 transition-colors">
+                      <tr key={f.id} className="hover:bg-brand-50 transition-colors">
                         <Td className="font-semibold">{f.title}</Td>
                         <Td className="tabular-nums">{f.landing}</Td>
                         <Td className="tabular-nums">
@@ -242,7 +242,7 @@ export default async function AnalyticsPage({
                 </thead>
                 <tbody>
                   {completionByCourse.map((c) => (
-                    <tr key={c.id} className="hover:bg-paper/60 transition-colors">
+                    <tr key={c.id} className="hover:bg-brand-50 transition-colors">
                       <Td className="font-semibold">{c.title}</Td>
                       <Td className="tabular-nums">{c.views}</Td>
                       <Td className="tabular-nums">{c.enrolled}</Td>

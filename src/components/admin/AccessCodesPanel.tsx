@@ -161,7 +161,7 @@ export default function AccessCodesPanel({
               {codes.map((c) => {
                 const expired = isExpired(c);
                 return (
-                  <tr key={c.id} className="hover:bg-paper/60 transition-colors">
+                  <tr key={c.id} className="hover:bg-brand-50 transition-colors">
                     <Td>
                       <div className="flex items-center gap-2">
                         <code dir="ltr" className="font-bold tracking-widest">

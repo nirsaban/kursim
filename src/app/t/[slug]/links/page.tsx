@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 const BUTTON_STYLES: Record<LinktreeButtonStyle, string> = {
-  solid: 'bg-white text-ink shadow-lg hover:scale-[1.02]',
+  solid: 'bg-white text-ink shadow-lg',
   outline: 'border-2 border-white/70 text-white hover:bg-white/10',
   soft: 'bg-white/15 text-white backdrop-blur-sm hover:bg-white/25',
 };
@@ -72,7 +72,7 @@ export default async function LinktreePage({ params }: Params) {
   return (
     <main
       className="min-h-screen flex flex-col items-center px-4 py-10 sm:py-16"
-      style={{ background: `linear-gradient(170deg, ${theme.deep} 0%, ${theme.main} 100%)` }}
+      style={{ background: theme.deep }}
     >
       {previewMode && (
         <p className="w-full max-w-md text-center text-sm font-semibold text-white bg-black/30 rounded-xl px-4 py-2.5 mb-6">
@@ -86,13 +86,13 @@ export default async function LinktreePage({ params }: Params) {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={branding.logo} alt={tenant.name} className="max-w-[80%] max-h-[80%] object-contain" />
           ) : (
-            <span className="font-display font-black text-3xl" style={{ color: theme.deep }}>
+            <span className="font-display font-bold text-3xl" style={{ color: theme.deep }}>
               {tenant.name.charAt(0)}
             </span>
           )}
         </span>
 
-        <h1 className="font-display text-2xl sm:text-3xl font-black text-white leading-tight">{title}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">{title}</h1>
         {lt.bio && <p className="text-white/75 mt-2.5 leading-relaxed max-w-sm">{lt.bio}</p>}
 
         <div className="w-full space-y-3.5 mt-8">
@@ -102,7 +102,7 @@ export default async function LinktreePage({ params }: Params) {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center justify-center gap-2.5 w-full min-h-[56px] rounded-2xl px-5 font-bold text-[15px] transition-[transform,background-color] duration-150 active:scale-[0.98] ${BUTTON_STYLES[lt.buttonStyle]}`}
+              className={`flex items-center justify-center gap-2.5 w-full min-h-[56px] rounded-2xl px-5 font-bold text-[15px] transition-colors duration-150 ${BUTTON_STYLES[lt.buttonStyle]}`}
             >
               {link.emoji && <span aria-hidden>{link.emoji}</span>}
               <span className="truncate">{link.label}</span>

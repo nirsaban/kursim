@@ -56,7 +56,7 @@ export default async function CheckoutPage({ params, searchParams }: Params) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-paper">
       <div className="max-w-md w-full bg-card border border-line rounded-xl2 shadow-lift p-7 sm:p-8">
-        <h1 className="font-display text-2xl font-black text-center">{he.checkoutTitle}</h1>
+        <h1 className="font-display text-2xl font-bold text-center">{he.checkoutTitle}</h1>
         <p className="text-muted text-sm mt-2 text-center leading-relaxed">{he.checkoutSubtitle}</p>
 
         {/* Summary and total live inside the form: ticking an add-on changes

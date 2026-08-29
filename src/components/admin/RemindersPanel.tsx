@@ -120,7 +120,7 @@ export default function RemindersPanel() {
           {automations.map((a) => (
             <Card key={a.id} className={cn('p-4 sm:p-5', !a.active && 'opacity-60')}>
               <div className="flex flex-wrap items-center gap-3">
-                <span className="w-11 h-11 rounded-xl bg-paper grid place-items-center text-xl shrink-0">
+                <span className="w-11 h-11 rounded-xl bg-brand-50 grid place-items-center text-xl shrink-0">
                   {a.trigger === 'WELCOME' ? '👋' : '⏰'}
                 </span>
                 <div className="flex-1 min-w-48">

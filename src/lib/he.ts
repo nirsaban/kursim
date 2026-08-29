@@ -1619,6 +1619,40 @@ export const he = {
   linktreeRemoveLink: 'הסרה',
   linktreeSaved: 'נשמר ✓',
   linktreePreviewBanner: 'תצוגה מקדימה — העמוד עוד לא פורסם. רק אתם רואים אותו.',
+
+  // course-taking workspace (student lesson view)
+  learnCourseContent: 'תוכן הקורס',
+  learnYourProgress: 'ההתקדמות שלכם',
+  learnProgressOf: '{done} מתוך {n} הושלמו',
+  learnTabOverview: 'סקירה',
+  learnTabAnnouncements: 'הודעות',
+  learnTabCourseContent: 'תוכן הקורס',
+  learnSection: 'פרק {i}: {title}',
+  learnSectionMeta: '{done} / {n} · {min} דק׳',
+  learnLectureMin: '{min} דק׳',
+  learnMarkComplete: 'סימון השיעור כהושלם',
+  learnLectureDone: 'השיעור הושלם',
+  learnAboutLesson: 'על השיעור הזה',
+  learnNoDescription: 'המדריך/ה עוד לא הוסיפ/ה תיאור לשיעור הזה',
+  learnResources: 'חומרים לשיעור',
+  learnNoAnnouncements: 'אין הודעות חדשות מבית הספר',
+  learnHideSidebar: 'הסתרת תוכן הקורס',
+  learnShowSidebar: 'הצגת תוכן הקורס',
+  learnBackHome: 'הקורסים שלי',
+  learnAutoNext: 'השיעור הבא מתחיל...',
+  learnCourseEmpty: 'הקורס הזה עוד לא כולל שיעורים',
+  learnLectureOf: 'שיעור {i} מתוך {n}',
+  learnShareEarn: 'שיתוף והטבות',
+  learnLeaveRating: 'דירוג הקורס',
+
+  // "my learning" home
+  myLearningTitle: 'הלמידה שלי',
+  myLearningAll: 'כל הקורסים',
+  myLearningInProgress: 'בתהליך',
+  myLearningDone: 'הושלמו',
+  myLearningPct: '{pct}% הושלמו',
+  myLearningStart: 'התחלת הקורס',
+  myLearningBy: 'מאת',
 } as const;
 
 export type HeKey = keyof typeof he;

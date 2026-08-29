@@ -49,7 +49,7 @@ export default function LessonQA({
   }
 
   return (
-    <section className="mt-8">
+    <section>
       <h2 className="font-display text-xl font-bold mb-4">{he.lessonQa}</h2>
 
       {isStudent && (
@@ -86,7 +86,7 @@ export default function LessonQA({
               <p className="mt-2 text-ink leading-relaxed whitespace-pre-wrap">{q.body}</p>
 
               {q.answer && (
-                <div className="mt-3 ps-4 border-s-2 border-brand-300 bg-paper rounded-e-xl py-2.5 pe-3">
+                <div className="mt-3 ps-4 border-s-2 border-brand-300 bg-brand-50 rounded-e-xl py-2.5 pe-3">
                   <p className="kicker mb-1">{he.qaAnswerLabel}</p>
                   <p className="text-sm text-ink leading-relaxed whitespace-pre-wrap">{q.answer}</p>
                 </div>

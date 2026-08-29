@@ -181,7 +181,7 @@ export async function buildLandingProps(args: {
     <a
       href={ctaHref}
       {...externalProps}
-      className={`group inline-flex items-center justify-center gap-2.5 font-bold text-[17px] rounded-full px-9 py-4 text-card transition-transform hover:scale-[1.03] active:scale-[0.99] ${extra}`}
+      className={`group inline-flex items-center justify-center gap-2.5 font-bold text-[17px] rounded-lg px-9 py-4 text-card transition-opacity hover:opacity-90 ${extra}`}
       style={{ background: theme.main }}
     >
       {paid && <span aria-hidden>🔒</span>}

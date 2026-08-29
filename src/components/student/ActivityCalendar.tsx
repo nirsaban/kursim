@@ -50,7 +50,7 @@ export default function ActivityCalendar({
               title={dayFmt.format(utcDateOf(key))}
               className="w-7 h-7 rounded-lg border transition-colors"
               style={{
-                background: active.has(key) ? color : '#F4F2EC',
+                background: active.has(key) ? color : '#F6F7F9',
                 borderColor: key === todayKey ? color : 'transparent',
                 borderWidth: key === todayKey ? 2 : 1,
               }}

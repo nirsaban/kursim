@@ -51,12 +51,12 @@ export default async function AdminPlanPage({
       {/* Current plan */}
       <Card className="mb-8">
         <CardBody className="flex flex-wrap items-center gap-4">
-          <span className="w-12 h-12 rounded-xl bg-paper border border-line grid place-items-center text-ink">
+          <span className="w-12 h-12 rounded-xl bg-brand-50 border border-line grid place-items-center text-ink">
             <Icon name="award" size={20} />
           </span>
           <div className="flex-1 min-w-48">
             <p className="kicker">{he.planCurrentLabel}</p>
-            <p className="font-display font-black text-2xl mt-0.5">{PLAN_NAME[plan]}</p>
+            <p className="font-display font-bold text-2xl mt-0.5">{PLAN_NAME[plan]}</p>
           </div>
           <div className="text-end">
             <p className="kicker">{he.planStudentsUsed}</p>
@@ -91,7 +91,7 @@ export default async function AdminPlanPage({
               </div>
               <p className="text-sm text-muted leading-relaxed flex-1">{PLAN_DESC[p.plan]}</p>
               <p className="mt-5">
-                <span className="font-display font-black text-3xl">{p.priceMonthly}</span>
+                <span className="font-display font-bold text-3xl">{p.priceMonthly}</span>
                 <span className="text-sm text-muted ms-1.5">{he.planPerMonth}</span>
               </p>
               <p className="text-sm text-muted mt-1">
@@ -108,7 +108,7 @@ export default async function AdminPlanPage({
                     className={cn(
                       'mt-5 inline-flex items-center justify-center font-bold rounded-xl min-h-[48px] transition-[background-color,transform] duration-150 active:scale-[0.98]',
                       popular
-                        ? 'bg-copper-500 hover:bg-copper-600 text-card shadow-cta'
+                        ? 'bg-copper-500 hover:bg-copper-600 text-card'
                         : 'bg-ink hover:bg-ink-surface text-card',
                     )}
                   >

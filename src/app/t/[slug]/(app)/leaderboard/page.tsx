@@ -80,7 +80,7 @@ export default async function LeaderboardPage({
                     key={r.studentId}
                     className={cn(
                       'transition-colors',
-                      isMe ? 'bg-copper-100/60' : 'hover:bg-paper/60',
+                      isMe ? 'bg-copper-100/60' : 'hover:bg-brand-50',
                     )}
                   >
                     <Td>
@@ -88,7 +88,7 @@ export default async function LeaderboardPage({
                         className={cn(
                           'inline-grid place-items-center w-8 h-8 rounded-lg font-display font-bold tabular-nums',
                           i === 0 && 'bg-ink text-paper',
-                          i > 0 && i < 3 && 'bg-paper border border-line text-ink',
+                          i > 0 && i < 3 && 'bg-brand-50 border border-line text-ink',
                           i >= 3 && 'text-muted',
                         )}
                       >

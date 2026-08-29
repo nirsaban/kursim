@@ -23,7 +23,7 @@ export default async function AdminCollectionsPage({ params }: { params: Promise
     courseCount >= 2 ? (
       <Link
         href={`/t/${slug}/admin/collections/new`}
-        className="inline-flex items-center bg-brand-700 hover:bg-brand-800 text-white text-sm font-semibold rounded-xl px-4 py-2 transition-colors"
+        className="inline-flex items-center bg-copper-500 hover:bg-copper-600 text-white text-sm font-semibold rounded-xl px-4 py-2 transition-colors"
       >
         + {he.collectionNew}
       </Link>

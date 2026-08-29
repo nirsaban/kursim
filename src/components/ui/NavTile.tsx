@@ -18,12 +18,12 @@ export default function NavTile({
     <Link
       href={href}
       className={cn(
-        'group bg-card border border-line rounded-xl2 shadow-card p-6 sm:p-7 h-full flex flex-col gap-3',
-        'transition-[transform,box-shadow] duration-200 hover:shadow-lift hover:-translate-y-1 active:translate-y-0 active:shadow-card',
+        'group bg-card border border-line rounded-lg p-6 sm:p-7 h-full flex flex-col gap-3',
+        'transition-[box-shadow,border-color] duration-200 hover:shadow-lift hover:border-brand-300',
       )}
     >
       <span
-        className="w-12 h-12 rounded-2xl bg-brand-100 flex items-center justify-center text-2xl shrink-0 transition-transform group-hover:scale-105"
+        className="w-12 h-12 rounded-2xl bg-brand-100 flex items-center justify-center text-2xl shrink-0"
         aria-hidden
       >
         {icon}

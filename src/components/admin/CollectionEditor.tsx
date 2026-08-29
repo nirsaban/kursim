@@ -132,7 +132,7 @@ export default function CollectionEditor({
           {url ? (
             <>
               <div className="flex-1 min-w-40">
-                <code dir="ltr" className="block text-xs bg-paper border border-line rounded-lg px-3 py-2 truncate">
+                <code dir="ltr" className="block text-xs bg-brand-50 border border-line rounded-lg px-3 py-2 truncate">
                   {url}
                 </code>
               </div>

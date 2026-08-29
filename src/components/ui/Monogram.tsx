@@ -14,7 +14,7 @@ export default function Monogram({
 }: {
   name: string;
   size?: 'sm' | 'md' | 'lg';
-  /** Background color (e.g. the course theme's soft tone). Defaults to paper. */
+  /** Background color (e.g. the course theme's soft tone). Defaults to a light tint. */
   tint?: string;
   /** Letter color. Defaults to the ink text color. */
   ink?: string;
@@ -29,8 +29,8 @@ export default function Monogram({
   return (
     <span
       className={cn(
-        'grid place-items-center font-display font-black select-none shrink-0',
-        !tint && 'bg-paper border border-line',
+        'grid place-items-center font-display font-bold select-none shrink-0',
+        !tint && 'bg-brand-50 border border-line',
         sizes[size],
         className,
       )}

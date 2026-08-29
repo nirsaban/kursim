@@ -26,12 +26,12 @@ export default async function PayFailedPage({ params, searchParams }: Props) {
         <span className="text-5xl" aria-hidden>
           😕
         </span>
-        <h1 className="font-display text-2xl font-black mt-4">{he.payFailedTitle}</h1>
+        <h1 className="font-display text-2xl font-bold mt-4">{he.payFailedTitle}</h1>
         <p className="text-muted mt-3 leading-relaxed">{he.payFailedBody}</p>
         <p className="text-xs text-muted mt-3">{he.payFailedSupport}</p>
         <Link
           href={`/t/${slug}`}
-          className="inline-flex items-center justify-center gap-2 font-bold text-[15px] rounded-full px-8 py-3.5 mt-6 border-[1.5px] border-ink text-ink hover:bg-paper transition-transform hover:scale-[1.02] active:scale-[0.99]"
+          className="inline-flex items-center justify-center gap-2 font-bold text-[15px] rounded-full px-8 py-3.5 mt-6 border-[1.5px] border-ink text-ink hover:bg-brand-50 transition-colors"
         >
           {he.payFailedBackHome}
         </Link>

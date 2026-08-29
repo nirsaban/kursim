@@ -113,7 +113,7 @@ export default async function JourneyPage({
               className={
                 a.unlocked
                   ? 'w-9 h-9 rounded-xl bg-copper-50 text-copper-600 grid place-items-center'
-                  : 'w-9 h-9 rounded-xl bg-paper text-muted/40 grid place-items-center'
+                  : 'w-9 h-9 rounded-xl bg-brand-50 text-muted/40 grid place-items-center'
               }
             >
               <Icon name={a.icon} size={17} />
@@ -184,7 +184,7 @@ export default async function JourneyPage({
               </thead>
               <tbody>
                 {dash.courses.map((c) => (
-                  <tr key={c.id} className="hover:bg-paper/60 transition-colors">
+                  <tr key={c.id} className="hover:bg-brand-50 transition-colors">
                     <Td>
                       <Link
                         href={`/t/${slug}/course/${c.id}`}

@@ -194,7 +194,7 @@ function StudentCard({
         <div
           className={cn(
             'w-10 h-10 rounded-full grid place-items-center font-bold text-sm shrink-0',
-            atLimit ? 'bg-ink text-paper' : 'bg-paper border border-line text-ink',
+            atLimit ? 'bg-ink text-paper' : 'bg-brand-50 border border-line text-ink',
           )}
         >
           <span dir="ltr">{initials}</span>
@@ -221,7 +221,7 @@ function StudentCard({
           return (
             <div
               key={s.sid}
-              className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-paper rounded-xl px-3.5 py-2.5 text-sm"
+              className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-brand-50 rounded-xl px-3.5 py-2.5 text-sm"
             >
               <span
                 className={cn(

@@ -53,7 +53,7 @@ export default function AffiliatesPanel({ courseId }: { courseId: string }) {
           </thead>
           <tbody>
             {affiliates.map((a) => (
-              <tr key={a.id} className="hover:bg-paper/60 transition-colors">
+              <tr key={a.id} className="hover:bg-brand-50 transition-colors">
                 <Td dir="ltr">{a.email}</Td>
                 <Td className="tabular-nums">{a.visits}</Td>
                 <Td className="tabular-nums font-semibold text-warn">🪙 {a.coins}</Td>

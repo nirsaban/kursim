@@ -230,7 +230,7 @@ export default function ContentTab({
 
       {course.modules.map((mod, mi) => (
         <section key={mod.id} className="bg-card border border-line rounded-xl2 shadow-card">
-          <div className="flex items-center flex-wrap gap-3 px-5 py-3.5 border-b border-line bg-paper/50 rounded-t-xl2">
+          <div className="flex items-center flex-wrap gap-3 px-5 py-3.5 border-b border-line bg-brand-50 rounded-t-xl2">
             <div className="flex flex-col gap-1 shrink-0" aria-hidden>
               <button
                 type="button"
@@ -287,7 +287,7 @@ export default function ContentTab({
           </div>
 
           {dripOpenIds.has(mod.id) && (
-            <div className="flex items-center gap-2.5 px-5 py-2.5 border-b border-line bg-paper/30 text-xs text-muted">
+            <div className="flex items-center gap-2.5 px-5 py-2.5 border-b border-line bg-brand-50 text-xs text-muted">
               <label className="flex items-center gap-1.5" title={he.dripHint}>
                 {he.dripDaysLabel}
                 <input
@@ -357,7 +357,7 @@ export default function ContentTab({
                 </div>
 
                 {openLesson === lesson.id && (
-                  <div className="mt-3 space-y-3 bg-paper/70 border border-line rounded-xl p-4">
+                  <div className="mt-3 space-y-3 bg-brand-50 border border-line rounded-xl p-4">
                     <div className="flex items-center gap-2.5">
                       <Input
                         defaultValue={lesson.title}
@@ -478,7 +478,7 @@ function BulkLessonForm({
           .filter(Boolean);
         if (titles.length) onAdd(titles);
       }}
-      className="max-w-md space-y-2 bg-paper/70 border border-line rounded-xl p-3"
+      className="max-w-md space-y-2 bg-brand-50 border border-line rounded-xl p-3"
     >
       <p className="text-xs font-medium">{he.bulkAddLessons}</p>
       <textarea

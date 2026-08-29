@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-const CREAM = '#EEEBE3';
-
 type NavLink = { href: string; label: string };
 
 /**
@@ -38,9 +36,8 @@ export default function CoralHeader({
   return (
     <header
       className={`sticky top-0 z-40 transition-all duration-300 ${
-        solid ? 'border-b border-black/10 backdrop-blur shadow-sm' : 'border-b border-transparent'
+        solid ? 'border-b border-line bg-paper/95 backdrop-blur shadow-sm' : 'border-b border-transparent'
       }`}
-      style={{ background: solid ? `${CREAM}F2` : 'transparent' }}
     >
       <div className="max-w-6xl mx-auto px-4 h-[68px] flex items-center justify-between gap-4">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -60,11 +57,11 @@ export default function CoralHeader({
         </div>
         <nav
           className={`hidden sm:flex items-center gap-5 text-sm font-semibold transition-colors duration-300 ${
-            solid ? 'text-[#160303]/70' : 'text-white/80'
+            solid ? 'text-ink/70' : 'text-white/80'
           }`}
         >
           {navLinks.map((l) => (
-            <a key={l.href} href={l.href} className={solid ? 'hover:text-[#160303]' : 'hover:text-white'}>
+            <a key={l.href} href={l.href} className={solid ? 'hover:text-ink' : 'hover:text-white'}>
               {l.label}
             </a>
           ))}
@@ -72,7 +69,7 @@ export default function CoralHeader({
         <a
           href={ctaHref}
           {...externalProps}
-          className="shrink-0 inline-flex items-center justify-center text-sm font-bold rounded-full bg-black text-white px-6 py-3 transition-transform hover:scale-[1.04]"
+          className="shrink-0 inline-flex items-center justify-center text-sm font-bold rounded-lg bg-ink text-white px-6 py-3 transition-opacity hover:opacity-90"
         >
           {ctaText}
         </a>

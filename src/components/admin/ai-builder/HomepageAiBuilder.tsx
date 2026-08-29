@@ -109,7 +109,7 @@ export default function HomepageAiBuilder({
     <Card>
       <CardHeader title={he.aiBuilderPreviewTitle} subtitle={he.aiBuilderPreviewHint} />
       <CardBody className="space-y-4">
-        <div className="rounded-xl2 border border-line overflow-hidden p-5 bg-paper space-y-5">
+        <div className="rounded-xl2 border border-line overflow-hidden p-5 bg-brand-50 space-y-5">
           <section
             className="rounded-xl2 shadow-lift overflow-hidden"
             style={{ background: `linear-gradient(120deg, ${theme.deep}, ${theme.main})` }}
@@ -118,7 +118,7 @@ export default function HomepageAiBuilder({
               <p className="text-white/70 text-sm font-medium">
                 {he.greetingMorning} {merged.emoji}
               </p>
-              <h1 className="font-display text-2xl sm:text-3xl font-black mt-1">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold mt-1">
                 {merged.welcomeHeadline || he.homeSubtitle}
               </h1>
             </div>

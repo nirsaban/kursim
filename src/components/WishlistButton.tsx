@@ -56,7 +56,7 @@ export default function WishlistButton({
           'inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-2.5 py-1 transition-colors disabled:opacity-50',
           saved
             ? 'bg-copper-100 text-copper-700'
-            : 'bg-paper text-muted border border-line hover:text-ink',
+            : 'bg-brand-50 text-muted border border-line hover:text-ink',
           className,
         )}
       >

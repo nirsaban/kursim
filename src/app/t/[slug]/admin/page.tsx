@@ -174,7 +174,7 @@ export default async function AdminDashboard({
               </Link>
               <Link
                 href={`/t/${slug}/admin/courses/new`}
-                className="inline-flex items-center bg-brand-700 hover:bg-brand-800 text-white text-sm font-semibold rounded-xl px-4 py-2 transition-colors"
+                className="inline-flex items-center bg-copper-500 hover:bg-copper-600 text-white text-sm font-semibold rounded-xl px-4 py-2 transition-colors"
               >
                 + {he.newCourseWizard}
               </Link>
@@ -236,7 +236,7 @@ export default async function AdminDashboard({
               {events.map((ev) => {
                 const row = (
                   <div className="flex items-center gap-4 px-5 py-3.5">
-                    <span className="w-10 h-10 rounded-xl bg-paper flex items-center justify-center text-lg shrink-0">
+                    <span className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-lg shrink-0">
                       {ev.icon}
                     </span>
                     <div className="flex-1 min-w-0">
@@ -251,7 +251,7 @@ export default async function AdminDashboard({
                 return (
                   <li key={ev.key}>
                     {ev.href ? (
-                      <Link href={ev.href} className="block hover:bg-paper transition-colors">
+                      <Link href={ev.href} className="block hover:bg-brand-50 transition-colors">
                         {row}
                       </Link>
                     ) : (
@@ -294,7 +294,7 @@ export default async function AdminDashboard({
         actions={
           <Link
             href={`/t/${slug}/admin/courses/new`}
-            className="inline-flex items-center bg-brand-700 hover:bg-brand-800 text-white text-sm font-semibold rounded-xl px-4 py-2 transition-colors"
+            className="inline-flex items-center bg-copper-500 hover:bg-copper-600 text-white text-sm font-semibold rounded-xl px-4 py-2 transition-colors"
           >
             + {he.newCourseWizard}
           </Link>

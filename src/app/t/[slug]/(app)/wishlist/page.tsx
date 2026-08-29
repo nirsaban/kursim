@@ -51,7 +51,7 @@ export default async function WishlistPage({
               <a
                 key={course.id}
                 href={`/t/${slug}/c/${course.id}`}
-                className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift hover:-translate-y-0.5 transition-[transform,box-shadow] duration-200 p-5 flex flex-col"
+                className="group bg-card border border-line rounded-xl2 shadow-card hover:border-brand-300 hover:shadow-lift transition-[border-color,box-shadow] duration-200 p-5 flex flex-col"
               >
                 <div className="flex items-start justify-between gap-3">
                   <Monogram name={m.headline || course.title} size="lg" tint={t.soft} ink={t.deep} />
@@ -65,7 +65,7 @@ export default async function WishlistPage({
                     {m.subheadline || course.description}
                   </p>
                 )}
-                <span className="mt-4 pt-4 border-t border-line/70 inline-flex items-center gap-1.5 text-sm font-semibold text-ink group-hover:text-brand-700 transition-colors">
+                <span className="mt-4 pt-4 border-t border-line inline-flex items-center gap-1.5 text-sm font-semibold text-ink group-hover:text-brand-700 transition-colors">
                   {he.viewCourse}
                   <Icon name="arrowForward" size={15} className="text-muted" />
                 </span>

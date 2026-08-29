@@ -20,6 +20,7 @@ export type CourseJourney = {
   description: string | null;
   accent: LandingAccent;
   emoji: string;
+  coverPublicId: string | null;
   totalLessons: number;
   completedLessons: number;
   pct: number;
@@ -111,6 +112,7 @@ export async function getStudentDashboard(
       description: course.description,
       accent: m.accent,
       emoji: m.emoji,
+      coverPublicId: course.coverPublicId,
       totalLessons: allLessons.length,
       completedLessons: done.length,
       pct,

@@ -104,7 +104,7 @@ export default function SessionWatcher() {
         )}
       >
         <SeatDots seats={['idle', 'active', 'free']} size="sm" className="justify-center mb-3" />
-        <p className="font-display font-black text-ink">{he.evictedNotice}</p>
+        <p className="font-display font-bold text-ink">{he.evictedNotice}</p>
         <p className="text-sm text-muted mt-1 leading-relaxed">{he.evictedBody}</p>
       </div>
     </div>

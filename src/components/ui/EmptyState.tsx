@@ -12,7 +12,7 @@ export default function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center text-center py-14 px-6">
       {icon ? (
-        <div className="w-12 h-12 rounded-2xl bg-paper text-ink flex items-center justify-center text-xl mb-4">
+        <div className="w-12 h-12 rounded-lg bg-brand-100 text-ink flex items-center justify-center text-xl mb-4">
           {icon}
         </div>
       ) : (

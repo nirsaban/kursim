@@ -39,7 +39,7 @@ export default async function TermsGatePage({
     >
       <div className="space-y-5">
         {terms.body && (
-          <div className="max-h-64 overflow-y-auto rounded-xl border border-line bg-paper/60 p-4 text-sm text-ink leading-relaxed whitespace-pre-line">
+          <div className="max-h-64 overflow-y-auto rounded-xl border border-line bg-brand-50 p-4 text-sm text-ink leading-relaxed whitespace-pre-line">
             {terms.body}
           </div>
         )}

@@ -122,7 +122,7 @@ function CalcomCard() {
         <div>
           <p className="text-sm font-medium text-ink mb-1.5">{he.saCalcomWebhookUrl}</p>
           <div className="flex items-center gap-2">
-            <code dir="ltr" className="bg-paper border border-line rounded-lg px-3 py-2 text-xs break-all flex-1">
+            <code dir="ltr" className="bg-brand-50 border border-line rounded-lg px-3 py-2 text-xs break-all flex-1">
               {webhookUrl}
             </code>
             <Button
@@ -239,7 +239,7 @@ export default function PlatformLeadsPanel() {
             </thead>
             <tbody>
               {leads.map((l) => (
-                <tr key={l.id} className="hover:bg-paper/60 transition-colors">
+                <tr key={l.id} className="hover:bg-brand-50 transition-colors">
                   <Td className="font-semibold">
                     {l.name || <span className="text-muted">—</span>}
                     {l.message && (

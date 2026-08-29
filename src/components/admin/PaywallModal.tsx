@@ -48,7 +48,7 @@ export default function PaywallModal({
         <p className="text-sm text-muted leading-relaxed">{body}</p>
         <a
           href={planHref()}
-          className="w-full inline-flex items-center justify-center gap-2 bg-copper-500 hover:bg-copper-600 text-card font-bold rounded-xl min-h-[48px] shadow-cta transition-[background-color,transform] duration-150 active:scale-[0.98]"
+          className="w-full inline-flex items-center justify-center gap-2 bg-copper-500 hover:bg-copper-600 text-card font-bold rounded-xl min-h-[48px] transition-[background-color,transform] duration-150 active:scale-[0.98]"
         >
           <Icon name="award" size={16} />
           {he.paywallCta}

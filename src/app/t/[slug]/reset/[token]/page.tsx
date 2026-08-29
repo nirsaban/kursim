@@ -47,7 +47,7 @@ export default async function ResetPasswordPage({
           <p className="text-sm leading-relaxed text-muted">{he.resetInvalidBody}</p>
           <Link
             href={`/t/${slug}/forgot`}
-            className="inline-flex items-center justify-center w-full rounded-xl bg-ink text-paper font-semibold px-5 py-3 hover:opacity-90 transition-opacity"
+            className="inline-flex items-center justify-center w-full rounded-xl bg-copper-500 text-white font-bold px-5 py-3 hover:bg-copper-600 transition-colors"
           >
             {he.forgotSubmit}
           </Link>

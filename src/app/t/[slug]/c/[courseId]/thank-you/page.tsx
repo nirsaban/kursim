@@ -28,14 +28,14 @@ export default async function ThankYouPage({ params }: Params) {
         <span className="text-5xl" aria-hidden>
           🎉
         </span>
-        <h1 className="font-display text-2xl font-black mt-4">{he.thankYouTitle}</h1>
+        <h1 className="font-display text-2xl font-bold mt-4">{he.thankYouTitle}</h1>
         <p className="text-muted mt-3 leading-relaxed">
           {he.thankYouBody.replace('{course}', course.title)}
         </p>
         <p className="text-xs text-muted mt-2">{he.thankYouHint}</p>
         <Link
           href={`/t/${slug}/login`}
-          className="inline-flex items-center justify-center gap-2 font-bold text-[15px] rounded-full px-8 py-3.5 text-card mt-6 transition-transform hover:scale-[1.02] active:scale-[0.99]"
+          className="inline-flex items-center justify-center gap-2 font-bold text-[15px] rounded-lg px-8 py-3.5 text-card mt-6 transition-opacity hover:opacity-90"
           style={{ background: theme.main }}
         >
           {he.thankYouLoginButton}

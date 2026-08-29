@@ -61,7 +61,7 @@ export default async function CertificatesPage({
               </div>
               <Link
                 href={`/t/${slug}/certificate/${c.courseId}`}
-                className="mt-auto inline-flex items-center justify-center bg-brand-700 hover:bg-brand-800 text-white text-sm font-semibold rounded-xl px-4 py-2 transition-colors"
+                className="mt-auto inline-flex items-center justify-center bg-copper-500 hover:bg-copper-600 text-white text-sm font-semibold rounded-xl px-4 py-2 transition-colors"
               >
                 {he.viewCertificate}
               </Link>

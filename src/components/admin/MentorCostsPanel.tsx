@@ -139,7 +139,7 @@ export default function MentorCostsPanel() {
               {active.map((r) => {
                 const pct = r.budgetCents > 0 ? Math.min(100, Math.round((r.costCents / r.budgetCents) * 100)) : 100;
                 return (
-                  <tr key={r.tenantId} className="hover:bg-paper/60 transition-colors">
+                  <tr key={r.tenantId} className="hover:bg-brand-50 transition-colors">
                     <Td className="font-semibold">
                       {r.name}
                       <span className="text-xs text-muted font-normal ms-2" dir="ltr">
@@ -152,7 +152,7 @@ export default function MentorCostsPanel() {
                     <Td className="tabular-nums">{r.messages}</Td>
                     <Td>
                       <div className="w-28">
-                        <div className="h-1.5 rounded-full bg-paper overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-brand-50 overflow-hidden">
                           <div
                             className={r.exhausted ? 'h-full bg-danger' : 'h-full bg-live'}
                             style={{ width: `${pct}%` }}

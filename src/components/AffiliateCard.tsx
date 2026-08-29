@@ -61,7 +61,7 @@ export default function AffiliateCard({ courseId }: { courseId: string }) {
       <div className="flex items-center gap-2 mt-4">
         <code
           dir="ltr"
-          className="flex-1 text-xs bg-paper border border-line rounded-lg px-3 py-2.5 truncate"
+          className="flex-1 text-xs bg-brand-50 border border-line rounded-lg px-3 py-2.5 truncate"
         >
           {stats.url}
         </code>
@@ -106,7 +106,7 @@ export default function AffiliateCard({ courseId }: { courseId: string }) {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mt-5">
-        <div className="bg-paper rounded-xl p-4 text-center">
+        <div className="bg-brand-50 rounded-xl p-4 text-center">
           <p className="font-display text-2xl font-bold tabular-nums">{stats.visits}</p>
           <p className="text-xs text-muted mt-0.5">{he.affiliateVisits}</p>
         </div>

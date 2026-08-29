@@ -89,7 +89,7 @@ export default function NotificationBell({ slug }: { slug: string }) {
               {he.notificationsEmpty}
             </p>
           ) : (
-            <ul className="max-h-96 overflow-y-auto divide-y divide-line/70">
+            <ul className="max-h-96 overflow-y-auto divide-y divide-line">
               {notifications.map((n) => {
                 const unreadDot = !n.readAt;
                 const inner = (
@@ -117,7 +117,7 @@ export default function NotificationBell({ slug }: { slug: string }) {
                 return (
                   <li key={n.id}>
                     {n.link ? (
-                      <Link href={n.link} className="block hover:bg-paper/60 transition-colors">
+                      <Link href={n.link} className="block hover:bg-brand-50 transition-colors">
                         {inner}
                       </Link>
                     ) : (
@@ -131,7 +131,7 @@ export default function NotificationBell({ slug }: { slug: string }) {
 
           <Link
             href={`/t/${slug}/notifications`}
-            className="block text-center text-sm font-medium text-ink hover:bg-paper/60 px-4 py-3 border-t border-line transition-colors"
+            className="block text-center text-sm font-medium text-ink hover:bg-brand-50 px-4 py-3 border-t border-line transition-colors"
           >
             {he.viewAllNotifications}
           </Link>

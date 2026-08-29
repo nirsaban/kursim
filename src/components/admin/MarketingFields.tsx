@@ -61,7 +61,7 @@ export function PairListEditor({
   return (
     <div className="space-y-3">
       {values.map((v, i) => (
-        <div key={i} className="border border-line rounded-xl p-3 space-y-2 bg-paper/50">
+        <div key={i} className="border border-line rounded-xl p-3 space-y-2 bg-brand-50">
           <div className="flex gap-2">
             <Input
               value={v[aKey] ?? ''}

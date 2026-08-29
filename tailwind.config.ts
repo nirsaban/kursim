@@ -5,59 +5,61 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // «דיו ואות» — bone paper, klaf cards, ink text
-        paper: '#F5F2EB',
-        card: '#FFFDF8',
+        // Udemy-style flat system — white surfaces, charcoal-indigo text,
+        // purple as the single accent. Token names are stable; values define
+        // the theme.
+        paper: '#FFFFFF',
+        card: '#FFFFFF',
         ink: {
-          DEFAULT: '#12151D',
-          surface: '#1A1F2A',
+          DEFAULT: '#303141',
+          surface: '#1D1E27',
         },
-        muted: '#6F6C64',
-        line: '#E5E0D4',
-        // brand = ink-blue ramp (primary actions, dark chrome)
+        muted: '#595C73',
+        line: '#D9DBE8',
+        // brand = charcoal-indigo ramp (dark chrome, footers, neutral UI)
         brand: {
-          50: '#F4F5F7',
-          100: '#E6E8EC',
-          200: '#C7CBD4',
-          300: '#9AA1AF',
-          400: '#5A6170',
-          500: '#3E4453',
-          600: '#2C3140',
-          700: '#232836',
-          800: '#1A1F2A',
-          900: '#161A24',
-          950: '#12151D',
+          50: '#F6F7F9',
+          100: '#E9EAF2',
+          200: '#D1D2E0',
+          300: '#9EA1B8',
+          400: '#6A6E85',
+          500: '#595C73',
+          600: '#454857',
+          700: '#303141',
+          800: '#252630',
+          900: '#1D1E27',
+          950: '#14151F',
         },
-        // copper = vermilion ramp (the single accent)
+        // copper = the accent ramp → Udemy purple (primary actions, links)
         copper: {
-          50: '#FDF1EC',
-          100: '#FBE3D9',
-          200: '#F6C4B0',
-          300: '#EF9D7E',
-          400: '#EA7A52',
-          500: '#E4572E',
-          600: '#C9481F',
-          700: '#A83A18',
-          800: '#862E13',
-          900: '#6B2510',
+          50: '#F6F2FC',
+          100: '#EDE5FA',
+          200: '#D9C7F5',
+          300: '#B187EA',
+          400: '#8B4FE0',
+          500: '#6D28D2',
+          600: '#5B21B6',
+          700: '#4B1D96',
+          800: '#3B1783',
+          900: '#2E1266',
         },
         ok: {
-          DEFAULT: '#1E7A4C',
-          soft: '#E3F6EC',
+          DEFAULT: '#1D7A45',
+          soft: '#ECF5EF',
         },
         danger: {
-          DEFAULT: '#B3382C',
-          soft: '#FBEDEA',
-          line: '#EAD3CF',
+          DEFAULT: '#B32B2B',
+          soft: '#FCECEA',
+          line: '#F0D2CE',
         },
         warn: {
-          DEFAULT: '#A16207',
-          soft: '#FBF3E2',
-          line: '#EAD9AE',
+          DEFAULT: '#B4690E',
+          soft: '#FCF4E8',
+          line: '#EFDCBA',
         },
         live: '#2FBF71',
-        coin: '#D9A441',
-        seat: '#C9C4B6',
+        coin: '#B4690E',
+        seat: '#D1D2E0',
       },
       fontFamily: {
         display: ['var(--font-frank)', 'serif'],
@@ -65,13 +67,15 @@ const config: Config = {
         script: ['var(--font-script)', 'cursive'],
       },
       boxShadow: {
-        card: '0 1px 2px rgba(20,18,10,0.05), 0 4px 16px -8px rgba(20,18,10,0.08)',
-        lift: '0 2px 4px rgba(20,18,10,0.06), 0 12px 32px -12px rgba(20,18,10,0.16)',
-        modal: '0 8px 40px -8px rgba(20,18,10,0.28)',
-        cta: '0 6px 18px rgba(228,87,46,0.35)',
+        // Flat system: borders carry the structure, shadows stay whisper-quiet
+        card: 'none',
+        lift: '0 2px 8px rgba(29, 30, 39, 0.08)',
+        modal: '0 4px 28px rgba(29, 30, 39, 0.18)',
+        cta: 'none',
       },
       borderRadius: {
-        xl2: '1.25rem',
+        xl: '0.5rem',
+        xl2: '0.5rem',
       },
       keyframes: {
         'pulse-live': {
@@ -80,9 +84,9 @@ const config: Config = {
           '100%': { boxShadow: '0 0 0 0 rgba(47,191,113,0)' },
         },
         'pulse-amber': {
-          '0%': { boxShadow: '0 0 0 0 rgba(217,164,65,0.55)' },
-          '70%': { boxShadow: '0 0 0 9px rgba(217,164,65,0)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(217,164,65,0)' },
+          '0%': { boxShadow: '0 0 0 0 rgba(180,105,14,0.55)' },
+          '70%': { boxShadow: '0 0 0 9px rgba(180,105,14,0)' },
+          '100%': { boxShadow: '0 0 0 0 rgba(180,105,14,0)' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
@@ -106,11 +110,11 @@ const config: Config = {
           to: { transform: 'translateX(50%)' },
         },
         'cta-glow': {
-          '0%, 100%': { boxShadow: '0 8px 22px var(--glow, rgba(228,87,46,0.35))' },
-          '50%': { boxShadow: '0 8px 34px var(--glow-strong, rgba(228,87,46,0.6))' },
+          '0%, 100%': { boxShadow: '0 8px 22px var(--glow, rgba(109,40,210,0.30))' },
+          '50%': { boxShadow: '0 8px 34px var(--glow-strong, rgba(109,40,210,0.5))' },
         },
         'badge-pulse': {
-          '0%': { boxShadow: '0 0 0 0 var(--glow, rgba(228,87,46,0.4))' },
+          '0%': { boxShadow: '0 0 0 0 var(--glow, rgba(109,40,210,0.4))' },
           '70%': { boxShadow: '0 0 0 10px transparent' },
           '100%': { boxShadow: '0 0 0 0 transparent' },
         },

@@ -163,7 +163,7 @@ function NavItem({
             ? 'bg-paper/10 text-paper font-semibold'
             : 'bg-ink/5 text-ink font-semibold'
           : ink
-            ? 'text-brand-300 hover:text-paper hover:bg-paper/5'
+            ? 'text-brand-300 hover:text-paper hover:bg-brand-50/5'
             : 'text-muted hover:text-ink hover:bg-ink/5',
       )}
       aria-current={active ? 'page' : undefined}
@@ -224,7 +224,7 @@ function NavGroupItem({
               ? 'bg-paper/10 text-paper font-semibold'
               : 'bg-ink/5 text-ink font-semibold'
             : ink
-              ? 'text-brand-300 hover:text-paper hover:bg-paper/5'
+              ? 'text-brand-300 hover:text-paper hover:bg-brand-50/5'
               : 'text-muted hover:text-ink hover:bg-ink/5',
         )}
         aria-haspopup="menu"
@@ -248,7 +248,7 @@ function NavGroupItem({
               href={l.href}
               onClick={() => setOpen(false)}
               className={cn(
-                'flex items-center gap-2 px-4 py-2 text-sm hover:bg-paper',
+                'flex items-center gap-2 px-4 py-2 text-sm hover:bg-brand-50',
                 isActive(l) && 'font-semibold text-ink',
               )}
             >
@@ -333,7 +333,7 @@ function UserMenu({
           {changePasswordHref && (
             <Link
               href={changePasswordHref}
-              className="block px-4 py-2 text-sm hover:bg-paper"
+              className="block px-4 py-2 text-sm hover:bg-brand-50"
               onClick={() => setOpen(false)}
             >
               {he.changePassword}
@@ -341,7 +341,7 @@ function UserMenu({
           )}
           <button
             onClick={logout}
-            className="block w-full text-start px-4 py-2 text-sm text-danger hover:bg-paper"
+            className="block w-full text-start px-4 py-2 text-sm text-danger hover:bg-brand-50"
           >
             {he.logout}
           </button>

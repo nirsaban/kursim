@@ -115,7 +115,7 @@ export default function ReviewsModeration({ courseId }: { courseId: string }) {
           </div>
 
           {editing === r.id ? (
-            <div className="mt-3 bg-paper/70 border border-line rounded-xl p-4 space-y-3">
+            <div className="mt-3 bg-brand-50 border border-line rounded-xl p-4 space-y-3">
               <p className="text-xs text-muted">{he.reviewEditNote}</p>
               <div className="flex flex-wrap gap-3">
                 <Field label={he.testimonialName} className="flex-1 min-w-40">
@@ -132,7 +132,7 @@ export default function ReviewsModeration({ courseId }: { courseId: string }) {
                         type="button"
                         onClick={() => setDraft({ ...draft, rating: star })}
                         className={cn(
-                          'text-2xl transition-transform hover:scale-110',
+                          'text-2xl transition-colors hover:text-warn',
                           star <= draft.rating ? 'text-warn' : 'text-line',
                         )}
                         aria-label={`${star}/5`}

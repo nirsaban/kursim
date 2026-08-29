@@ -8,9 +8,9 @@ export const BRAND = {
   /** Latin domain-style handle used in synthesised emails and asset paths. */
   slug: 'genirischool',
   tagline: 'בית הספר הדיגיטלי שלכם',
-  /** Copper — the single accent of the «דיו ואות» palette. */
-  accent: '#E4572E',
-  ink: '#12151D',
-  inkSoft: '#232836',
-  paper: '#F5F2EB',
+  /** Purple — the single accent of the Udemy-style palette. */
+  accent: '#6D28D2',
+  ink: '#303141',
+  inkSoft: '#1D1E27',
+  paper: '#FFFFFF',
 } as const;

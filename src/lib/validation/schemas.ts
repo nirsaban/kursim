@@ -117,7 +117,8 @@ export const updateTenantSchema = z.object({
 
 export const progressSchema = z.object({
   lessonId: z.string().uuid(),
-  lastPositionSec: z.number().int().min(0),
+  // Omitted when only toggling completion — the saved resume position is kept.
+  lastPositionSec: z.number().int().min(0).optional(),
   completed: z.boolean().optional(),
 });
 

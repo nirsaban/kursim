@@ -36,7 +36,7 @@ export default async function NotificationsPage({
         <EmptyState icon={<Icon name="bell" size={22} />} title={he.notificationsEmpty} />
       ) : (
         <Card>
-          <ul className="divide-y divide-line/70">
+          <ul className="divide-y divide-line">
             {notifications.map((n) => {
               const inner = (
                 <div className="flex items-start gap-3 px-5 py-4">
@@ -62,7 +62,7 @@ export default async function NotificationsPage({
               return (
                 <li key={n.id}>
                   {n.link ? (
-                    <Link href={n.link} className="block hover:bg-paper/60 transition-colors">
+                    <Link href={n.link} className="block hover:bg-brand-50 transition-colors">
                       {inner}
                     </Link>
                   ) : (

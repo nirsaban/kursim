@@ -3,11 +3,11 @@ import { cn } from '@/lib/cn';
 type Tone = 'brand' | 'ok' | 'danger' | 'warn' | 'neutral' | 'copper';
 
 const tones: Record<Tone, string> = {
-  brand: 'bg-ink text-paper',
+  brand: 'bg-ink text-white',
   ok: 'bg-ok-soft text-ok',
   danger: 'bg-danger-soft text-danger',
   warn: 'bg-warn-soft text-warn',
-  neutral: 'bg-paper text-muted border border-line',
+  neutral: 'bg-brand-100 text-ink',
   copper: 'bg-copper-100 text-copper-700',
 };
 

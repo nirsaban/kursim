@@ -23,7 +23,7 @@ export default function AnnouncementsCard({
         }
       />
       <CardBody className="p-0">
-        <ul className="divide-y divide-line/70">
+        <ul className="divide-y divide-line">
           {announcements.map((a, i) => (
             <li key={i} className="px-5 py-4">
               <div className="flex items-baseline gap-3">

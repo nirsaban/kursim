@@ -112,7 +112,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
             </div>
             <code
               dir="ltr"
-              className="block text-xs bg-paper border border-line rounded-lg px-3 py-2 truncate"
+              className="block text-xs bg-brand-50 border border-line rounded-lg px-3 py-2 truncate"
             >
               {typeof window !== 'undefined' ? window.location.origin : ''}/t/{tenantSlug}/c/
               {createdId}
@@ -123,7 +123,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
         <div className="flex justify-center gap-3 mt-8">
           <Link
             href={`/t/${tenantSlug}/admin/courses/${createdId}`}
-            className="inline-flex items-center bg-brand-700 hover:bg-brand-800 text-white font-semibold rounded-xl px-5 py-2.5 text-sm transition-colors"
+            className="inline-flex items-center bg-copper-500 hover:bg-copper-600 text-white font-semibold rounded-xl px-5 py-2.5 text-sm transition-colors"
           >
             {he.goToCourse}
           </Link>
@@ -159,7 +159,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
               className={cn(
                 'flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors',
                 i === step
-                  ? 'bg-brand-700 text-white'
+                  ? 'bg-copper-500 text-white'
                   : i < step
                     ? 'bg-brand-100 text-brand-800 hover:bg-brand-200'
                     : 'bg-ink/5 text-muted',
@@ -206,7 +206,7 @@ export default function CourseWizard({ tenantSlug }: { tenantSlug: string }) {
                     onClose={() => setShowAiBuilder(false)}
                   />
                 ) : (
-                  <div className="flex items-center justify-between gap-4 border border-line rounded-xl2 px-4 py-3 bg-paper/50">
+                  <div className="flex items-center justify-between gap-4 border border-line rounded-xl2 px-4 py-3 bg-brand-50">
                     <div>
                       <p className="font-semibold text-sm">{he.aiBuilderTitle}</p>
                       <p className="text-xs text-muted mt-0.5">{he.aiBuilderSubtitle}</p>

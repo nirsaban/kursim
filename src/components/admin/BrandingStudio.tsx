@@ -11,6 +11,9 @@ import { fileToLogoDataUrl } from '@/lib/client/logo';
 
 const DEFAULTS: Branding = { logo: null, logoSize: 36, primary: null };
 
+/** Platform default accent shown in the preview when the tenant hasn't picked one. */
+const PLATFORM_DEFAULT_PRIMARY = '#6D28D2';
+
 export default function BrandingStudio() {
   const [branding, setBranding] = useState<Branding | null>(null);
   const [tenantName, setTenantName] = useState('');
@@ -66,8 +69,8 @@ export default function BrandingStudio() {
     }
   }
 
-  const primary = branding.primary ?? '#12151D';
-  const heroFrom = branding.primary ? darkenHex(branding.primary, 0.55) : '#12151D';
+  const primary = branding.primary ?? PLATFORM_DEFAULT_PRIMARY;
+  const heroFrom = darkenHex(primary, 0.55);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[4fr,5fr] gap-6 items-start">
@@ -77,7 +80,7 @@ export default function BrandingStudio() {
           <CardHeader title={he.brandingLogo} subtitle={he.brandingLogoHint} />
           <CardBody className="space-y-5">
             <div className="flex items-center gap-4">
-              <span className="w-20 h-20 rounded-2xl border border-line bg-paper grid place-items-center overflow-hidden shrink-0">
+              <span className="w-20 h-20 rounded-2xl border border-line bg-brand-50 grid place-items-center overflow-hidden shrink-0">
                 {branding.logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={branding.logo} alt="" className="max-w-full max-h-full object-contain" />
@@ -125,7 +128,7 @@ export default function BrandingStudio() {
             <div className="flex items-center gap-3">
               <input
                 type="color"
-                value={branding.primary ?? '#12151D'}
+                value={branding.primary ?? PLATFORM_DEFAULT_PRIMARY}
                 onChange={(e) => setBranding({ ...branding, primary: e.target.value })}
                 className="w-11 h-11 rounded-xl border border-line cursor-pointer bg-card p-1"
                 aria-label={he.brandingPrimary}
@@ -134,7 +137,7 @@ export default function BrandingStudio() {
                 dir="ltr"
                 className="!w-36 text-center font-mono"
                 value={branding.primary ?? ''}
-                placeholder="#2563eb"
+                placeholder={PLATFORM_DEFAULT_PRIMARY}
                 onChange={(e) => {
                   const v = e.target.value.trim();
                   if (v === '') setBranding({ ...branding, primary: null });
@@ -178,11 +181,11 @@ export default function BrandingStudio() {
       {/* Live preview — a miniature of the student home that repaints as you edit */}
       <div className="lg:sticky lg:top-24">
         <p className="kicker mb-3">{he.brandingPreview}</p>
-        <div className="rounded-xl2 border border-line shadow-lift overflow-hidden bg-paper">
+        <div className="rounded-xl2 border border-line shadow-lift overflow-hidden bg-brand-50">
           {/* Mini navbar */}
           <div className="bg-card/95 border-b border-line px-4 h-12 flex items-center gap-2.5">
             <span
-              className="rounded-lg border border-line bg-paper grid place-items-center overflow-hidden shrink-0"
+              className="rounded-lg border border-line bg-brand-50 grid place-items-center overflow-hidden shrink-0"
               style={{ width: branding.logoSize, height: branding.logoSize }}
             >
               {branding.logo ? (
@@ -206,7 +209,7 @@ export default function BrandingStudio() {
             <div className="h-2 w-16 rounded-full bg-white/40 mb-2" />
             <div className="h-3 w-36 rounded-full bg-white/80 mb-4" />
             <div className="bg-card rounded-lg p-3 flex items-center gap-3">
-              <span className="w-8 h-8 rounded-lg bg-paper grid place-items-center text-sm">▶</span>
+              <span className="w-8 h-8 rounded-lg bg-brand-50 grid place-items-center text-sm">▶</span>
               <div className="flex-1 space-y-1.5">
                 <div className="h-2 w-24 rounded-full bg-ink/15" />
                 <div className="h-2 w-16 rounded-full bg-ink/10" />

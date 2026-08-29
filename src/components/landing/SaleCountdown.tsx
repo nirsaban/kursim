@@ -59,7 +59,7 @@ export default function SaleCountdown({
             style={{ borderColor: `${accent}33` }}
           >
             <div
-              className="font-display font-black text-2xl tabular-nums leading-none"
+              className="font-display font-bold text-2xl tabular-nums leading-none"
               style={{ color: accent, transition: reduced ? 'none' : undefined }}
             >
               {String(c.v).padStart(2, '0')}

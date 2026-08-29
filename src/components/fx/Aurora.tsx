@@ -2,9 +2,13 @@
  * Drifting aurora — two blurred color blobs slowly wandering over a dark
  * surface. Pure CSS, animation disabled globally by prefers-reduced-motion.
  * Parent must be `relative overflow-hidden`.
+ *
+ * Unused by the flat Udemy-style redesign (decorative glows are out of
+ * style) — kept for API compatibility with any future/other-scope call
+ * site, recolored to the current palette.
  */
 export default function Aurora({
-  colors = ['rgba(228,87,46,0.30)', 'rgba(47,191,113,0.16)'],
+  colors = ['rgba(109,40,210,0.30)', 'rgba(47,191,113,0.16)'],
 }: {
   colors?: [string, string] | string[];
 }) {

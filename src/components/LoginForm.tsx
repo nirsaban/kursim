@@ -77,7 +77,7 @@ export default function LoginForm({ tenantSlug }: { tenantSlug?: string }) {
             <span dir="ltr">{n}</span> {he.outOf} <span dir="ltr">{n}</span> {he.devicesInUse}
           </span>
         </div>
-        <h2 className="font-display text-2xl font-black text-ink mt-3.5 mb-2">
+        <h2 className="font-display text-2xl font-bold text-ink mt-3.5 mb-2">
           {he.deviceLimitTitle}
         </h2>
         <p className="text-sm leading-relaxed text-muted mb-5">{he.deviceLimitBody}</p>
@@ -133,9 +133,9 @@ export default function LoginForm({ tenantSlug }: { tenantSlug?: string }) {
   return (
     <div className="space-y-4">
       {evicted && (
-        <div className="rounded-xl2 border border-line bg-paper px-5 py-4">
+        <div className="rounded-xl2 border border-line bg-brand-50 px-5 py-4">
           <SeatDots seats={['idle', 'active', 'free']} size="sm" className="mb-2" />
-          <p className="font-display font-black text-ink">{he.evictedNotice}</p>
+          <p className="font-display font-bold text-ink">{he.evictedNotice}</p>
           <p className="text-sm text-muted mt-1 leading-relaxed">{he.evictedBody}</p>
         </div>
       )}

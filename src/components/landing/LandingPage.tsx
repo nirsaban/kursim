@@ -40,7 +40,7 @@ function Nav() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
           <LogoMark size={30} variant="ink" />
-          <span className="font-display font-black text-lg text-ink">
+          <span className="font-display font-bold text-lg text-ink">
             {he.appName}
             <span className="text-copper-500">.</span>
           </span>
@@ -57,7 +57,7 @@ function Nav() {
         </nav>
         <Link
           href="/signup"
-          className="inline-flex items-center bg-ink hover:bg-ink-surface text-card text-sm font-semibold rounded-xl px-4 min-h-[40px] transition-[background-color,transform] duration-150 active:scale-[0.98]"
+          className="inline-flex items-center bg-ink hover:bg-ink-surface text-card text-sm font-semibold rounded-xl px-4 min-h-[40px] transition-colors duration-150"
         >
           {he.lpPricingCtaFree}
         </Link>
@@ -77,10 +77,10 @@ function Hero() {
           >
             <Icon name="bolt" size={15} />
             {he.lpHeroPill}
-            <Icon name="arrowForward" size={13} className="transition-transform group-hover:-translate-x-0.5" />
+            <Icon name="arrowForward" size={13} />
           </a>
           <p className="kicker mb-3">{he.lpHeroKicker}</p>
-          <h1 className="font-display text-4xl sm:text-5xl font-black leading-[1.12]">
+          <h1 className="font-display text-4xl sm:text-5xl font-bold leading-[1.12]">
             {he.lpHeroTitle1}
             <br />
             <span className="text-copper-600">{he.lpHeroTitle2}</span>
@@ -89,7 +89,7 @@ function Hero() {
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-8">
             <Link
               href="/signup"
-              className="inline-flex items-center justify-center bg-copper-500 hover:bg-copper-600 text-card font-bold rounded-xl px-6 min-h-[52px] shadow-cta transition-[background-color,transform] duration-150 active:scale-[0.98]"
+              className="inline-flex items-center justify-center bg-copper-500 hover:bg-copper-600 text-card font-bold rounded-xl px-6 min-h-[52px] shadow-cta transition-colors duration-150"
             >
               {he.lpPricingCtaFree}
             </Link>
@@ -130,7 +130,7 @@ function Hero() {
                 ].map(([label, value]) => (
                   <div key={label} className="bg-paper/70 border border-line rounded-xl p-3">
                     <p className="text-[11px] text-muted">{label}</p>
-                    <p className="font-display font-black text-lg tabular-nums mt-1">{value}</p>
+                    <p className="font-display font-bold text-lg tabular-nums mt-1">{value}</p>
                   </div>
                 ))}
               </div>
@@ -174,7 +174,7 @@ function Stats() {
       <div className="max-w-6xl mx-auto px-4 py-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
         {STATS.map((s) => (
           <div key={s.valueKey} className="text-center">
-            <div className="font-display text-2xl sm:text-3xl font-black text-ink">{he[s.valueKey]}</div>
+            <div className="font-display text-2xl sm:text-3xl font-bold text-ink">{he[s.valueKey]}</div>
             <div className="text-xs sm:text-sm text-muted mt-1.5 leading-snug">{he[s.labelKey]}</div>
           </div>
         ))}
@@ -187,7 +187,7 @@ function SectionHead({ eyebrow, title, subtitle }: { eyebrow?: string; title: st
   return (
     <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
       {eyebrow && <p className="kicker mb-3">{eyebrow}</p>}
-      <h2 className="font-display text-3xl sm:text-4xl font-black leading-tight">{title}</h2>
+      <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight">{title}</h2>
       {subtitle && <p className="text-muted text-lg mt-4">{subtitle}</p>}
     </div>
   );
@@ -232,13 +232,13 @@ const PILLARS: ReadonlyArray<{
  */
 function Pillars() {
   return (
-    <section id="platform" className="bg-ink text-paper fx-grain scroll-mt-16">
+    <section id="platform" className="bg-ink text-paper scroll-mt-16">
       <div className="max-w-6xl mx-auto px-4 py-20 sm:py-24">
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-copper-400 mb-3">
             {he.lpPillarsEyebrow}
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl font-black leading-tight">{he.lpPillarsTitle}</h2>
+          <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight">{he.lpPillarsTitle}</h2>
           <p className="text-paper/60 text-lg mt-4">{he.lpPillarsSubtitle}</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
@@ -248,8 +248,8 @@ function Pillars() {
                 <span className="w-10 h-10 rounded-xl bg-paper/10 grid place-items-center">
                   <Icon name={p.icon} size={18} />
                 </span>
-                <h3 className="font-display font-black text-xl">{he[p.titleKey] as string}</h3>
-                <span className="ms-auto font-display font-black text-2xl text-paper/15 tabular-nums" aria-hidden>
+                <h3 className="font-display font-bold text-xl">{he[p.titleKey] as string}</h3>
+                <span className="ms-auto font-display font-bold text-2xl text-paper/15 tabular-nums" aria-hidden>
                   {i + 1}
                 </span>
               </div>
@@ -283,7 +283,7 @@ const MENTOR_POINTS = [
  */
 function MentorShowcase() {
   return (
-    <section id="mentor" className="bg-ink text-paper fx-grain scroll-mt-16">
+    <section id="mentor" className="bg-ink text-paper scroll-mt-16">
       <div className="max-w-6xl mx-auto px-4 py-20 sm:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
@@ -291,7 +291,7 @@ function MentorShowcase() {
               <Icon name="sparkles" size={13} />
               {he.lpMentorBadge}
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl font-black leading-tight">
+            <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight">
               {he.lpMentorTitle1}
               <br />
               <span className="text-copper-400">{he.lpMentorTitle2}</span>
@@ -313,7 +313,7 @@ function MentorShowcase() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-9">
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center bg-copper-500 hover:bg-copper-600 text-card font-bold rounded-xl px-6 min-h-[48px] shadow-cta transition-[background-color,transform] duration-150 active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-copper-500 hover:bg-copper-600 text-card font-bold rounded-xl px-6 min-h-[48px] shadow-cta transition-colors duration-150"
               >
                 {he.lpMentorCta}
               </Link>
@@ -385,7 +385,7 @@ function Features() {
         {FEATURES.map((f) => (
           <div
             key={f.titleKey}
-            className="bg-card border border-line rounded-xl2 shadow-card p-5 sm:p-6 transition-[transform,box-shadow] duration-200 hover:shadow-lift hover:-translate-y-0.5"
+            className="bg-card border border-line rounded-xl2 shadow-card p-5 sm:p-6 transition-shadow duration-200 hover:shadow-lift"
           >
             <span className="w-10 h-10 rounded-xl bg-paper border border-line text-ink grid place-items-center mb-4">
               <Icon name={f.icon} size={18} />
@@ -414,7 +414,7 @@ function How() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-8">
           {STEPS.map((s) => (
             <div key={s.n}>
-              <div className="font-display text-5xl font-black text-line mb-4" aria-hidden>
+              <div className="font-display text-5xl font-bold text-line mb-4" aria-hidden>
                 {s.n}
               </div>
               <h3 className="font-display text-xl font-bold mb-2">{he[s.titleKey]}</h3>
@@ -488,7 +488,7 @@ async function Pricing() {
                 <h3 className="font-display font-bold text-lg">{PLAN_NAMES[p.plan]}</h3>
                 <p className="text-sm text-muted leading-relaxed mt-1 flex-1">{PLAN_DESCS[p.plan]}</p>
                 <p className="mt-5">
-                  <span className="font-display font-black text-3xl">{p.priceMonthly}</span>
+                  <span className="font-display font-bold text-3xl">{p.priceMonthly}</span>
                   <span className="text-sm text-muted ms-1.5">{he.planPerMonth}</span>
                 </p>
                 <p className="text-sm text-muted mt-1">
@@ -500,7 +500,7 @@ async function Pricing() {
                   href="/signup"
                   className={
                     popular
-                      ? 'mt-5 inline-flex items-center justify-center bg-copper-500 hover:bg-copper-600 text-card font-bold rounded-xl min-h-[48px] shadow-cta transition-[background-color,transform] duration-150 active:scale-[0.98]'
+                      ? 'mt-5 inline-flex items-center justify-center bg-copper-500 hover:bg-copper-600 text-card font-bold rounded-xl min-h-[48px] shadow-cta transition-colors duration-150'
                       : 'mt-5 inline-flex items-center justify-center border-[1.5px] border-ink text-ink font-semibold rounded-xl min-h-[48px] hover:bg-paper transition-colors'
                   }
                 >
@@ -524,10 +524,10 @@ const TRUST_POINTS = [
 
 function Trust() {
   return (
-    <section className="bg-ink text-paper fx-grain">
+    <section className="bg-ink text-paper">
       <div className="max-w-6xl mx-auto px-4 py-20 sm:py-24">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="font-display text-3xl sm:text-4xl font-black leading-tight">{he.lpTrustTitle}</h2>
+          <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight">{he.lpTrustTitle}</h2>
           <p className="text-paper/60 text-lg mt-4">{he.lpTrustSubtitle}</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -583,7 +583,7 @@ function FinalCta() {
   return (
     <section id="contact" className="bg-brand-950 text-white scroll-mt-16">
       <div className="max-w-lg mx-auto px-4 py-20 sm:py-24 text-center">
-        <h2 className="font-display text-3xl sm:text-4xl font-black leading-tight">{he.lpFinalTitle}</h2>
+        <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight">{he.lpFinalTitle}</h2>
         <p className="text-brand-200 text-lg mt-4">{he.lpFinalSubtitle}</p>
         <div className="mt-8 text-start">
           <LeadForm />

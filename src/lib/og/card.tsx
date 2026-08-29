@@ -136,20 +136,22 @@ export async function ogCard(input: OgCardInput): Promise<ImageResponse> {
           justifyContent: 'space-between',
           position: 'relative',
           padding: '58px 72px',
-          background: `linear-gradient(150deg, ${BRAND.inkSoft} 0%, ${BRAND.ink} 62%, #0C0E14 100%)`,
+          background: BRAND.paper,
+          border: '2px solid #D9DBE8',
+          boxSizing: 'border-box',
           fontFamily: 'Heebo',
         }}
       >
-        {/* Accent wash — ties the preview to the landing page's own theme. */}
+        {/* Flat accent bar — ties the preview to the landing page's own theme, no glow. */}
         <div
           style={{
             position: 'absolute',
-            top: -260,
-            right: -200,
-            width: 820,
-            height: 820,
+            left: 0,
+            right: 0,
+            top: 0,
+            height: 10,
             display: 'flex',
-            backgroundImage: `radial-gradient(circle at 50% 50%, ${accent}59 0%, ${accent}1F 45%, ${BRAND.ink}00 70%)`,
+            background: accent,
           }}
         />
 
@@ -175,13 +177,14 @@ export async function ogCard(input: OgCardInput): Promise<ImageResponse> {
                   borderRadius: 22,
                   objectFit: 'contain',
                   background: BRAND.paper,
+                  border: '1px solid #D9DBE8',
                 }}
                 alt=""
               />
             ) : (
               <Mark size={84} accent={accent} />
             )}
-            {eyebrow ? <RtlText text={eyebrow} size={30} color="#C7CBD4" /> : null}
+            {eyebrow ? <RtlText text={eyebrow} size={30} color="#595C73" /> : null}
           </div>
           {/* The seat-limit motif: two taken, one free. */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -193,7 +196,9 @@ export async function ogCard(input: OgCardInput): Promise<ImageResponse> {
                   width: 14,
                   height: 14,
                   borderRadius: 14,
-                  background: i === 2 ? 'rgba(245,242,235,0.25)' : accent,
+                  background: i === 2 ? BRAND.paper : accent,
+                  border: i === 2 ? '2px solid #D9DBE8' : 'none',
+                  boxSizing: 'border-box',
                 }}
               />
             ))}
@@ -206,13 +211,13 @@ export async function ogCard(input: OgCardInput): Promise<ImageResponse> {
             text={title}
             size={title.length > 42 ? 62 : 76}
             weight={700}
-            color={BRAND.paper}
+            color={BRAND.ink}
             lineHeight={1.18}
             letterSpacing={-1.2}
             maxWidth={1000}
           />
           {subtitle ? (
-            <RtlText text={subtitle} size={32} color="#9AA1AF" lineHeight={1.42} maxWidth={940} />
+            <RtlText text={subtitle} size={32} color="#595C73" lineHeight={1.42} maxWidth={940} />
           ) : null}
         </div>
 
@@ -227,11 +232,11 @@ export async function ogCard(input: OgCardInput): Promise<ImageResponse> {
         >
           <div style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', gap: 16 }}>
             <Mark size={46} accent={BRAND.accent} />
-            <div style={{ display: 'flex', fontSize: 31, fontWeight: 700, color: BRAND.paper }}>
+            <div style={{ display: 'flex', fontSize: 31, fontWeight: 700, color: BRAND.ink }}>
               {BRAND.name}
             </div>
           </div>
-          <RtlText text={footer} size={26} color="#6F6C64" />
+          <RtlText text={footer} size={26} color="#8A8D9E" />
         </div>
       </div>
     ),

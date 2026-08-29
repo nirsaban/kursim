@@ -6,7 +6,6 @@ import SaleCountdown from '@/components/landing/SaleCountdown';
 import Marquee from '@/components/landing/Marquee';
 import StickyCta from '@/components/landing/StickyCta';
 import ScrollProgress from '@/components/landing/ScrollProgress';
-import TiltCard from '@/components/fx/TiltCard';
 import ResultsGallery from '@/components/landing/ResultsGallery';
 import SectionHeading from '@/components/landing/SectionHeading';
 import CollectionCourses from '@/components/landing/CollectionCourses';
@@ -92,7 +91,7 @@ export default function ClassicLanding({
         <div className="max-w-5xl mx-auto px-4 h-[62px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5 min-w-0">
             <span
-              className="w-9 h-9 rounded-[10px] bg-ink text-paper grid place-items-center font-display font-black text-lg shrink-0"
+              className="w-9 h-9 rounded-[10px] bg-ink text-paper grid place-items-center font-display font-bold text-lg shrink-0"
               aria-hidden
             >
               {tenantName.charAt(0)}
@@ -139,7 +138,7 @@ export default function ClassicLanding({
           <a
             href={ctaHref}
             {...externalProps}
-            className="shrink-0 text-sm font-bold text-card rounded-full px-5 py-2.5 transition-transform hover:scale-[1.04]"
+            className="shrink-0 text-sm font-bold text-card rounded-lg px-5 py-2.5 transition-opacity hover:opacity-90"
             style={{ background: theme.main }}
           >
             {ctaText}
@@ -161,10 +160,8 @@ export default function ClassicLanding({
 
       {/* Hero — two columns per design 1e: copy + before/after showcase */}
       <section
-        className="relative overflow-hidden fx-grain bg-ink"
-        style={{
-          background: `linear-gradient(180deg, #12151D 0%, #12151D 62%, ${theme.soft} 100%)`,
-        }}
+        className="relative overflow-hidden bg-ink"
+        style={{ background: theme.deep }}
       >
         <div
           className={`relative max-w-5xl mx-auto px-4 py-16 sm:py-20 ${
@@ -177,10 +174,7 @@ export default function ClassicLanding({
                   video above — repeating them here would be redundant. */}
               {!cinematic && (
                 <>
-                  <span
-                    className="inline-flex items-center gap-2 text-[13px] font-bold rounded-full px-3.5 py-1.5 mb-5 text-paper"
-                    style={{ background: 'rgba(245,242,235,0.12)' }}
-                  >
+                  <span className="inline-flex items-center gap-2 text-[13px] font-bold rounded-full px-3.5 py-1.5 mb-5 text-paper bg-paper/10">
                     {m.emoji} {he.digitalCourseBadge}
                     <span className="relative flex w-2 h-2" aria-hidden>
                       <span
@@ -189,7 +183,7 @@ export default function ClassicLanding({
                       />
                     </span>
                   </span>
-                  <h1 className="font-display text-4xl sm:text-[52px] font-black leading-[1.15] tracking-tight max-w-3xl text-paper">
+                  <h1 className="font-display text-4xl sm:text-[52px] font-bold leading-[1.15] tracking-tight max-w-3xl text-paper">
                     {headlineWords.length > 1 ? (
                       <>
                         {headlineLead}{headlineLead && ' '}
@@ -224,7 +218,7 @@ export default function ClassicLanding({
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 text-[13px] text-paper/70">
                 {trustBullets.map((t) => (
                   <span key={t} className="inline-flex items-center gap-1.5">
-                    <span className="font-black" style={{ color: theme.accent }} aria-hidden>
+                    <span className="font-bold" style={{ color: theme.accent }} aria-hidden>
                       ✓
                     </span>
                     {t}
@@ -290,7 +284,7 @@ export default function ClassicLanding({
                           value={s.num}
                           decimals={s.decimals}
                           prefix={s.prefix}
-                          className="font-display font-black text-xl text-paper block"
+                          className="font-display font-bold text-xl text-paper block"
                         />
                         {s.label}
                       </div>
@@ -302,38 +296,36 @@ export default function ClassicLanding({
 
           {heroMedia && (
             <Reveal delay={250}>
-              <TiltCard maxTilt={5} className="rounded-[20px]">
-                <div className="rounded-[20px] overflow-hidden border border-line shadow-[0_18px_44px_rgba(20,18,10,0.14)]">
-                  {heroMedia.kind === 'BEFORE_AFTER' && heroMedia.afterUrl ? (
-                    <BeforeAfterSlider
-                      beforeUrl={heroMedia.url}
-                      afterUrl={heroMedia.afterUrl}
-                      beforeLabel={he.beforeLabel}
-                      afterLabel={he.afterLabel}
-                      accent={theme.main}
-                    />
-                  ) : heroMedia.kind === 'VIDEO' ? (
-                    <video
-                      src={heroMedia.url}
-                      controls
-                      playsInline
-                      preload="metadata"
-                      className="w-full aspect-[4/3] object-cover bg-ink/5"
-                    />
-                  ) : (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={heroMedia.url}
-                      alt={heroMedia.caption || headline}
-                      className="w-full aspect-[4/3] object-cover bg-ink/5"
-                    />
-                  )}
-                </div>
-              </TiltCard>
+              <div className="rounded-[20px] overflow-hidden border border-line shadow-lift">
+                {heroMedia.kind === 'BEFORE_AFTER' && heroMedia.afterUrl ? (
+                  <BeforeAfterSlider
+                    beforeUrl={heroMedia.url}
+                    afterUrl={heroMedia.afterUrl}
+                    beforeLabel={he.beforeLabel}
+                    afterLabel={he.afterLabel}
+                    accent={theme.main}
+                  />
+                ) : heroMedia.kind === 'VIDEO' ? (
+                  <video
+                    src={heroMedia.url}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="w-full aspect-[4/3] object-cover bg-ink/5"
+                  />
+                ) : (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={heroMedia.url}
+                    alt={heroMedia.caption || headline}
+                    className="w-full aspect-[4/3] object-cover bg-ink/5"
+                  />
+                )}
+              </div>
               {m.instructorName && (
                 <div className="flex items-center gap-3 mt-4 bg-card border border-line rounded-[14px] px-4 py-3">
                   <span
-                    className="w-10 h-10 rounded-full grid place-items-center font-display font-black text-card"
+                    className="w-10 h-10 rounded-full grid place-items-center font-display font-bold text-card"
                     style={{ background: theme.main }}
                     aria-hidden
                   >
@@ -375,7 +367,7 @@ export default function ClassicLanding({
                   <SectionHeading
                     title={he.audienceTitle}
                     accent={theme.accent}
-                    titleClassName="font-display font-black"
+                    titleClassName="font-display font-bold"
                     align="start"
                     className="mb-5"
                   />
@@ -384,7 +376,7 @@ export default function ClassicLanding({
                   {m.audience.map((a, i) => (
                     <Reveal key={i} delay={i * 80}>
                       <div className="flex items-start gap-3 rounded-[13px] bg-paper px-4 py-3.5 leading-relaxed">
-                        <span className="font-black shrink-0" style={{ color: theme.main }} aria-hidden>
+                        <span className="font-bold shrink-0" style={{ color: theme.main }} aria-hidden>
                           ✓
                         </span>
                         <span className="text-[15px]">{a}</span>
@@ -400,7 +392,7 @@ export default function ClassicLanding({
                   <SectionHeading
                     title={he.outcomesTitle}
                     accent={theme.accent}
-                    titleClassName="font-display font-black"
+                    titleClassName="font-display font-bold"
                     align="start"
                     className="mb-5"
                   />
@@ -410,7 +402,7 @@ export default function ClassicLanding({
                     <Reveal key={i} delay={i * 60}>
                       <li className="border border-line rounded-[13px] px-5 py-4 h-full">
                         <span
-                          className="font-display font-black text-xl block"
+                          className="font-display font-bold text-xl block"
                           style={{ color: theme.main }}
                           aria-hidden
                           dir="ltr"
@@ -435,7 +427,7 @@ export default function ClassicLanding({
             <SectionHeading
               title={he.benefitsTitle}
               accent={theme.accent}
-              titleClassName="font-display font-black"
+              titleClassName="font-display font-bold"
               align="start"
               className="mb-8"
             />
@@ -470,7 +462,7 @@ export default function ClassicLanding({
             <SectionHeading
               title={he.resultsTitle}
               accent={theme.accent}
-              titleClassName="font-display font-black"
+              titleClassName="font-display font-bold"
               subtitleClassName="text-muted"
               subtitle={he.resultsSubtitle}
             />
@@ -488,7 +480,7 @@ export default function ClassicLanding({
             <SectionHeading
               title={he.galleryTitle}
               accent={theme.accent}
-              titleClassName="font-display font-black"
+              titleClassName="font-display font-bold"
               align="start"
               className="mb-8"
             />
@@ -534,10 +526,10 @@ export default function ClassicLanding({
 
       {/* Curriculum — the dark ink chapter */}
       {lessonCount > 0 && (
-        <section id="curriculum" className="relative overflow-hidden bg-ink fx-grain">
+        <section id="curriculum" className="relative overflow-hidden bg-ink">
           <div className="relative max-w-3xl mx-auto px-4 py-16">
             <Reveal>
-              <h2 className="font-display text-2xl sm:text-3xl font-black mb-1.5 text-paper">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold mb-1.5 text-paper">
                 {he.curriculum}
               </h2>
               <p className="text-sm text-brand-300 mb-7">
@@ -560,7 +552,7 @@ export default function ClassicLanding({
                   >
                     <summary className="flex items-center gap-4 px-5 py-4 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
                       <span
-                        className="font-display font-black text-lg shrink-0"
+                        className="font-display font-bold text-lg shrink-0"
                         style={{ color: theme.main }}
                         dir="ltr"
                       >
@@ -600,7 +592,7 @@ export default function ClassicLanding({
             {/* Mid-page conversion moment — right after the syllabus sold them */}
             <Reveal delay={120}>
               <div className="mt-12 text-center">
-                <p className="font-display text-2xl font-black text-paper">{he.midCtaTitle}</p>
+                <p className="font-display text-2xl font-bold text-paper">{he.midCtaTitle}</p>
                 <p className="text-sm text-brand-300 mt-1.5">{he.midCtaSubtitle}</p>
                 <div className="mt-5 flex justify-center">{cta()}</div>
               </div>
@@ -616,7 +608,7 @@ export default function ClassicLanding({
             <SectionHeading
               title={he.testimonialsTitle}
               accent={theme.accent}
-              titleClassName="font-display font-black"
+              titleClassName="font-display font-bold"
               align="start"
               className="mb-8"
             />
@@ -663,7 +655,7 @@ export default function ClassicLanding({
               title={he.reviewsTitle}
               subtitle={`${he.verifiedStudent} ✓`}
               accent={theme.accent}
-              titleClassName="font-display font-black"
+              titleClassName="font-display font-bold"
               subtitleClassName="text-muted"
               align="start"
               className="mb-8"
@@ -744,7 +736,7 @@ export default function ClassicLanding({
               >
                 🎁 {he.saleBadge}
               </span>
-              <h2 className="font-display text-2xl sm:text-3xl font-black mt-4">{m.sale.title}</h2>
+              <h2 className="font-display text-2xl sm:text-3xl font-bold mt-4">{m.sale.title}</h2>
               {m.sale.description && (
                 <p className="text-muted mt-3 leading-relaxed whitespace-pre-wrap max-w-2xl">
                   {m.sale.description}
@@ -800,12 +792,12 @@ export default function ClassicLanding({
                 <a
                   href={saleHref}
                   {...saleExternalProps}
-                  className="group inline-flex items-center justify-center gap-2 font-bold rounded-full px-8 py-3.5 text-card transition-transform hover:scale-[1.03] active:scale-[0.99]"
+                  className="group inline-flex items-center justify-center gap-2 font-bold rounded-lg px-8 py-3.5 text-card transition-opacity hover:opacity-90"
                   style={{ background: theme.main }}
                 >
                   {m.sale.paymentLink && <span aria-hidden>🔒</span>}
                   {he.saleCta}
-                  <span aria-hidden className="transition-transform duration-300 group-hover:-translate-x-1">
+                  <span aria-hidden>
                     ←
                   </span>
                 </a>
@@ -824,7 +816,7 @@ export default function ClassicLanding({
                 <SectionHeading
                   title={he.faqTitle}
                   accent={theme.accent}
-                  titleClassName="font-display font-black"
+                  titleClassName="font-display font-bold"
                   align="start"
                   className="mb-6"
                 />
@@ -851,9 +843,9 @@ export default function ClassicLanding({
           )}
 
           <Reveal delay={120}>
-            <div className="relative overflow-hidden rounded-[22px] text-paper px-8 py-9 fx-grain bg-ink">
+            <div className="relative overflow-hidden rounded-[22px] text-paper px-8 py-9 bg-ink">
               <div className="relative">
-                <h2 className="font-display text-3xl font-black text-paper leading-snug">{headline}</h2>
+                <h2 className="font-display text-3xl font-bold text-paper leading-snug">{headline}</h2>
                 <p className="text-brand-300 text-sm leading-relaxed mt-3 max-w-md">
                   {he.ctaAccessNote.replace('{n}', String(sessionLimit))}
                 </p>

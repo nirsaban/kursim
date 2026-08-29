@@ -66,7 +66,7 @@ export default function WhatsappPanel({ messages }: { messages: WaMessageRow[] }
   return (
     <div className="space-y-6">
       {/* How it works */}
-      <div className="rounded-xl2 border border-line bg-paper/60 p-5">
+      <div className="rounded-xl2 border border-line bg-brand-50 p-5">
         <p className="font-display font-bold mb-3 flex items-center gap-2">
           <span aria-hidden>💬</span>
           {he.waHelpTitle}

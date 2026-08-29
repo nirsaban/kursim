@@ -1,6 +1,6 @@
 /**
- * The GeniriSchool mark — a copper G on a rounded tile, with the vermilion
- * Live dot the rest of the UI uses for "a seat is in use".
+ * The GeniriSchool mark — a purple G on a rounded tile, with the accent
+ * dot the rest of the UI uses for "a seat is in use".
  */
 import { he } from '@/lib/he';
 
@@ -12,9 +12,9 @@ export default function LogoMark({
   variant?: 'ink' | 'bone' | 'vermilion';
 }) {
   const fills = {
-    ink: { tile: '#12151D', glyph: '#E4572E', dot: '#F5F2EB' },
-    bone: { tile: '#F5F2EB', glyph: '#12151D', dot: '#E4572E' },
-    vermilion: { tile: '#E4572E', glyph: '#FFFDF8', dot: '#12151D' },
+    ink: { tile: '#1D1E27', glyph: '#6D28D2', dot: '#FFFFFF' },
+    bone: { tile: '#FFFFFF', glyph: '#1D1E27', dot: '#6D28D2' },
+    vermilion: { tile: '#6D28D2', glyph: '#FFFFFF', dot: '#1D1E27' },
   }[variant];
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-label={he.logoAria}>

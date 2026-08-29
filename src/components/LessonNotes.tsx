@@ -34,8 +34,8 @@ export default function LessonNotes({
   }
 
   return (
-    <section className="mt-8">
-      <div className="bg-card border border-line rounded-xl2 shadow-card p-5">
+    <section>
+      <div className="bg-card border border-line rounded-lg p-5">
         <div className="flex items-baseline justify-between gap-3 mb-1">
           <h2 className="font-display text-lg font-bold">{he.lessonNotesLabel}</h2>
           <span

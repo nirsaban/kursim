@@ -2,104 +2,69 @@ import Link from 'next/link';
 import { LANDING_THEMES } from '@/lib/landing-themes';
 import ProgressBar from '@/components/ui/ProgressBar';
 import Icon from '@/components/ui/Icon';
-import Monogram from '@/components/ui/Monogram';
 import type { CourseJourney } from '@/lib/student-dashboard';
 import { he } from '@/lib/he';
 
 /**
- * One enrolled course: monogram identity, module milestone dots, progress,
- * and a continue CTA straight into the next lesson. The course accent is a
- * quiet detail (milestones, percentage) — never a painted header.
+ * "My learning" course card: thumbnail, title, school name, thin progress
+ * bar with a percentage — opens straight into the lecture to watch next.
  */
 export default function JourneyCourseCard({
   slug,
   course,
-  index = 0,
+  coverUrl,
+  schoolName,
 }: {
   slug: string;
   course: CourseJourney;
-  index?: number;
+  coverUrl?: string | null;
+  schoolName: string;
 }) {
   const theme = LANDING_THEMES[course.accent];
   const done = course.pct === 100 && course.totalLessons > 0;
+  const href = course.nextLesson ? `/t/${slug}/lesson/${course.nextLesson.id}` : `/t/${slug}/course/${course.id}`;
 
   return (
-    <div
-      className="group bg-card border border-line rounded-xl2 shadow-card hover:shadow-lift hover:-translate-y-0.5 transition-[transform,box-shadow] duration-200 animate-rise flex flex-col p-5"
-      style={{ animationDelay: `${Math.min(index, 5) * 60}ms` }}
-    >
-      <Link href={`/t/${slug}/course/${course.id}`} className="flex items-start gap-3.5">
-        <Monogram name={course.title} size="lg" tint={theme.soft} ink={theme.deep} />
-        <div className="min-w-0 flex-1">
-          <h2 className="font-display font-bold text-lg leading-snug group-hover:text-brand-700 transition-colors">
-            {course.title}
-          </h2>
-          {course.description && (
-            <p className="text-sm text-muted line-clamp-2 mt-1 leading-relaxed">
-              {course.description}
-            </p>
-          )}
-        </div>
-      </Link>
-
-      {/* Module milestones — the journey path */}
-      {course.milestones.length > 0 && (
-        <div className="flex items-center mt-5" aria-label={he.modules}>
-          {course.milestones.slice(0, 8).map((m, i) => (
-            <span key={i} className="flex items-center flex-1 last:flex-none">
-              <span
-                title={`${m.title} · ${m.completedLessons}/${m.totalLessons}`}
-                className="w-3 h-3 rounded-full border-2 shrink-0"
-                style={
-                  m.done
-                    ? { background: theme.main, borderColor: theme.main }
-                    : m.completedLessons > 0
-                      ? { background: theme.soft, borderColor: theme.main }
-                      : { background: 'transparent', borderColor: '#E5E0D4' }
-                }
-              />
-              {i < Math.min(course.milestones.length, 8) - 1 && (
-                <span
-                  className="h-px flex-1 mx-1"
-                  style={{ background: m.done ? theme.main : '#E5E0D4' }}
-                />
-              )}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="flex items-baseline justify-between text-xs text-muted mt-5 mb-2">
-        <span className="tabular-nums">
-          {course.completedLessons}/{course.totalLessons} {he.lessons}
-        </span>
-        <span className="font-semibold tabular-nums text-ink">{course.pct}%</span>
-      </div>
-      <ProgressBar value={course.pct} tone={done ? 'ok' : 'brand'} />
-
-      <div className="mt-4 pt-4 border-t border-line/70 flex items-center gap-3 min-h-[44px]">
-        {done ? (
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-ok">
-            <Icon name="check" size={15} />
-            {he.completed}
-          </span>
-        ) : course.nextLesson ? (
-          <>
-            <span className="text-xs text-muted truncate leading-relaxed">
-              {he.nextLessonLabel}: {course.nextLesson.title}
-            </span>
-            <Link
-              href={`/t/${slug}/lesson/${course.nextLesson.id}`}
-              className="ms-auto shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-ink border-[1.5px] border-ink rounded-lg px-3.5 py-1.5 min-h-[36px] transition-[background-color,transform] duration-150 hover:bg-paper active:scale-[0.98]"
-            >
-              <Icon name="play" size={12} />
-              {he.continueWatching}
-            </Link>
-          </>
+    <Link href={href} className="group block border border-line rounded-lg bg-card hover:shadow-lift transition-shadow">
+      <div className="relative aspect-video border-b border-line overflow-hidden rounded-t-lg" style={{ background: theme.soft }}>
+        {coverUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={coverUrl} alt="" className="w-full h-full object-cover" />
         ) : (
-          <span className="text-xs text-muted">{he.noLessons}</span>
+          <div className="w-full h-full grid place-items-center">
+            <span className="text-5xl" aria-hidden>
+              {course.emoji}
+            </span>
+          </div>
         )}
+        <span className="absolute inset-0 grid place-items-center bg-black/0 group-hover:bg-black/30 transition-colors">
+          <span className="w-12 h-12 rounded-full bg-white/90 text-ink grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <Icon name="play" size={18} />
+          </span>
+        </span>
       </div>
-    </div>
+      <div className="p-3">
+        <h2 className="font-body font-bold text-base leading-snug line-clamp-2 text-ink">{course.title}</h2>
+        <p className="text-xs text-muted mt-1 truncate">{schoolName}</p>
+        <div className="mt-3">
+          <ProgressBar value={course.pct} tone={done ? 'ok' : 'brand'} className="h-1" />
+          <div className="flex items-center justify-between mt-1.5 text-xs">
+            <span className="text-muted tabular-nums">
+              {course.totalLessons === 0
+                ? he.noLessons
+                : course.completedLessons === 0
+                  ? he.myLearningStart
+                  : he.myLearningPct.replace('{pct}', String(course.pct))}
+            </span>
+            {done && (
+              <span className="inline-flex items-center gap-1 font-bold text-ok">
+                <Icon name="check" size={12} />
+                {he.completed}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 }

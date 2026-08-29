@@ -12,7 +12,7 @@ export default function ProgressBar({
   const pct = Math.max(0, Math.min(100, value));
   return (
     <div
-      className={cn('h-2 bg-ink/[0.12] rounded-full overflow-hidden', className)}
+      className={cn('h-2 bg-brand-100 rounded-full overflow-hidden', className)}
       role="progressbar"
       aria-valuenow={pct}
       aria-valuemin={0}
@@ -21,7 +21,7 @@ export default function ProgressBar({
       <div
         className={cn(
           'h-full rounded-full transition-[width] duration-500',
-          tone === 'ok' ? 'bg-live' : 'bg-ink',
+          tone === 'ok' ? 'bg-live' : 'bg-copper-500',
         )}
         style={{ width: `${pct}%` }}
       />

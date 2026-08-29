@@ -35,7 +35,7 @@ export default function SectionHeading({
       >
         <span
           className="h-px w-10 rounded-full"
-          style={{ background: `linear-gradient(to left, ${accent}00, ${accent}cc)` }}
+          style={{ background: accent, opacity: 0.35 }}
         />
         <span
           className="w-[7px] h-[7px] rotate-45 rounded-[2px]"
@@ -43,7 +43,7 @@ export default function SectionHeading({
         />
         <span
           className="h-px w-10 rounded-full"
-          style={{ background: `linear-gradient(to right, ${accent}00, ${accent}cc)` }}
+          style={{ background: accent, opacity: 0.35 }}
         />
       </span>
 

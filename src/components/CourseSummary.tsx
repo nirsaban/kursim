@@ -26,7 +26,7 @@ export default function CourseSummary({ modules }: { modules: SummaryModule[] })
   if (withLessons.length === 0) return null;
 
   return (
-    <section className="bg-gradient-to-l from-brand-800 to-brand-600 text-white rounded-xl2 shadow-lift overflow-hidden">
+    <section className="bg-ink-surface text-white rounded-xl2 overflow-hidden">
       <div className="p-6 pb-4">
         <h2 className="font-display text-2xl font-bold">{he.courseCompletedTitle}</h2>
         <p className="text-white/75 mt-1">{he.courseCompletedSub}</p>

@@ -20,9 +20,9 @@ export default function CollectionCourses({
   variant: 'classic' | 'coral';
 }) {
   const coral = variant === 'coral';
-  const border = coral ? 'border-black/10' : 'border-line';
-  const muted = coral ? 'text-[#160303]/70' : 'text-muted';
-  const titleFont = coral ? 'font-body font-extrabold' : 'font-display font-black';
+  const border = 'border-line';
+  const muted = 'text-muted';
+  const titleFont = coral ? 'font-body font-extrabold' : 'font-display font-bold';
   const cols = collection.courses.length >= 3 ? 'md:grid-cols-3' : 'md:grid-cols-2';
 
   return (
@@ -40,9 +40,7 @@ export default function CollectionCourses({
         {collection.courses.map((c, i) => (
           <Reveal key={c.id} delay={i * 80} className="h-full">
             <article
-              className={`h-full flex flex-col rounded-[24px] overflow-hidden border ${border} ${
-                coral ? 'bg-white/50' : 'bg-card'
-              } transition-colors duration-300 hover:border-[--hover-line]`}
+              className={`h-full flex flex-col rounded-lg overflow-hidden border ${border} bg-card transition-colors duration-300 hover:border-[--hover-line]`}
               style={{ '--hover-line': theme.main } as React.CSSProperties}
             >
               {c.coverUrl ? (
@@ -101,14 +99,12 @@ export default function CollectionCourses({
                   {c.ctaHref && (
                     <a
                       href={c.ctaHref}
-                      className="group inline-flex w-full items-center justify-center gap-2 font-bold rounded-full px-6 py-3.5 text-card transition-transform hover:scale-[1.02]"
+                      className="group inline-flex w-full items-center justify-center gap-2 font-bold rounded-lg px-6 py-3.5 text-card transition-opacity hover:opacity-90"
                       style={{ background: theme.main }}
                     >
                       <span aria-hidden>🔒</span>
                       {c.ctaText}
-                      <span aria-hidden className="transition-transform duration-300 group-hover:-translate-x-1">
-                        ←
-                      </span>
+                      <span aria-hidden>←</span>
                     </a>
                   )}
                   {c.detailsHref && (

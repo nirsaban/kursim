@@ -271,7 +271,7 @@ function CopyRow({ label, url, copyLabel }: { label: string; url: string; copyLa
           value={url}
           dir="ltr"
           onFocus={(e) => e.currentTarget.select()}
-          className="flex-1 min-w-0 bg-paper border border-line rounded-xl px-3 py-2 text-xs font-mono text-ink truncate"
+          className="flex-1 min-w-0 bg-brand-50 border border-line rounded-xl px-3 py-2 text-xs font-mono text-ink truncate"
         />
         <button
           onClick={copy}

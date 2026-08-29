@@ -203,7 +203,7 @@ export default function GalleryEditor({
       {items.length > 0 && (
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {items.map((item, i) => (
-            <li key={i} className="border border-line rounded-xl p-3 bg-paper/50 space-y-2">
+            <li key={i} className="border border-line rounded-xl p-3 bg-brand-50 space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <span aria-hidden>{kindLabel(item)}</span>
                 <span className="text-muted text-xs truncate flex-1" dir="ltr">

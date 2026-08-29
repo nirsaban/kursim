@@ -148,7 +148,7 @@ export default function PlatformPackagesPanel() {
             <div className="flex flex-wrap items-center gap-3">
               <code
                 dir="ltr"
-                className="flex-1 min-w-64 text-xs bg-paper border border-line rounded-xl px-3.5 py-2.5 overflow-x-auto whitespace-nowrap"
+                className="flex-1 min-w-64 text-xs bg-brand-50 border border-line rounded-xl px-3.5 py-2.5 overflow-x-auto whitespace-nowrap"
               >
                 {webhookUrl}
               </code>
@@ -183,7 +183,7 @@ export default function PlatformPackagesPanel() {
                 </thead>
                 <tbody>
                   {payments.map((p) => (
-                    <tr key={p.id} className="border-b border-line/60 last:border-0">
+                    <tr key={p.id} className="border-b border-line last:border-0">
                       <td className="py-2.5 pe-4 whitespace-nowrap text-muted">
                         {new Date(p.createdAt).toLocaleDateString('he-IL')}
                       </td>

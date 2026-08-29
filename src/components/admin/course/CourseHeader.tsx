@@ -127,7 +127,7 @@ export default function CourseHeader({
         </div>
       </div>
       <textarea
-        className="w-full text-sm text-muted bg-paper/70 rounded-xl p-3 outline-none mt-3 focus:ring-1 focus:ring-brand-300 resize-y"
+        className="w-full text-sm text-muted bg-brand-50 rounded-xl p-3 outline-none mt-3 focus:ring-1 focus:ring-brand-300 resize-y"
         placeholder={he.courseDescription}
         defaultValue={course.description ?? ''}
         rows={2}
@@ -152,7 +152,7 @@ export default function CourseHeader({
             type="number"
             min={1}
             dir="ltr"
-            className="w-24 text-sm bg-paper/70 rounded-xl px-3 py-2 outline-none focus:ring-1 focus:ring-brand-300 text-center"
+            className="w-24 text-sm bg-brand-50 rounded-xl px-3 py-2 outline-none focus:ring-1 focus:ring-brand-300 text-center"
             defaultValue={course.catalogNumber}
             onBlur={(e) => {
               if (e.target.value !== String(course.catalogNumber)) {

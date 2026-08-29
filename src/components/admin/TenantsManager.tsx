@@ -132,7 +132,7 @@ export default function TenantsManager() {
             </thead>
             <tbody>
               {tenants.map((t) => (
-                <tr key={t.id} className="hover:bg-paper/60 transition-colors">
+                <tr key={t.id} className="hover:bg-brand-50 transition-colors">
                   <Td className="font-semibold">{t.name}</Td>
                   <Td dir="ltr">
                     <a

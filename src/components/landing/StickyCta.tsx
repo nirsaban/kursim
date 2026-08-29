@@ -56,12 +56,12 @@ export default function StickyCta({
             {note && <p className="text-xs text-muted truncate">{note}</p>}
           </div>
           {priceText && (
-            <b className="text-ink font-display font-black text-lg shrink-0">{priceText}</b>
+            <b className="text-ink font-display font-bold text-lg shrink-0">{priceText}</b>
           )}
           <a
             href={href}
             {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            className="flex-1 sm:flex-none min-h-[48px] inline-flex items-center justify-center gap-2 font-bold rounded-full px-7 text-card transition-transform hover:scale-[1.02] active:scale-[0.99]"
+            className="flex-1 sm:flex-none min-h-[48px] inline-flex items-center justify-center gap-2 font-bold rounded-lg px-7 text-card transition-opacity hover:opacity-90"
             style={{ background: accent }}
             tabIndex={shown ? 0 : -1}
           >

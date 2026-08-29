@@ -143,7 +143,7 @@ export default function ResultsEditor({
       ) : (
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {items.map((item, i) => (
-            <li key={item.publicId} className="border border-line rounded-xl p-3 bg-paper/50 space-y-2">
+            <li key={item.publicId} className="border border-line rounded-xl p-3 bg-brand-50 space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-muted text-xs tabular-nums">{i + 1}</span>
                 {thumbs[item.publicId] ? (

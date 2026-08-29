@@ -84,7 +84,7 @@ export default async function CertificatePage({
 
             <p className="kicker text-copper-600">{tenant.name}</p>
 
-            <h1 className="font-display text-3xl sm:text-4xl font-black text-ink mt-4">
+            <h1 className="font-display text-3xl sm:text-4xl font-bold text-ink mt-4">
               {he.certificateHeading}
             </h1>
 

@@ -43,8 +43,8 @@ export default function ForgotForm({ tenantSlug }: { tenantSlug: string }) {
   if (sent) {
     return (
       <div className="space-y-4">
-        <div className="rounded-xl2 border border-line bg-paper px-5 py-4">
-          <p className="font-display font-black text-ink">{he.forgotSentTitle}</p>
+        <div className="rounded-xl2 border border-line bg-brand-50 px-5 py-4">
+          <p className="font-display font-bold text-ink">{he.forgotSentTitle}</p>
           <p className="text-sm text-muted mt-1 leading-relaxed">{he.forgotSentBody}</p>
         </div>
         <p className="text-xs text-muted leading-relaxed">
@@ -80,7 +80,7 @@ export default function ForgotForm({ tenantSlug }: { tenantSlug: string }) {
       </Field>
       {notFound && (
         <div className="rounded-xl2 border border-danger-line bg-danger-soft px-5 py-4">
-          <p className="font-display font-black text-danger text-sm">{he.forgotNotFoundTitle}</p>
+          <p className="font-display font-bold text-danger text-sm">{he.forgotNotFoundTitle}</p>
           <p className="text-sm text-danger/90 mt-1 leading-relaxed">{he.forgotNotFoundBody}</p>
         </div>
       )}

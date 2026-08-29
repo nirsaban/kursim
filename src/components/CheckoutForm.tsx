@@ -74,7 +74,7 @@ export default function CheckoutForm({
 
   return (
     <form className="grid gap-4 mt-6 text-start" onSubmit={submit}>
-      <div className="rounded-xl border border-line bg-paper p-4">
+      <div className="rounded-xl border border-line bg-brand-50 p-4">
         <p className="text-xs font-semibold text-muted">{he.checkoutIncludes}</p>
         <ul className="mt-2 space-y-1.5">
           {offer.includedTitles.map((title) => (
@@ -123,7 +123,7 @@ export default function CheckoutForm({
                 {formatAgorot(offer.strikeAgorot)}
               </span>
             )}
-            <span className="font-display text-xl font-black" style={{ color: accent }}>
+            <span className="font-display text-xl font-bold" style={{ color: accent }}>
               {formatAgorot(total)}
             </span>
           </span>

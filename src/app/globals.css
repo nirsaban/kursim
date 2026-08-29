@@ -10,7 +10,7 @@
   h2,
   h3,
   h4 {
-    @apply font-display font-black;
+    @apply font-display font-bold;
     text-wrap: balance;
   }
   table {
